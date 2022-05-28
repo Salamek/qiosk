@@ -5,7 +5,8 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     this->refreshWebAction = QWebEnginePage::Reload;
-    this->initialUrl = QUrl("https://blacklist.salamek.cz");
+    //this->initialUrl = QUrl("https://blacklist.salamek.cz");
+    this->initialUrl = QUrl("https://minusrus.com");
     this->webView = new WebView();
     this->webView->setContextMenuPolicy(Qt::ContextMenuPolicy::NoContextMenu);
     this->webView->setUrl(this->initialUrl);
@@ -65,15 +66,19 @@ void MainWindow::resizeEvent(QResizeEvent* event) {
 void MainWindow::handleWebViewLoadProgress(int progress)
 {
     static QIcon stopIcon(QStringLiteral(":stop.png"));
+    static QIcon stopIconDisabled(QStringLiteral(":stop_disabled.png"));
     static QIcon reloadIcon(QStringLiteral(":refresh.png"));
+    static QIcon reloadIconDisabled(QStringLiteral(":refresh_disabled.png"));
 
     if (0 < progress && progress < 100) {
         this->refreshWebAction = QWebEnginePage::Stop;
-        this->barWidget->reloadButton->setIcon(stopIcon);
+        this->barWidget->reloadButton->setEnabledIcon(stopIcon);
+        this->barWidget->reloadButton->setDisabledIcon(stopIconDisabled);
         this->progressBar->setValue(progress);
     } else {
         this->refreshWebAction = QWebEnginePage::Reload;
-        this->barWidget->reloadButton->setIcon(reloadIcon);
+        this->barWidget->reloadButton->setEnabledIcon(reloadIcon);
+        this->barWidget->reloadButton->setDisabledIcon(reloadIconDisabled);
         this->progressBar->setValue(0);
     }
 }

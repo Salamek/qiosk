@@ -6,5 +6,10 @@
         <file>back.png</file>
         <file>home.png</file>
         <file>stop.png</file>
+        <file>refresh_disabled.png</file>
+        <file>forward_disabled.png</file>
+        <file>back_disabled.png</file>
+        <file>home_disabled.png</file>
+        <file>stop_disabled.png</file>
     </qresource>
 </RCC>

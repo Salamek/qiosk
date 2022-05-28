@@ -7,14 +7,18 @@ BarWidget::BarWidget(QWidget *parent)
     buttonBarLayout->setMargin(0);
 
     static QIcon backIcon(QStringLiteral(":back.png"));
+    static QIcon backIconDisabled(QStringLiteral(":back_disabled.png"));
     static QIcon forwardIcon(QStringLiteral(":forward.png"));
-    static QIcon reloadIcon(QStringLiteral(":reload.png"));
+    static QIcon forwardIconDisabled(QStringLiteral(":forward_disabled.png"));
+    static QIcon reloadIcon(QStringLiteral(":refresh.png"));
+    static QIcon reloadIconDisabled(QStringLiteral(":refresh_disabled.png"));
     static QIcon homeIcon(QStringLiteral(":home.png"));
+    static QIcon homeIconDisabled(QStringLiteral(":home_disabled.png"));
 
-    backButton = new BarButton(backIcon);
-    forwardButton = new BarButton(forwardIcon);
-    reloadButton = new BarButton(reloadIcon);
-    homeButton = new BarButton(homeIcon);
+    backButton = new BarButton(backIcon, backIconDisabled);
+    forwardButton = new BarButton(forwardIcon, forwardIconDisabled);
+    reloadButton = new BarButton(reloadIcon, reloadIconDisabled);
+    homeButton = new BarButton(homeIcon, homeIconDisabled);
     QSpacerItem *horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
     buttonBarLayout->addItem(horizontalSpacer);
 

@@ -26,10 +26,10 @@ public:
     void setWidth(int widthPercent);
     void setHeight(int heightPercent);
 
-    QPushButton *homeButton;
-    QPushButton *reloadButton;
-    QPushButton *forwardButton;
-    QPushButton *backButton;
+    BarButton *homeButton;
+    BarButton *reloadButton;
+    BarButton *forwardButton;
+    BarButton *backButton;
 
 private:
     BarVerticalPositionEnum positionVertical;
