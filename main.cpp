@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-
+#include "userinputeventfilter.h"
 #include <QApplication>
 #include <QWebEngineSettings>
 #include <QWebEngineProfile>
@@ -22,5 +22,11 @@ int main(int argc, char *argv[])
 
     MainWindow w;
     w.show();
+
+    UserInputEventFilter userInputEventFilter;
+
+    QObject::connect(&userInputEventFilter, &UserInputEventFilter::userActivity, &w, &MainWindow::onUserActivity);
+
+    a.installEventFilter(&userInputEventFilter);
     return a.exec();
 }

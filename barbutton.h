@@ -14,6 +14,7 @@ public:
 private:
     QIcon disabledIcon;
     QIcon enabledIcon;
+    void reloadIcon();
 };
 
 #endif // BARBUTTON_H

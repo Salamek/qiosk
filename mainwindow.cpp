@@ -4,9 +4,9 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    this->resetHistoryLock = false;
     this->refreshWebAction = QWebEnginePage::Reload;
-    //this->initialUrl = QUrl("https://blacklist.salamek.cz");
-    this->initialUrl = QUrl("https://minusrus.com");
+    this->initialUrl = QUrl("https://zive.cz");
     this->webView = new WebView();
     this->webView->setContextMenuPolicy(Qt::ContextMenuPolicy::NoContextMenu);
     this->webView->setUrl(this->initialUrl);
@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->barWidget = new BarWidget(this);
     this->progressBar = new ProgressBarWidget(this);
+    this->resetTimer = new ResetTimer(this);
 
     //Bar events
     connect(this->barWidget->homeButton, &QPushButton::clicked, this, &MainWindow::goHome);
@@ -34,14 +35,33 @@ MainWindow::MainWindow(QWidget *parent)
     this->barWidget->reloadButton->setEnabled(true);
 
     //WebView events
+    connect(this->webView, &QWebEngineView::loadStarted, this, &MainWindow::handleLoadStarted);
     connect(this->webView, &QWebEngineView::loadProgress, this, &MainWindow::handleWebViewLoadProgress);
+    connect(this->webView, &QWebEngineView::loadFinished, this, &MainWindow::handleLoadFinished);
     connect(this->webView, &WebView::webActionEnabledChanged, this, &MainWindow::handleWebActionEnabledChanged);
 
+    //Reset timer events
+    connect(this->resetTimer, &ResetTimer::timeout, this, &MainWindow::doReset);
+
+    // ============================
     // Initial Configuration
+    // ============================
     this->barWidget->setHeight(5); //%
     this->barWidget->setWidth(50); //%
     this->barWidget->setHorizontalPosition(BarHorizontalPositionEnum::Center);
     this->barWidget->setVerticalPosition(BarVerticalPositionEnum::Bottom);
+
+    // Configure reset timer, disable this if timeout==0
+    this->resetTimer->setTimeout(10);
+    this->resetTimer->start();
+
+    // ============================
+    // End of initial configuration
+    // ============================
+
+
+
+
     QRect windowGeometry = this->geometry();
     this->barWidget->plot(windowGeometry.width(), windowGeometry.height());
     this->progressBar->plot(windowGeometry.width(), windowGeometry.height());
@@ -56,6 +76,31 @@ void MainWindow::doReload() {
     this->webView->triggerPageAction(this->refreshWebAction);
 }
 
+/**
+ * @brief MainWindow::doReset
+ * Reset browser to initial state
+ */
+void MainWindow::doReset() {
+    // Load initial page if there is any history
+    // History == someone was working on kiosk == we have to reset his shit
+    if (this->webView->history()->canGoBack() || this->webView->history()->canGoForward()) {
+        this->webView->load(this->initialUrl);
+        this->resetHistoryLock = true;
+    }
+
+    // Rest scroll
+    this->webView->scrollTo(0, 0);
+
+    // Reset zoom
+    this->webView->setZoomFactor(1.0);
+}
+
+
+void MainWindow::onUserActivity() {
+    //@TODO maybe just save last activity time and check for inactivity in timer?
+    this->resetTimer->reset();
+}
+
 void MainWindow::resizeEvent(QResizeEvent* event) {
     QSize size = event->size();
     this->barWidget->plot(size.width(), size.height());
@@ -63,23 +108,41 @@ void MainWindow::resizeEvent(QResizeEvent* event) {
     QMainWindow::resizeEvent(event);
 }
 
+void MainWindow::handleLoadStarted() {
+    this->setupReloadStopButton(true);
+}
+
 void MainWindow::handleWebViewLoadProgress(int progress)
 {
+    if (0 < progress && progress < 100) {
+        this->progressBar->setValue(progress);
+    } else {
+        this->progressBar->setValue(0);
+    }
+}
+
+void MainWindow::handleLoadFinished(bool ok) {
+    this->setupReloadStopButton(false);
+    if (this->resetHistoryLock == true) {
+        this->webView->history()->clear();
+        this->resetHistoryLock = false;
+    }
+}
+
+void MainWindow::setupReloadStopButton(bool loading) {
     static QIcon stopIcon(QStringLiteral(":stop.png"));
     static QIcon stopIconDisabled(QStringLiteral(":stop_disabled.png"));
     static QIcon reloadIcon(QStringLiteral(":refresh.png"));
     static QIcon reloadIconDisabled(QStringLiteral(":refresh_disabled.png"));
 
-    if (0 < progress && progress < 100) {
+    if (loading) {
         this->refreshWebAction = QWebEnginePage::Stop;
         this->barWidget->reloadButton->setEnabledIcon(stopIcon);
         this->barWidget->reloadButton->setDisabledIcon(stopIconDisabled);
-        this->progressBar->setValue(progress);
     } else {
         this->refreshWebAction = QWebEnginePage::Reload;
         this->barWidget->reloadButton->setEnabledIcon(reloadIcon);
         this->barWidget->reloadButton->setDisabledIcon(reloadIconDisabled);
-        this->progressBar->setValue(0);
     }
 }
 

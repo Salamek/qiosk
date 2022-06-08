@@ -19,13 +19,19 @@ BarButton::BarButton(QIcon enabledIcon, QIcon disabledIcon)
 
 void BarButton::setDisabledIcon(QIcon disabledIcon) {
     this->disabledIcon = disabledIcon;
+    this->reloadIcon();
 }
 
 void BarButton::setEnabledIcon(QIcon enabledIcon) {
     this->enabledIcon = enabledIcon;
+    this->reloadIcon();
 }
 
 void BarButton::setEnabled(bool enabled) {
     this->setIcon((enabled == true ? this->enabledIcon : this->disabledIcon));
     QPushButton::setEnabled(enabled);
+}
+
+void BarButton::reloadIcon() {
+    this->setIcon((this->isEnabled() == true ? this->enabledIcon : this->disabledIcon));
 }

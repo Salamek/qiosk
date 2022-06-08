@@ -53,6 +53,10 @@ bool WebView::isWebActionEnabled(QWebEnginePage::WebAction webAction) const
     return page()->action(webAction)->isEnabled();
 }
 
+void WebView::scrollTo(int scrollX, int scrollY) {
+    page()->runJavaScript(QString("window.scrollTo({ top: %1, left: %2, behavior: 'smooth' });").arg(scrollX).arg(scrollY));
+}
+
 QWebEngineView *WebView::createWindow(QWebEnginePage::WebWindowType type)
 {
     switch (type) {

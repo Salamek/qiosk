@@ -15,6 +15,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     progressbarwidget.cpp \
+    resettimer.cpp \
+    userinputeventfilter.cpp \
     webview.cpp
 
 HEADERS += \
@@ -23,6 +25,8 @@ HEADERS += \
     enum.h \
     mainwindow.h \
     progressbarwidget.h \
+    resettimer.h \
+    userinputeventfilter.h \
     webview.h
 
 FORMS +=

@@ -11,6 +11,7 @@ class WebView : public QWebEngineView
 public:
     WebView(QWidget *parent = nullptr);
     bool isWebActionEnabled(QWebEnginePage::WebAction webAction) const;
+    void scrollTo(int scrollX, int scrollY);
 protected:
     QWebEngineView *createWindow(QWebEnginePage::WebWindowType type) override;
 signals:
