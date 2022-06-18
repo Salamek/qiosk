@@ -12,21 +12,27 @@ CONFIG += c++17
 SOURCES += \
     barbutton.cpp \
     barwidget.cpp \
+    configuration.cpp \
     main.cpp \
     mainwindow.cpp \
     progressbarwidget.cpp \
     resettimer.cpp \
+    tools.cpp \
     userinputeventfilter.cpp \
+    webpage.cpp \
     webview.cpp
 
 HEADERS += \
     barbutton.h \
     barwidget.h \
+    configuration.h \
     enum.h \
     mainwindow.h \
     progressbarwidget.h \
     resettimer.h \
+    tools.h \
     userinputeventfilter.h \
+    webpage.h \
     webview.h
 
 FORMS +=

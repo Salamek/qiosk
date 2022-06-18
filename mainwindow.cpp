@@ -1,13 +1,19 @@
 #include "mainwindow.h"
 
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(Configuration *config, QWidget *parent)
     : QMainWindow(parent)
 {
+    this->config = config;
     this->resetHistoryLock = false;
     this->refreshWebAction = QWebEnginePage::Reload;
-    this->initialUrl = QUrl("https://zive.cz");
+    this->initialUrl = this->config->getUrl();
+
     this->webView = new WebView();
+    WebPage *webPage = new WebPage(QWebEngineProfile::defaultProfile(), this->webView);
+    webPage->setWhiteList(this->config->getWhiteList());
+    this->webView->setPage(webPage);
+
     this->webView->setContextMenuPolicy(Qt::ContextMenuPolicy::NoContextMenu);
     this->webView->setUrl(this->initialUrl);
 
@@ -41,26 +47,25 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->webView, &WebView::webActionEnabledChanged, this, &MainWindow::handleWebActionEnabledChanged);
 
     //Reset timer events
-    connect(this->resetTimer, &ResetTimer::timeout, this, &MainWindow::doReset);
+    connect(this->resetTimer, &ResetTimer::timeout, this, &MainWindow::checkReset);
 
     // ============================
     // Initial Configuration
     // ============================
-    this->barWidget->setHeight(5); //%
-    this->barWidget->setWidth(50); //%
-    this->barWidget->setHorizontalPosition(BarHorizontalPositionEnum::Center);
-    this->barWidget->setVerticalPosition(BarVerticalPositionEnum::Bottom);
+    this->barWidget->setHeight(this->config->getNavbarHeight()); //%
+    this->barWidget->setWidth(this->config->getNavbarWidth()); //%
+    this->barWidget->setHorizontalPosition(this->config->getNavbarHorizontalPosition());
+    this->barWidget->setVerticalPosition(this->config->getNavbarVerticalPosition());
 
     // Configure reset timer, disable this if timeout==0
-    this->resetTimer->setTimeout(10);
-    this->resetTimer->start();
+    if (this->config->getIdleTime() != 0) {
+        this->resetTimer->setTimeout(this->config->getIdleTime());
+        this->resetTimer->start();
+    }
 
     // ============================
     // End of initial configuration
     // ============================
-
-
-
 
     QRect windowGeometry = this->geometry();
     this->barWidget->plot(windowGeometry.width(), windowGeometry.height());
@@ -76,6 +81,13 @@ void MainWindow::doReload() {
     this->webView->triggerPageAction(this->refreshWebAction);
 }
 
+
+void MainWindow::checkReset() {
+    if (this->config->getIdleTime() > 0 && this->lastUserActivity + this->config->getIdleTime() < QDateTime::currentSecsSinceEpoch()) {
+        this->doReset();
+    }
+}
+
 /**
  * @brief MainWindow::doReset
  * Reset browser to initial state
@@ -88,7 +100,7 @@ void MainWindow::doReset() {
         this->resetHistoryLock = true;
     }
 
-    // Rest scroll
+    // Reset scroll
     this->webView->scrollTo(0, 0);
 
     // Reset zoom
@@ -97,8 +109,7 @@ void MainWindow::doReset() {
 
 
 void MainWindow::onUserActivity() {
-    //@TODO maybe just save last activity time and check for inactivity in timer?
-    this->resetTimer->reset();
+    this->lastUserActivity = QDateTime::currentSecsSinceEpoch();
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event) {

@@ -3,6 +3,7 @@
 
 #include <QWebEngineView>
 
+class WebPage;
 
 class WebView : public QWebEngineView
 {
@@ -12,6 +13,7 @@ public:
     WebView(QWidget *parent = nullptr);
     bool isWebActionEnabled(QWebEnginePage::WebAction webAction) const;
     void scrollTo(int scrollX, int scrollY);
+    void setPage(WebPage *page);
 protected:
     QWebEngineView *createWindow(QWebEnginePage::WebWindowType type) override;
 signals:

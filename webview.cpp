@@ -33,12 +33,16 @@ WebView::WebView(QWidget *parent)
             QTimer::singleShot(0, [this] { reload(); });
         }
     });
-    createWebActionTrigger(this->page(),QWebEnginePage::Forward);
-    createWebActionTrigger(this->page(),QWebEnginePage::Back);
-    createWebActionTrigger(this->page(),QWebEnginePage::Reload);
-    createWebActionTrigger(this->page(),QWebEnginePage::Stop);
 }
 
+void WebView::setPage(WebPage *page)
+{
+    createWebActionTrigger(page,QWebEnginePage::Forward);
+    createWebActionTrigger(page,QWebEnginePage::Back);
+    createWebActionTrigger(page,QWebEnginePage::Reload);
+    createWebActionTrigger(page,QWebEnginePage::Stop);
+    QWebEngineView::setPage(page);
+}
 
 void WebView::createWebActionTrigger(QWebEnginePage *page, QWebEnginePage::WebAction webAction)
 {
