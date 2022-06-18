@@ -59,8 +59,10 @@ void BarWidget::setHeight(int heightPercent) {
 void BarWidget::plot(int parentWidth, int parentHeight) {
     QString styleBackground = "BarWidget{background-color: rgba(53, 53, 53, .85);";
     int minHeight = 50; //px
-    int barWidth = (parentWidth / 100) * this->widthPercent;
-    int barHeight = qMax((parentHeight / 100) * this->heightPercent, minHeight);
+    int minWidth = 48 * 4 + 10; //px
+
+    int barWidth = qMax(parentWidth * this->widthPercent / 100 , minWidth);
+    int barHeight = qMax(parentHeight * this->heightPercent / 100, minHeight);
     int barX;
     int barY;
 
