@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "userinputeventfilter.h"
 #include "configuration.h"
-#include "enum.h"
+#include "barwidget.h"
 #include <QApplication>
 #include <QWebEngineSettings>
 #include <QWebEngineProfile>
@@ -79,15 +79,15 @@ int main(int argc, char *argv[])
     navbarHorizontalPositionOptions << "left" << "right" << "center";
     switch(navbarHorizontalPositionOptions.indexOf(parser.value(navbarHorizontalPositionOption))){
       case 0:
-        config->setNavbarHorizontalPosition(BarHorizontalPositionEnum::Left);
+        config->setNavbarHorizontalPosition(BarWidget::HorizontalPosition::Left);
         break;
 
       case 1:
-        config->setNavbarHorizontalPosition(BarHorizontalPositionEnum::Right);
+        config->setNavbarHorizontalPosition(BarWidget::HorizontalPosition::Right);
         break;
 
       case 2:
-        config->setNavbarHorizontalPosition(BarHorizontalPositionEnum::Center);
+        config->setNavbarHorizontalPosition(BarWidget::HorizontalPosition::Center);
         break;
       default:
         fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided horizontal position is not allowed, use one of left|right|center.")));
@@ -99,11 +99,11 @@ int main(int argc, char *argv[])
     navbarVerticalPositionOptions << "top" << "bottom";
     switch(navbarVerticalPositionOptions.indexOf(parser.value(navbarVerticalPositionOption))){
       case 0:
-        config->setNavbarVerticalPosition(BarVerticalPositionEnum::Top);
+        config->setNavbarVerticalPosition(BarWidget::VerticalPosition::Top);
         break;
 
       case 1:
-        config->setNavbarVerticalPosition(BarVerticalPositionEnum::Bottom);
+        config->setNavbarVerticalPosition(BarWidget::VerticalPosition::Bottom);
         break;
 
       default:

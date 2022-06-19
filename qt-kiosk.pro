@@ -26,7 +26,6 @@ HEADERS += \
     barbutton.h \
     barwidget.h \
     configuration.h \
-    enum.h \
     mainwindow.h \
     progressbarwidget.h \
     resettimer.h \

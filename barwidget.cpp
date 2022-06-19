@@ -40,11 +40,11 @@ void BarWidget::paintEvent(QPaintEvent *)
     this->style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }
 
-void BarWidget::setVerticalPosition(BarVerticalPositionEnum positionVertical) {
+void BarWidget::setVerticalPosition(VerticalPosition positionVertical) {
     this->positionVertical = positionVertical;
 }
 
-void BarWidget::setHorizontalPosition(BarHorizontalPositionEnum positionHorizontal) {
+void BarWidget::setHorizontalPosition(HorizontalPosition positionHorizontal) {
     this->positionHorizontal = positionHorizontal;
 }
 
@@ -67,17 +67,17 @@ void BarWidget::plot(int parentWidth, int parentHeight) {
     int barY;
 
     switch(this->positionHorizontal) {
-    case BarHorizontalPositionEnum::Center:
+    case HorizontalPosition::Center:
         barX = (parentWidth / 2) - (barWidth / 2);
         if (this->widthPercent < 100) {
             styleBackground += " border-top-left-radius: 10px; border-top-right-radius: 10px;";
         }
         break;
-    case BarHorizontalPositionEnum::Left:
+    case HorizontalPosition::Left:
         barX = 0;
         styleBackground += " border-top-right-radius: 10px;";
         break;
-    case BarHorizontalPositionEnum::Right:
+    case HorizontalPosition::Right:
         barX = parentWidth - barWidth;
         styleBackground += " border-top-left-radius: 10px;";
         break;
@@ -86,10 +86,10 @@ void BarWidget::plot(int parentWidth, int parentHeight) {
     styleBackground += "}";
 
     switch(this->positionVertical) {
-    case BarVerticalPositionEnum::Bottom:
+    case VerticalPosition::Bottom:
         barY = parentHeight - barHeight;
         break;
-    case BarVerticalPositionEnum::Top:
+    case VerticalPosition::Top:
         barY = 0;
         break;
     }

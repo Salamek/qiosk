@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QUrl>
-#include "enum.h"
+#include "barwidget.h"
 
 class Configuration : public QObject
 {
@@ -17,8 +17,8 @@ public:
     QStringList whiteList; // List of whitelisted URLs in GLOB format
     //bool navbarEnabled; // Is navbar displayed
     //QStringList navbarButtons; // Enabled buttons on navbar, order matters ['home', 'reload', 'back', 'forward']
-    BarVerticalPositionEnum navbarVerticalPosition;
-    BarHorizontalPositionEnum navbarHorizontalPosition;
+    BarWidget::VerticalPosition navbarVerticalPosition;
+    BarWidget::HorizontalPosition navbarHorizontalPosition;
     int navbarWidth; //%
     int navbarHeight; //%
 
@@ -28,8 +28,8 @@ public:
     void setTouchscreen(bool touchscreen);
     void setIdleTime(int idleTime);
     void setWhiteList(QStringList whiteList);
-    void setNavbarVerticalPosition(BarVerticalPositionEnum navbarVerticalPosition);
-    void setNavbarHorizontalPosition(BarHorizontalPositionEnum navbarHorizontalPosition);
+    void setNavbarVerticalPosition(BarWidget::VerticalPosition navbarVerticalPosition);
+    void setNavbarHorizontalPosition(BarWidget::HorizontalPosition navbarHorizontalPosition);
     void setNavbarWidth(int navbarWidth);
     void setNavbarHeight(int navbarHeight);
 
@@ -39,8 +39,8 @@ public:
     int getNavbarHeight();
     int getIdleTime();
     QStringList getWhiteList();
-    BarVerticalPositionEnum getNavbarVerticalPosition();
-    BarHorizontalPositionEnum getNavbarHorizontalPosition();
+    BarWidget::VerticalPosition getNavbarVerticalPosition();
+    BarWidget::HorizontalPosition getNavbarHorizontalPosition();
 
 signals:
 

@@ -8,8 +8,8 @@ Configuration::Configuration(QObject *parent)
     this->touchscreen = true;
     this->idleTime = 0;
     this->whiteList = QStringList();
-    this->navbarVerticalPosition = BarVerticalPositionEnum::Bottom;
-    this->navbarHorizontalPosition = BarHorizontalPositionEnum::Center;
+    this->navbarVerticalPosition = BarWidget::VerticalPosition::Bottom;
+    this->navbarHorizontalPosition = BarWidget::HorizontalPosition::Center;
     this->navbarWidth = 25; //%
     this->navbarHeight = 5; //%
 }
@@ -35,11 +35,11 @@ void Configuration::setWhiteList(QStringList whiteList) {
     this->whiteList = whiteList;
 }
 
-void Configuration::setNavbarVerticalPosition(BarVerticalPositionEnum navbarVerticalPosition) {
+void Configuration::setNavbarVerticalPosition(BarWidget::VerticalPosition navbarVerticalPosition) {
     this->navbarVerticalPosition = navbarVerticalPosition;
 }
 
-void Configuration::setNavbarHorizontalPosition(BarHorizontalPositionEnum navbarHorizontalPosition) {
+void Configuration::setNavbarHorizontalPosition(BarWidget::HorizontalPosition navbarHorizontalPosition) {
     this->navbarHorizontalPosition = navbarHorizontalPosition;
 }
 
@@ -78,11 +78,11 @@ int Configuration::getIdleTime() {
     return this->idleTime;
 }
 
-BarVerticalPositionEnum Configuration::getNavbarVerticalPosition() {
+BarWidget::VerticalPosition Configuration::getNavbarVerticalPosition() {
     return this->navbarVerticalPosition;
 }
 
-BarHorizontalPositionEnum Configuration::getNavbarHorizontalPosition() {
+BarWidget::HorizontalPosition Configuration::getNavbarHorizontalPosition() {
     return this->navbarHorizontalPosition;
 }
 

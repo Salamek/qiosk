@@ -11,7 +11,6 @@
 #include <QSizePolicy>
 #include <QSpacerItem>
 #include <QGraphicsDropShadowEffect>
-#include "enum.h"
 #include "barbutton.h"
 
 class BarWidget : public QWidget
@@ -20,9 +19,20 @@ class BarWidget : public QWidget
 public:
     explicit BarWidget(QWidget *parent = nullptr);
 
+    enum class HorizontalPosition {
+        Center,
+        Left,
+        Right
+    };
+
+    enum class VerticalPosition {
+        Top,
+        Bottom
+    };
+
     void plot(int parentWidth, int parentHeight);
-    void setVerticalPosition(BarVerticalPositionEnum positionVertical);
-    void setHorizontalPosition(BarHorizontalPositionEnum positionHorizontal);
+    void setVerticalPosition(VerticalPosition positionVertical);
+    void setHorizontalPosition(HorizontalPosition positionHorizontal);
     void setWidth(int widthPercent);
     void setHeight(int heightPercent);
 
@@ -31,9 +41,10 @@ public:
     BarButton *forwardButton;
     BarButton *backButton;
 
+
 private:
-    BarVerticalPositionEnum positionVertical;
-    BarHorizontalPositionEnum positionHorizontal;
+    VerticalPosition positionVertical;
+    HorizontalPosition positionHorizontal;
     int widthPercent;
     int heightPercent;
 signals:
