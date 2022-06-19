@@ -12,6 +12,7 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     this->webView = new WebView();
     WebPage *webPage = new WebPage(QWebEngineProfile::defaultProfile(), this->webView);
     webPage->setWhiteList(this->config->getWhiteList());
+    webPage->setPermissions(this->config->getPermissions());
     this->webView->setPage(webPage);
 
     this->webView->setContextMenuPolicy(Qt::ContextMenuPolicy::NoContextMenu);

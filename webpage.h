@@ -12,10 +12,28 @@ class WebPage : public QWebEnginePage
 
 public:
     WebPage(QWebEngineProfile *profile, QObject *parent = nullptr);
+
+    enum Permission {
+        NoPermission,
+        AllowInvalidCertificate,
+        AllowNotifications,
+        AllowGeolocation,
+        AllowMediaAudioCapture,
+        AllowMediaVideoCapture,
+        AllowMediaAudioVideoCapture,
+        AllowMouseLock,
+        AllowDesktopVideoCapture,
+        AllowDesktopAudioVideoCapture
+    };
+    Q_DECLARE_FLAGS(Permissions, Permission)
+
     void setWhiteList(QStringList whiteList);
+    void setPermissions(WebPage::Permissions permissions);
 private:
     bool isUrlInWhiteList(QUrl url);
     QList<QRegularExpression> whiteListRegexps;
+    Permissions permissions;
+    bool isFeatureAllowed(Feature feature);
 protected:
     bool certificateError(const QWebEngineCertificateError &error) override;
     bool acceptNavigationRequest(const QUrl &url, QWebEnginePage::NavigationType type, bool isMainFrame) override;
@@ -28,5 +46,7 @@ private slots:
     void handleSelectClientCertificate(QWebEngineClientCertificateSelection clientCertSelection);
 #endif
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(WebPage::Permissions)
 
 #endif // WEBPAGE_H

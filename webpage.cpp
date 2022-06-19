@@ -19,6 +19,18 @@ WebPage::WebPage(QWebEngineProfile *profile, QObject *parent)
 #endif
 }
 
+void WebPage::setWhiteList(QStringList whiteList) {
+    this->whiteListRegexps.clear();
+    QString whiteListItem;
+    foreach(whiteListItem, whiteList) {
+        this->whiteListRegexps << QRegularExpression(Tools::wildcardToRegularExpression(whiteListItem));
+    }
+}
+
+void WebPage::setPermissions(WebPage::Permissions permissions) {
+    this->permissions = permissions;
+}
+
 bool WebPage::acceptNavigationRequest(const QUrl &url, QWebEnginePage::NavigationType type, bool isMainFrame) {
     if (this->whiteListRegexps.count() > 0) {
         return this->isUrlInWhiteList(url);
@@ -39,17 +51,10 @@ bool WebPage::isUrlInWhiteList(QUrl url) {
     return false;
 }
 
-void WebPage::setWhiteList(QStringList whiteList) {
-    this->whiteListRegexps.clear();
-    QString whiteListItem;
-    foreach(whiteListItem, whiteList) {
-        this->whiteListRegexps << QRegularExpression(Tools::wildcardToRegularExpression(whiteListItem));
-    }
-}
 
 bool WebPage::certificateError(const QWebEngineCertificateError &error)
 {
-    bool ignoreCertificateError = true; //@TODO
+    bool ignoreCertificateError = this->permissions.testFlag(Permission::AllowInvalidCertificate);
     QWidget *mainWindow = view()->window();
     if (error.isOverridable()) {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
@@ -81,37 +86,37 @@ void WebPage::handleAuthenticationRequired(const QUrl &requestUrl, QAuthenticato
     }
 }
 
-inline QString questionForFeature(QWebEnginePage::Feature feature)
-{
+bool WebPage::isFeatureAllowed(Feature feature) {
     switch (feature) {
     case QWebEnginePage::Geolocation:
-        return WebPage::tr("Allow %1 to access your location information?");
+        return this->permissions.testFlag(Permission::AllowGeolocation);
     case QWebEnginePage::MediaAudioCapture:
-        return WebPage::tr("Allow %1 to access your microphone?");
+        return this->permissions.testFlag(Permission::AllowMediaAudioCapture);
     case QWebEnginePage::MediaVideoCapture:
-        return WebPage::tr("Allow %1 to access your webcam?");
+        return this->permissions.testFlag(Permission::AllowMediaVideoCapture);
     case QWebEnginePage::MediaAudioVideoCapture:
-        return WebPage::tr("Allow %1 to access your microphone and webcam?");
+        return this->permissions.testFlag(Permission::AllowMediaAudioVideoCapture);
     case QWebEnginePage::MouseLock:
-        return WebPage::tr("Allow %1 to lock your mouse cursor?");
+        return this->permissions.testFlag(Permission::AllowMouseLock);
     case QWebEnginePage::DesktopVideoCapture:
-        return WebPage::tr("Allow %1 to capture video of your desktop?");
+        return this->permissions.testFlag(Permission::AllowDesktopVideoCapture);
     case QWebEnginePage::DesktopAudioVideoCapture:
-        return WebPage::tr("Allow %1 to capture audio and video of your desktop?");
+        return this->permissions.testFlag(Permission::AllowDesktopAudioVideoCapture);
     case QWebEnginePage::Notifications:
-        return WebPage::tr("Allow %1 to show notification on your desktop?");
+        return this->permissions.testFlag(Permission::AllowNotifications);
     }
-    return QString();
+
+    return false;
 }
 
 void WebPage::handleFeaturePermissionRequested(const QUrl &securityOrigin, Feature feature)
 {
-    QString title = tr("Permission Request");
-    QString question = questionForFeature(feature).arg(securityOrigin.host());
-    if (!question.isEmpty() && QMessageBox::question(view()->window(), title, question) == QMessageBox::Yes)
+    bool allowed = this->isFeatureAllowed(feature);
+    if (allowed) {
         setFeaturePermission(securityOrigin, feature, PermissionGrantedByUser);
-    else
+    } else {
         setFeaturePermission(securityOrigin, feature, PermissionDeniedByUser);
+    }
 }
 
 void WebPage::handleProxyAuthenticationRequired(const QUrl &, QAuthenticator *auth, const QString &proxyHost)

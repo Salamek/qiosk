@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QUrl>
 #include "barwidget.h"
+#include "webpage.h"
 
 class Configuration : public QObject
 {
@@ -19,6 +20,7 @@ public:
     //QStringList navbarButtons; // Enabled buttons on navbar, order matters ['home', 'reload', 'back', 'forward']
     BarWidget::VerticalPosition navbarVerticalPosition;
     BarWidget::HorizontalPosition navbarHorizontalPosition;
+    WebPage::Permissions permissions;
     int navbarWidth; //%
     int navbarHeight; //%
 
@@ -32,6 +34,7 @@ public:
     void setNavbarHorizontalPosition(BarWidget::HorizontalPosition navbarHorizontalPosition);
     void setNavbarWidth(int navbarWidth);
     void setNavbarHeight(int navbarHeight);
+    void setPermissions(WebPage::Permissions permissions);
 
     bool isFullscreen();
     QUrl getUrl();
@@ -41,6 +44,7 @@ public:
     QStringList getWhiteList();
     BarWidget::VerticalPosition getNavbarVerticalPosition();
     BarWidget::HorizontalPosition getNavbarHorizontalPosition();
+    WebPage::Permissions getPermissions();
 
 signals:
 

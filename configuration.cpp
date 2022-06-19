@@ -12,6 +12,7 @@ Configuration::Configuration(QObject *parent)
     this->navbarHorizontalPosition = BarWidget::HorizontalPosition::Center;
     this->navbarWidth = 25; //%
     this->navbarHeight = 5; //%
+    //this->permissions = WebPage::Permission::AllowGeolocation | WebPage::Permission::AllowInvalidCertificate | WebPage::Permission::AllowNotifications | WebPage::Permission::AllowDesktopVideoCapture;
 }
 
 
@@ -57,6 +58,9 @@ void Configuration::setNavbarHeight(int navbarHeight) {
     this->navbarHeight = navbarHeight;
 }
 
+void Configuration::setPermissions(WebPage::Permissions permissions) {
+    this->permissions = permissions;
+}
 
 bool Configuration::isFullscreen() {
     return this->fullscreen;
@@ -88,4 +92,8 @@ BarWidget::HorizontalPosition Configuration::getNavbarHorizontalPosition() {
 
 QStringList Configuration::getWhiteList() {
     return this->whiteList;
+}
+
+WebPage::Permissions Configuration::getPermissions() {
+    return this->permissions;
 }
