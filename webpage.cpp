@@ -77,6 +77,7 @@ bool WebPage::certificateError(const QWebEngineCertificateError &error)
 
 void WebPage::handleAuthenticationRequired(const QUrl &requestUrl, QAuthenticator *auth)
 {
+    //@TODO provide option for HTTP auth
     if (false) {
         /*auth->setUser(passwordDialog.m_userNameLineEdit->text());
         auth->setPassword(passwordDialog.m_passwordLineEdit->text());*/
@@ -121,6 +122,7 @@ void WebPage::handleFeaturePermissionRequested(const QUrl &securityOrigin, Featu
 
 void WebPage::handleProxyAuthenticationRequired(const QUrl &, QAuthenticator *auth, const QString &proxyHost)
 {
+    //@TODO provide option for proxy auth
     if (false) {
         /*auth->setUser(passwordDialog.m_userNameLineEdit->text());
         auth->setPassword(passwordDialog.m_passwordLineEdit->text());*/
@@ -133,16 +135,7 @@ void WebPage::handleProxyAuthenticationRequired(const QUrl &, QAuthenticator *au
 //! [registerProtocolHandlerRequested]
 void WebPage::handleRegisterProtocolHandlerRequested(QWebEngineRegisterProtocolHandlerRequest request)
 {
-    auto answer = QMessageBox::question(
-        view()->window(),
-        tr("Permission Request"),
-        tr("Allow %1 to open all %2 links?")
-        .arg(request.origin().host())
-        .arg(request.scheme()));
-    if (answer == QMessageBox::Yes)
-        request.accept();
-    else
-        request.reject();
+    request.reject();
 }
 //! [registerProtocolHandlerRequested]
 
