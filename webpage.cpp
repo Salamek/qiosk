@@ -14,7 +14,7 @@ WebPage::WebPage(QWebEngineProfile *profile, QObject *parent)
     connect(this, &QWebEnginePage::featurePermissionRequested, this, &WebPage::handleFeaturePermissionRequested);
     connect(this, &QWebEnginePage::proxyAuthenticationRequired, this, &WebPage::handleProxyAuthenticationRequired);
     connect(this, &QWebEnginePage::registerProtocolHandlerRequested, this, &WebPage::handleRegisterProtocolHandlerRequested);
-#if !defined(QT_NO_SSL) || QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+#if !defined(QT_NO_SSL) && QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
     connect(this, &QWebEnginePage::selectClientCertificate, this, &WebPage::handleSelectClientCertificate);
 #endif
 }
@@ -139,7 +139,7 @@ void WebPage::handleRegisterProtocolHandlerRequested(QWebEngineRegisterProtocolH
 }
 //! [registerProtocolHandlerRequested]
 
-#if !defined(QT_NO_SSL) || QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+#if !defined(QT_NO_SSL) && QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
 void WebPage::handleSelectClientCertificate(QWebEngineClientCertificateSelection selection)
 {
     // Just select one.
