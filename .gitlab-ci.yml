@@ -23,6 +23,8 @@ build:linux:
     
 test:linux:
   stage: test
+  before_script:
+    - apt install libqt5webenginewidgets5 -qy
   script:
     - ./qt-kiosk -h
   dependencies:
