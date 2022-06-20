@@ -8,7 +8,7 @@ build_linux:
   stage: build
   before_script:
     - apt update -qy
-    - apt install build-essential qt5-qmake gt5-default qtwebengine5-dev -qy
+    - apt install build-essential qt5-qmake qtwebengine5-dev -qy
   script:
     - qmake qt-kiosk.pro
     - make
