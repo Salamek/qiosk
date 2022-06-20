@@ -1,0 +1,25 @@
+stages:
+  - build
+  - test
+
+
+
+build_linux:
+  stage: build
+  before_script:
+    - apt update -qy
+    - apt install build-essential qt5-qmake libqt5webview5-dev -qy
+  script:
+    - qmake qt-kiosk.pro
+    - make
+  tags:
+    - debian
+
+    
+test_linux:
+  stage: test
+  script:
+    - ./qt-kiosk -h
+    
+  tags:
+    - debian
