@@ -19,15 +19,16 @@ BarWidget::BarWidget(QWidget *parent)
     forwardButton = new BarButton(forwardIcon, forwardIconDisabled);
     reloadButton = new BarButton(reloadIcon, reloadIconDisabled);
     homeButton = new BarButton(homeIcon, homeIconDisabled);
-    QSpacerItem *horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    buttonBarLayout->addItem(horizontalSpacer);
+    QSpacerItem *horizontalSpacerOne = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    buttonBarLayout->addItem(horizontalSpacerOne);
 
     buttonBarLayout->addWidget(backButton);
     buttonBarLayout->addWidget(forwardButton);
     buttonBarLayout->addWidget(reloadButton);
     buttonBarLayout->addWidget(homeButton);
 
-    buttonBarLayout->addItem(horizontalSpacer);
+    QSpacerItem *horizontalSpacerTwo = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    buttonBarLayout->addItem(horizontalSpacerTwo);
 
     this->setLayout(buttonBarLayout);
 }
