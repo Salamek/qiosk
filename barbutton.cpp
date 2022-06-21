@@ -1,7 +1,7 @@
 #include "barbutton.h"
 
-BarButton::BarButton(QIcon enabledIcon, QIcon disabledIcon)
-    : QPushButton{enabledIcon, ""}
+BarButton::BarButton(QIcon enabledIcon, QIcon disabledIcon, QWidget *parent)
+    : QPushButton{enabledIcon, "", parent}
 {
     this->enabledIcon = enabledIcon;
     this->disabledIcon = disabledIcon;

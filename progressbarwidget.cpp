@@ -10,6 +10,7 @@ ProgressBarWidget::ProgressBarWidget(QWidget *parent)
 }
 
 void ProgressBarWidget::plot(int parentWidth, int parentHeight) {
+    Q_UNUSED(parentHeight);
     this->resize(parentWidth, 1);
 }
 

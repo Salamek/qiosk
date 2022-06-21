@@ -32,6 +32,8 @@ void WebPage::setPermissions(WebPage::Permissions permissions) {
 }
 
 bool WebPage::acceptNavigationRequest(const QUrl &url, QWebEnginePage::NavigationType type, bool isMainFrame) {
+    Q_UNUSED(type);
+    Q_UNUSED(isMainFrame);
     if (this->whiteListRegexps.count() > 0) {
         return this->isUrlInWhiteList(url);
     }
@@ -77,6 +79,7 @@ bool WebPage::certificateError(const QWebEngineCertificateError &error)
 
 void WebPage::handleAuthenticationRequired(const QUrl &requestUrl, QAuthenticator *auth)
 {
+    Q_UNUSED(requestUrl);
     //@TODO provide option for HTTP auth
     if (false) {
         /*auth->setUser(passwordDialog.m_userNameLineEdit->text());
@@ -122,6 +125,7 @@ void WebPage::handleFeaturePermissionRequested(const QUrl &securityOrigin, Featu
 
 void WebPage::handleProxyAuthenticationRequired(const QUrl &, QAuthenticator *auth, const QString &proxyHost)
 {
+    Q_UNUSED(proxyHost);
     //@TODO provide option for proxy auth
     if (false) {
         /*auth->setUser(passwordDialog.m_userNameLineEdit->text());

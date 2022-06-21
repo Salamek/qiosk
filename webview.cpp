@@ -30,7 +30,7 @@ WebView::WebView(QWidget *parent)
                                                    tr("Render process exited with code: %1\n"
                                                       "Do you want to reload the page ?").arg(statusCode));
         if (btn == QMessageBox::Yes) {
-            QTimer::singleShot(0, [this] { reload(); });
+            QTimer::singleShot(0, this, SLOT(reload()));
         }
     });
 }
@@ -47,7 +47,7 @@ void WebView::setPage(WebPage *page)
 void WebView::createWebActionTrigger(QWebEnginePage *page, QWebEnginePage::WebAction webAction)
 {
     QAction *action = page->action(webAction);
-    connect(action, &QAction::changed, [this, action, webAction]{
+    connect(action, &QAction::changed, this, [this, action, webAction]{
         emit webActionEnabledChanged(webAction, action->isEnabled());
     });
 }

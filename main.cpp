@@ -10,6 +10,8 @@
 int main(int argc, char *argv[])
 {
     qputenv("QT_ASSUME_STDERR_HAS_CONSOLE", "1");
+    //qputenv("QTWEBENGINE_REMOTE_DEBUGGING", "9988"); //https://developer.chrome.com/docs/devtools/
+    //qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-logging");
     qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
     QCoreApplication::setOrganizationName("Adam Schubert");
     QCoreApplication::setApplicationName("qt-kiosk");
@@ -72,7 +74,8 @@ int main(int argc, char *argv[])
     parser.addOption(navbarHeightOption);
 
     // A string option with multiple names (-a, --allow-feature)
-    QCommandLineOption allowFeatureOption(QStringList() << "a" << "allow-feature", QCoreApplication::translate("main", "Allow feature") , permissionOptionsMap.keys().join("|"));
+    QStringList permissionOptionsMapKeys = permissionOptionsMap.keys();
+    QCommandLineOption allowFeatureOption(QStringList() << "a" << "allow-feature", QCoreApplication::translate("main", "Allow feature"), permissionOptionsMapKeys.join("|"));
     parser.addOption(allowFeatureOption);
 
     // Process the actual command line arguments given by the user

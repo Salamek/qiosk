@@ -134,6 +134,7 @@ void MainWindow::handleWebViewLoadProgress(int progress)
 }
 
 void MainWindow::handleLoadFinished(bool ok) {
+    Q_UNUSED(ok);
     this->setupReloadStopButton(false);
     if (this->resetHistoryLock == true) {
         this->webView->history()->clear();
@@ -178,6 +179,8 @@ void MainWindow::handleWebActionEnabledChanged(QWebEnginePage::WebAction action,
 
 MainWindow::~MainWindow()
 {
+    delete this->webView;
+    delete this->config;
 }
 
 
