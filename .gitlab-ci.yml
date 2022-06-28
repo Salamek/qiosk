@@ -1,10 +1,10 @@
 stages:
   - build
-  - test
+  - package
 
 
 
-build:linux:
+build:linux:x86-64:
   stage: build
   before_script:
     - apt update -qy
@@ -36,15 +36,34 @@ build:linux:arm64:
       - qt-kiosk
     expire_in: 1d
 
-
-test:linux:
-  stage: test
-  before_script:
-    - apt update -qy
-    - apt install libqt5webenginewidgets5 -qy
+package:debian:x86-64:
+  stage: package
   script:
-    - ./qt-kiosk -h
-  dependencies:
-    - build:linux
+    - apt update -qy
+    - apt install dh-make -qy
+    - dpkg-buildpackage
+  depedencies:
+    - build:debian:x86-64
   tags:
     - debian
+
+  artifacts:
+    paths:
+      - qt-kiosk*.deb
+    expire_in: 1d
+
+
+
+
+
+#test:linux:
+#  stage: test
+#  before_script:
+#    - apt update -qy
+#    - apt install libqt5webenginewidgets5 -qy
+#  script:
+#    - ./qt-kiosk -h
+#  dependencies:
+#    - build:linux
+#  tags:
+#    - debian
