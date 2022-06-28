@@ -20,7 +20,23 @@ build:linux:
       - qt-kiosk
     expire_in: 1d
 
-    
+build:linux:arm64:
+  stage: build
+  before_script:
+    - apt update -qy
+    - apt install build-essential qt5-qmake qtwebengine5-dev -qy
+  script:
+    - qmake qt-kiosk.pro
+    - make
+  tags:
+    - debian-arm64
+
+  artifacts:
+    paths:
+      - qt-kiosk
+    expire_in: 1d
+
+
 test:linux:
   stage: test
   before_script:
