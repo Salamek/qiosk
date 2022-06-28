@@ -42,8 +42,8 @@ package:debian:x86-64:
     - apt update -qy
     - apt install dh-make -qy
     - dpkg-buildpackage
-  depedencies:
-    - build:debian:x86-64
+  dependencies:
+    - build:linux:x86-64
   tags:
     - debian
 
