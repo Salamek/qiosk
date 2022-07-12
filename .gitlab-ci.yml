@@ -41,9 +41,9 @@ package:debian:x86-64:
   script:
     - apt update -qy
     - apt install dh-make cmake -qy
-    - dpkg-buildpackage
-  dependencies:
-    - build:linux:x86-64
+    - dpkg-buildpackage -us -uc
+#  dependencies:
+#    - build:linux:x86-64
   tags:
     - debian
 
