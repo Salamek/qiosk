@@ -10,7 +10,7 @@ build:linux:x86-64:
     - apt update -qy
     - apt install build-essential qt5-qmake qtwebengine5-dev -qy
   script:
-    - qmake qt-kiosk.pro
+    - cmake .
     - make
   tags:
     - debian
@@ -26,7 +26,7 @@ build:linux:arm64:
     - apt update -qy
     - apt install build-essential qt5-qmake qtwebengine5-dev -qy
   script:
-    - qmake qt-kiosk.pro
+    - cmake .
     - make
   tags:
     - debian-arm64
@@ -40,7 +40,7 @@ package:debian:x86-64:
   stage: package
   script:
     - apt update -qy
-    - apt install dh-make -qy
+    - apt install dh-make cmake -qy
     - dpkg-buildpackage
   dependencies:
     - build:linux:x86-64
