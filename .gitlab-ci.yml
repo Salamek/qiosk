@@ -8,7 +8,7 @@ build:linux:x86-64:
   stage: build
   before_script:
     - apt update -qy
-    - apt install build-essential qt5-qmake qtwebengine5-dev -qy
+    - apt install build-essential cmake qtwebengine5-dev -qy
   script:
     - cmake .
     - make
@@ -24,7 +24,7 @@ build:linux:arm64:
   stage: build
   before_script:
     - apt update -qy
-    - apt install build-essential qt5-qmake qtwebengine5-dev -qy
+    - apt install build-essential cmake qtwebengine5-dev -qy
   script:
     - cmake .
     - make
