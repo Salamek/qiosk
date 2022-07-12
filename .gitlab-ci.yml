@@ -40,6 +40,7 @@ package:debian:x86-64:
   stage: package
   script:
     - apt update -qy
+    - apt upgrade -qy 
     - apt install dh-make cmake -qy
     - dpkg-buildpackage -us -uc
 #  dependencies:
