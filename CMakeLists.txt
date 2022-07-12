@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 project(qt-kiosk VERSION 1.0 LANGUAGES CXX)
 
+include(GNUInstallDirs)
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOUIC ON)
@@ -63,6 +65,12 @@ set_target_properties(qt-kiosk PROPERTIES
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
+
+#install(TARGETS qt-kiosk ${INSTALL_TARGETS_DEFAULT_ARGS}
+#        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+#        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#)
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(qt-kiosk)
