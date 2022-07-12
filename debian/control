@@ -9,7 +9,7 @@ Homepage: https://github.com/salamek/qt-kiosk
 #Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/qt-kiosk.git
 
 Package: qt-kiosk
-Architecture: all
+Architecture: any
 Depends: ${misc:Depends}, libqt5webenginewidgets5
 Description: QT Kiosk is simple kiosk browser written in QT
  <insert long description, indented with spaces>
