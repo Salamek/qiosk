@@ -1,6 +1,7 @@
 stages:
   - build
   - package
+  - deploy
 
 
 
@@ -70,14 +71,30 @@ package:debian:arm64:
     expire_in: 1d
 
 
-#test:linux:
-#  stage: test
-#  before_script:
-#    - apt update -qy
-#    - apt install libqt5webenginewidgets5 -qy
-#  script:
-#    - ./qt-kiosk -h
-#  dependencies:
-#    - build:linux
-#  tags:
-#    - debian
+
+repoupdate:
+  stage: deploy
+  before_script:
+    # SSH
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - apt-get update -y
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+
+  script:
+    #- ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/www/arch/pub/any/python-cron-descriptor*.pkg.tar.zst'
+    - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/cache/deb/pub/all/qt-kiosk*.deb'
+    #- scp archlinux/python-cron-descriptor*.pkg.tar.zst www-data@repository:/var/www/repository.salamek.cz/www/arch/pub/any
+    - scp qt-kiosk*.deb www-data@repository:/var/www/repository.salamek.cz/cache/deb/pub/all
+    - ssh www-data@repository '/var/www/repository.salamek.cz/deb-pub-update.sh'
+    #- ssh www-data@repository '/var/www/repository.salamek.cz/arch-pub-update.sh'
+  
+  dependencies:
+    - package:debian:arm64
+    - package:debian:x86-64
+  tags:
+    - debian
+  #only:
+  #  - tags
