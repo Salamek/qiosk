@@ -43,12 +43,13 @@ package:debian:x86-64:
     - apt upgrade -qy 
     - apt install dh-make build-essential cmake qtwebengine5-dev -qy
     - dpkg-buildpackage -us -uc
+    - mv ../qt-kiosk*.deb .
   tags:
     - debian
 
   artifacts:
     paths:
-      - ../qt-kiosk*.deb
+      - ./qt-kiosk*.deb
     expire_in: 1d
 
 
@@ -59,12 +60,13 @@ package:debian:arm64:
     - apt upgrade -qy 
     - apt install dh-make build-essential cmake qtwebengine5-dev -qy
     - dpkg-buildpackage -us -uc
+    - mv ../qt-kiosk*.deb .
   tags:
     - debian-arm64
 
   artifacts:
     paths:
-      - ../qt-kiosk*.deb
+      - ./qt-kiosk*.deb
     expire_in: 1d
 
 
