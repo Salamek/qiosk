@@ -70,6 +70,24 @@ package:debian:arm64:
       - ./qt-kiosk*.deb
     expire_in: 1d
 
+package:debian:armhf:
+  stage: package
+  script:
+    - dpkg --add-architecture armhf
+    - apt update -qy
+    - apt upgrade -qy 
+    - apt install dh-make build-essential cmake crossbuild-essential-armhf qtwebengine5-dev:armhf -qy
+    - export CONFIG_SITE=/etc/dpkg-cross/cross-config.armhf  
+    - export DEB_BUILD_OPTIONS=nocheck 
+    - dpkg-buildpackage -aarmhf -Pcross,nocheck -us -uc
+    - mv ../qt-kiosk*.deb .
+  tags:
+    - debian
+
+  artifacts:
+    paths:
+      - ./qt-kiosk*.deb
+    expire_in: 1d
 
 
 repoupdate:
