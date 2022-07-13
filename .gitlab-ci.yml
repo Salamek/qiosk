@@ -41,7 +41,7 @@ package:debian:x86-64:
   script:
     - apt update -qy
     - apt upgrade -qy 
-    - apt install dh-make cmake -qy
+    - apt install dh-make build-essential cmake qtwebengine5-dev -qy
     - dpkg-buildpackage -us -uc
 #  dependencies:
 #    - build:linux:x86-64
