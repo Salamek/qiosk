@@ -1,0 +1,32 @@
+pkgname=qt-kiosk
+pkgver=0.0.1
+pkgdesc="QT Kiosk ."
+pkgrel=1
+arch=('x86_64')
+license=('GPL-3')
+url='https://github.com/salamek/qt-kiosk'
+depends=(
+    'qt6-webengine'
+)
+
+makedepends=(
+    'qt6-webengine'
+    'cmake'
+)
+
+provides=('qt-kiosk')
+
+prepare() {
+  mkdir -p build
+}
+
+build() {
+  cd build
+  cmake -B build -S ../../../ -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build build
+}
+
+package() {
+  cd build
+  DESTDIR="$pkgdir" cmake --install build
+}
