@@ -4,8 +4,7 @@ stages:
   - deploy
 
 
-
-build:linux:x86-64:
+build:debian:x86-64:
   stage: build
   before_script:
     - apt update -qy
@@ -15,22 +14,6 @@ build:linux:x86-64:
     - make
   tags:
     - debian
-
-  artifacts:
-    paths:
-      - qt-kiosk
-    expire_in: 1d
-
-build:linux:arm64:
-  stage: build
-  before_script:
-    - apt update -qy
-    - apt install build-essential cmake qtwebengine5-dev -qy
-  script:
-    - cmake .
-    - make
-  tags:
-    - debian-arm64
 
   artifacts:
     paths:
@@ -54,16 +37,35 @@ package:debian:x86-64:
     expire_in: 1d
 
 
+#package:debian:arm64:
+#  stage: package
+#  script:
+#    - apt update -qy
+#    - apt upgrade -qy 
+#    - apt install dh-make build-essential cmake qtwebengine5-dev -qy
+#    - dpkg-buildpackage -us -uc
+#    - mv ../qt-kiosk*.deb .
+#  tags:
+#    - debian-arm64
+#
+#  artifacts:
+#    paths:
+#      - ./qt-kiosk*.deb
+#    expire_in: 1d
+
 package:debian:arm64:
   stage: package
   script:
+    - dpkg --add-architecture arm64
     - apt update -qy
     - apt upgrade -qy 
-    - apt install dh-make build-essential cmake qtwebengine5-dev -qy
-    - dpkg-buildpackage -us -uc
+    - apt install dh-make build-essential cmake crossbuild-essential-arm64 qtwebengine5-dev:arm64 -qy
+    - export CONFIG_SITE=/etc/dpkg-cross/cross-config.arm64  
+    - export DEB_BUILD_OPTIONS=nocheck 
+    - dpkg-buildpackage -aarm64 -Pcross,nocheck -us -uc
     - mv ../qt-kiosk*.deb .
   tags:
-    - debian-arm64
+    - debian
 
   artifacts:
     paths:
@@ -111,6 +113,7 @@ repoupdate:
   
   dependencies:
     - package:debian:arm64
+    - package:debian:armhf
     - package:debian:x86-64
   tags:
     - debian
