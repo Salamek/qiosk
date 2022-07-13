@@ -66,34 +66,9 @@ set_target_properties(qt-kiosk PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-#install(TARGETS qt-kiosk ${INSTALL_TARGETS_DEFAULT_ARGS}
-#        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-#        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#)
+install(TARGETS qt-kiosk DESTINATION bin)
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(qt-kiosk)
 endif()
 
-#target_link_libraries(qt-kiosk PUBLIC
-#    Qt::Core
-#    Qt::Gui
-#    Qt::WebEngineWidgets
-#)
-
-
-# Resources:
-#set(qt-kiosk_resource_files
-#    "back.png"
-#    "back_disabled.png"
-#    "forward.png"
-#    "forward_disabled.png"
-#    "home.png"
-#    "home_disabled.png"
-#    "icon.png"
-#    "refresh.png"
-#    "refresh_disabled.png"
-#    "stop.png"
-#    "stop_disabled.png"
-#)
