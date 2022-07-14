@@ -11,6 +11,7 @@ depends=(
 
 makedepends=(
     'qt6-webengine'
+    'gcc'
     'cmake'
 )
 

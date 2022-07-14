@@ -95,7 +95,7 @@ package:debian:armhf:
 package:archlinux:x86-64:
   stage: package
   script:
-    - pacman -Sy sudo binutils fakeroot qt6-webengine cmake --noconfirm
+    - pacman -Sy sudo binutils fakeroot qt6-webengine cmake gcc --noconfirm
     - useradd -m -G users -s /bin/bash package
     - chown -R package:users archlinux
     - cd archlinux
