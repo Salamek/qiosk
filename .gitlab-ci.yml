@@ -134,5 +134,5 @@ repoupdate:
     - package:archlinux:x86-64
   tags:
     - debian
-  #only:
-  #  - tags
+  only:
+    - tags
