@@ -92,6 +92,22 @@ package:debian:armhf:
     expire_in: 1d
 
 
+package:archlinux:x86-64:
+  stage: package
+  script:
+    - pacman -Sy sudo binutils fakeroot qt6-webengine cmake --noconfirm
+    - useradd -m -G users -s /bin/bash package
+    - chown -R package:users archlinux
+    - cd archlinux
+    - sudo -H -u package makepkg -f
+  tags:
+    - archlinux
+
+  artifacts:
+    paths:
+      - archlinux/qt-kiosk*
+    expire_in: 1d
+
 repoupdate:
   stage: deploy
   before_script:
@@ -104,17 +120,18 @@ repoupdate:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
   script:
-    #- ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/www/arch/pub/any/python-cron-descriptor*.pkg.tar.zst'
+    - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/www/arch/pub/x86_64/qt-kiosk*.pkg.tar.zst'
     - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/cache/deb/pub/all/qt-kiosk*.deb'
-    #- scp archlinux/python-cron-descriptor*.pkg.tar.zst www-data@repository:/var/www/repository.salamek.cz/www/arch/pub/any
+    - scp archlinux/qt-kiosk*.pkg.tar.zst www-data@repository:/var/www/repository.salamek.cz/www/arch/pub/x86_64
     - scp qt-kiosk*.deb www-data@repository:/var/www/repository.salamek.cz/cache/deb/pub/all
     - ssh www-data@repository '/var/www/repository.salamek.cz/deb-pub-update.sh'
-    #- ssh www-data@repository '/var/www/repository.salamek.cz/arch-pub-update.sh'
+    - ssh www-data@repository '/var/www/repository.salamek.cz/arch-pub-update.sh'
   
   dependencies:
     - package:debian:arm64
     - package:debian:armhf
     - package:debian:x86-64
+    - package:archlinux:x86-64
   tags:
     - debian
   #only:
