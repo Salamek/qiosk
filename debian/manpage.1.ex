@@ -4,7 +4,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH qt-kiosk SECTION "October 22 2019"
+.TH qiosk SECTION "October 22 2019"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -18,16 +18,16 @@
 .\" .sp <n>    insert n+1 empty lines
 .\" for manpage-specific macros, see man(7)
 .SH NAME
-qt-kiosk \- program to do something
+qiosk \- program to do something
 .SH SYNOPSIS
-.B qt-kiosk
+.B qiosk
 .RI [ options ] " files" ...
 .br
 .B bar
 .RI [ options ] " files" ...
 .SH DESCRIPTION
 This manual page documents briefly the
-.B qt-kiosk
+.B qiosk
 and
 .B bar
 commands.

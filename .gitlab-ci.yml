@@ -17,7 +17,7 @@ build:debian:x86-64:
 
   artifacts:
     paths:
-      - qt-kiosk
+      - qiosk
     expire_in: 1d
 
 package:debian:x86-64:
@@ -27,13 +27,13 @@ package:debian:x86-64:
     - apt upgrade -qy 
     - apt install dh-make build-essential cmake qtwebengine5-dev -qy
     - dpkg-buildpackage -us -uc
-    - mv ../qt-kiosk*.deb .
+    - mv ../qiosk*.deb .
   tags:
     - debian
 
   artifacts:
     paths:
-      - ./qt-kiosk*.deb
+      - ./qiosk*.deb
     expire_in: 1d
 
 
@@ -44,13 +44,13 @@ package:debian:x86-64:
 #    - apt upgrade -qy 
 #    - apt install dh-make build-essential cmake qtwebengine5-dev -qy
 #    - dpkg-buildpackage -us -uc
-#    - mv ../qt-kiosk*.deb .
+#    - mv ../qiosk*.deb .
 #  tags:
 #    - debian-arm64
 #
 #  artifacts:
 #    paths:
-#      - ./qt-kiosk*.deb
+#      - ./qiosk*.deb
 #    expire_in: 1d
 
 package:debian:arm64:
@@ -63,13 +63,13 @@ package:debian:arm64:
     - export CONFIG_SITE=/etc/dpkg-cross/cross-config.arm64  
     - export DEB_BUILD_OPTIONS=nocheck 
     - dpkg-buildpackage -aarm64 -Pcross,nocheck -us -uc
-    - mv ../qt-kiosk*.deb .
+    - mv ../qiosk*.deb .
   tags:
     - debian
 
   artifacts:
     paths:
-      - ./qt-kiosk*.deb
+      - ./qiosk*.deb
     expire_in: 1d
 
 package:debian:armhf:
@@ -82,13 +82,13 @@ package:debian:armhf:
     - export CONFIG_SITE=/etc/dpkg-cross/cross-config.armhf  
     - export DEB_BUILD_OPTIONS=nocheck 
     - dpkg-buildpackage -aarmhf -Pcross,nocheck -us -uc
-    - mv ../qt-kiosk*.deb .
+    - mv ../qiosk*.deb .
   tags:
     - debian
 
   artifacts:
     paths:
-      - ./qt-kiosk*.deb
+      - ./qiosk*.deb
     expire_in: 1d
 
 
@@ -105,7 +105,7 @@ package:archlinux:x86-64:
 
   artifacts:
     paths:
-      - archlinux/qt-kiosk*
+      - archlinux/qiosk*
     expire_in: 1d
 
 repoupdate:
@@ -120,10 +120,10 @@ repoupdate:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
   script:
-    - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/www/arch/pub/x86_64/qt-kiosk*.pkg.tar.zst'
-    - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/cache/deb/pub/all/qt-kiosk*.deb'
-    - scp archlinux/qt-kiosk*.pkg.tar.zst www-data@repository:/var/www/repository.salamek.cz/www/arch/pub/x86_64
-    - scp qt-kiosk*.deb www-data@repository:/var/www/repository.salamek.cz/cache/deb/pub/all
+    - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/www/arch/pub/x86_64/qiosk*.pkg.tar.zst'
+    - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/cache/deb/pub/all/qiosk*.deb'
+    - scp archlinux/qiosk*.pkg.tar.zst www-data@repository:/var/www/repository.salamek.cz/www/arch/pub/x86_64
+    - scp qiosk*.deb www-data@repository:/var/www/repository.salamek.cz/cache/deb/pub/all
     - ssh www-data@repository '/var/www/repository.salamek.cz/deb-pub-update.sh'
     - ssh www-data@repository '/var/www/repository.salamek.cz/arch-pub-update.sh'
   

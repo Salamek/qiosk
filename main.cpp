@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     //qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-logging");
     qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
     QCoreApplication::setOrganizationName("Adam Schubert");
-    QCoreApplication::setApplicationName("qt-kiosk");
+    QCoreApplication::setApplicationName("qiosk");
     QCoreApplication::setApplicationVersion("1.0");
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);

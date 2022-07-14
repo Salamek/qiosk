@@ -1,5 +1,5 @@
 #!/bin/sh
-# postinst script for qt-kiosk
+# postinst script for qiosk
 #
 # see: dh_installdeb(1)
 
@@ -21,7 +21,7 @@ set -e
 case "$1" in
     configure)
         if [ -z "$2" ]; then
-            ln -sf /etc/qt-kiosk/config.json /usr/lib/qt-kiosk/config/config.production.json
+            ln -sf /etc/qiosk/config.json /usr/lib/qiosk/config/config.production.json
             if ! systemctl is-enabled --quiet nginx; then
                 systemctl enable nginx
             fi
@@ -30,7 +30,7 @@ case "$1" in
                 systemctl restart nginx
             fi
         else
-            ln -sf /etc/qt-kiosk/config.json /usr/lib/qt-kiosk/config/config.production.json
+            ln -sf /etc/qiosk/config.json /usr/lib/qiosk/config/config.production.json
             systemctl restart nginx
         fi
     ;;

@@ -27,7 +27,7 @@ manpage.1: manpage.sgml
   <!ENTITY dhemail     "<email>adam.schubert@sg1-game.net</email>">
   <!ENTITY dhusername  "Adam Schubert">
   <!ENTITY dhucpackage "<refentrytitle>tux Frontend</refentrytitle>">
-  <!ENTITY dhpackage   "qt-kiosk">
+  <!ENTITY dhpackage   "qiosk">
 
   <!ENTITY debian      "<productname>Debian</productname>">
   <!ENTITY gnu         "<acronym>GNU</acronym>">

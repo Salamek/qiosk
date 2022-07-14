@@ -1,5 +1,5 @@
 #!/bin/sh
-# postrm script for qt-kiosk
+# postrm script for qiosk
 #
 # see: dh_installdeb(1)
 

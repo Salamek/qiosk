@@ -1,14 +1,14 @@
-Source: qt-kiosk
+Source: qiosk
 Section: unknown
 Priority: optional
 Maintainer: Adam Schubert <adam.schubert@sg1-game.net>
 Build-Depends: debhelper (>= 9)
 Standards-Version: 3.9.8
-Homepage: https://github.com/salamek/qt-kiosk
-#Vcs-Git: https://anonscm.debian.org/collab-maint/qt-kiosk.git
-#Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/qt-kiosk.git
+Homepage: https://github.com/salamek/qiosk
+#Vcs-Git: https://anonscm.debian.org/collab-maint/qiosk.git
+#Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/qiosk.git
 
-Package: qt-kiosk
+Package: qiosk
 Architecture: any
 Depends: ${misc:Depends}, libqt5webenginewidgets5
 Description: QT Kiosk is simple kiosk browser written in QT

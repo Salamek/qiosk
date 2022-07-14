@@ -1,10 +1,10 @@
-pkgname=qt-kiosk
+pkgname=qiosk
 pkgver=0.0.1
 pkgdesc="QT Kiosk ."
 pkgrel=1
 arch=('x86_64')
 license=('GPL-3')
-url='https://github.com/salamek/qt-kiosk'
+url='https://github.com/salamek/qiosk'
 depends=(
     'qt5-webengine'
 )
@@ -16,7 +16,7 @@ makedepends=(
     'cmake'
 )
 
-provides=('qt-kiosk')
+provides=('qiosk')
 
 prepare() {
   mkdir -p build

@@ -1,6 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: qt-kiosk
-Source: https://github.com/salamek/qt-kiosk
+Upstream-Name: qiosk
+Source: https://github.com/salamek/qiosk
 
 Files: *
 Copyright: <years> <put author's name and email here>

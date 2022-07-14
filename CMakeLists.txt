@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(qt-kiosk VERSION 1.0 LANGUAGES CXX)
+project(qiosk VERSION 1.0 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -27,36 +27,36 @@ set(PROJECT_SOURCES
     userinputeventfilter.cpp userinputeventfilter.h
     webpage.cpp webpage.h
     webview.cpp webview.h
-    qt-kiosk.qrc
+    qiosk.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(qt-kiosk
+    qt_add_executable(qiosk
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
     )
 # Define target properties for Android with Qt 6 as:
-#    set_property(TARGET qt-kiosk APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+#    set_property(TARGET qiosk APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
 # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 else()
     if(ANDROID)
-        add_library(qt-kiosk SHARED
+        add_library(qiosk SHARED
             ${PROJECT_SOURCES}
         )
 # Define properties for Android with Qt 5 after find_package() calls as:
 #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
-        add_executable(qt-kiosk
+        add_executable(qiosk
             ${PROJECT_SOURCES}
         )
     endif()
 endif()
 
 
-target_link_libraries(qt-kiosk PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::WebEngineWidgets)
+target_link_libraries(qiosk PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::WebEngineWidgets)
 
-set_target_properties(qt-kiosk PROPERTIES
+set_target_properties(qiosk PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
@@ -64,9 +64,9 @@ set_target_properties(qt-kiosk PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-install(TARGETS qt-kiosk DESTINATION bin)
+install(TARGETS qiosk DESTINATION bin)
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(qt-kiosk)
+    qt_finalize_executable(qiosk)
 endif()
 

@@ -56,9 +56,9 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
   <!ENTITY dhsection   "SECTION">
   <!-- TITLE should be something like "User commands" or similar (see
        http://www.tldp.org/HOWTO/Man-Page/q2.html). -->
-  <!ENTITY dhtitle     "qt-kiosk User Manual">
+  <!ENTITY dhtitle     "qiosk User Manual">
   <!ENTITY dhucpackage "tux Frontend">
-  <!ENTITY dhpackage   "qt-kiosk">
+  <!ENTITY dhpackage   "qiosk">
 ]>
 
 <refentry>

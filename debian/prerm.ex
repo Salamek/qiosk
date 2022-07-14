@@ -1,5 +1,5 @@
 #!/bin/sh
-# prerm script for qt-kiosk
+# prerm script for qiosk
 #
 # see: dh_installdeb(1)
 
