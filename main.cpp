@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     permissionOptionsMap.insert("media-audio-video-capture", WebPage::Permission::AllowMediaAudioVideoCapture);
     permissionOptionsMap.insert("mouse-lock", WebPage::Permission::AllowMouseLock);
     permissionOptionsMap.insert("desktop-video-capture", WebPage::Permission::AllowDesktopVideoCapture);
-    permissionOptionsMap.insert("dektop-audio-video-capture", WebPage::Permission::AllowDesktopAudioVideoCapture);
+    permissionOptionsMap.insert("desktop-audio-video-capture", WebPage::Permission::AllowDesktopAudioVideoCapture);
 
 
 
