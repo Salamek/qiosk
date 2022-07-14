@@ -1,0 +1,26 @@
+GIT:
+    AUTO_COMMIT: true
+    AUTO_TAG: true
+    AUTO_PUSH: true # false=disabled, true=enabled, 'remote_name'=enabled and push to remote_name
+    COMMIT_MESSAGE: 'New version {version}'
+    COMMIT_PARSER: 'version.commit_parser.Sematic:Sematic'
+
+REGEXPS:
+    'CMakeLists.txt': project\(qiosk\s*VERSION\s*(?P<major>\d+)\.(?P<minor>\d+)(?:\.(?P<patch>\d+))?
+    'PKGBUILD': pkgver\s*=\s*(?P<version>.*)
+    'main.cpp': setApplicationVersion\(\"(?P<major>\d+)\.(?P<minor>\d+)(?:\.(?P<patch>\d+))?\"\);
+
+VERSION_FILES:
+    'CMakeLists.txt': 'CMakeLists.txt'
+    'archlinux/PKGBUILD': 'PKGBUILD'
+    'main.cpp': 'main.cpp'
+
+
+CHANGE_LOGS:
+    'debian/changelog':
+        'generator': 'version.change_log.Debian'
+        'types': ['fix', 'feat']
+        'arguments':
+            'project_name': 'qiosk'
+            'stability': 'unstable'
+            'urgency': 'medium'
