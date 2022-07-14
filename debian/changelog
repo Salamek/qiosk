@@ -1,3 +1,50 @@
+qiosk (1.0.1) unstable; urgency=medium
+
+  * Fixes
+    * CLI
+      * 7a77196 Fix typo
+    * CI
+      * f1001f1 PKGBULD depedn on qt5
+      * a1b4c89 Switch to QT5 for arch build
+      * 8259b2d Install make for arch build
+      * 835d50f Add gcc as arch dep
+      * 4b0a764 Install cmake
+      * 76a6c01 apt update before install
+    * BarWidget
+      * d2b24c0 Fixes crash on exit (double object destruction)
+    * Warnings
+      * 34be697 Fixup warnings and destroy some objects correctly
+    * QT5
+      * 6a2690f Fix condition check for QT version
+    * Bar
+      * e28d646 Calculate w/h correctly
+  * Features
+    * Version
+      * e2babee Added .version.yml and fixes
+    * CI
+      * ccb8418 Deploy packaged only on tag
+      * 1833ae3 Upload arch x86_64 build
+      * 4cac918 Added archlinux pkgbuild
+      * df8800f Disable arm64 build, use cross compile for arm64
+      * d5c16f7 Cross compile for armhf
+      * 4f7f5af Upload debian packages
+      * 71d472d Use CMake install
+      * 5c13bb5 Use cmake
+      * aed4ce9 Upload build binary
+      * 3dea9ef Initial CI config
+    * Debian
+      * efacde0 Package config
+    * RegisterProtocol
+      * be82f2e Reject all requests
+    * Permissions
+      * 1e1177e Added command options to set webpage permissions
+    * BarWidget
+      * 70c95b3 Move BarWidget Enum into BarWidget namespace
+    * Reset
+      * dd4bf80 Implement reset system with timeout
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Thu, 14 Jul 2022 20:49:45 +0000
+
 qiosk (0.0.1) unstable; urgency=medium
 
   * Initial version
