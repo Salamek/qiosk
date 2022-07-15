@@ -1,3 +1,11 @@
+qiosk (1.0.2) unstable; urgency=medium
+
+  * Fixes
+    * Deps
+      * 774ed91 Depend on QT virtualkeyboard
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Fri, 15 Jul 2022 15:25:06 +0000
+
 qiosk (1.0.1) unstable; urgency=medium
 
   * Fixes
