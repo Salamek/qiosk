@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     //qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
     QCoreApplication::setOrganizationName("Adam Schubert");
     QCoreApplication::setApplicationName("qiosk");
-    QCoreApplication::setApplicationVersion("1.0.4");
+    QCoreApplication::setApplicationVersion("1.0.5");
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication a(argc, argv);

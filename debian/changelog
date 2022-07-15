@@ -1,3 +1,14 @@
+qiosk (1.0.5) unstable; urgency=medium
+
+  * Fixes
+    * FullScreen
+      * a85ddf4 Call plot only on correct events
+  * Features
+    * ENV
+      * 2eab796 Do not set ENV variables in main by default
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Fri, 15 Jul 2022 16:07:26 +0000
+
 qiosk (1.0.4) unstable; urgency=medium
 
   * Fixes
