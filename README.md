@@ -7,7 +7,7 @@ Qiosk is a "kiosk first" web browser written in QT as a core part of [chromium-k
 * Tested on Archlinux, Archlinux ARM, Debian, Raspbian
 * Integrated native virtual keyboard
 * Integrated whitelist
-* Redirect to homepage when idle for specified amount of time
+* Resets to default settings when idle for specified amount of time
 * Configurable button bar with options to specify height/width, position
 * Uses QT [QWebEngine](https://wiki.qt.io/QtWebEngine) so it is basically build on chromium
 
