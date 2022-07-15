@@ -114,9 +114,12 @@ void MainWindow::onUserActivity() {
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
-    QSize size = event->size();
-    this->barWidget->plot(size.width(), size.height());
-    this->progressBar->plot(size.width(), size.height());
+    if (event->spontaneous()) {
+        QSize size = event->size();
+        this->barWidget->plot(size.width(), size.height());
+        this->progressBar->plot(size.width(), size.height());
+    }
+
     QMainWindow::resizeEvent(event);
 }
 
