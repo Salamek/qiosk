@@ -1,5 +1,5 @@
 Source: qiosk
-Section: unknown
+Section: web
 Priority: optional
 Maintainer: Adam Schubert <adam.schubert@sg1-game.net>
 Build-Depends: debhelper (>= 9)
@@ -10,6 +10,6 @@ Homepage: https://github.com/salamek/qiosk
 
 Package: qiosk
 Architecture: any
-Depends: ${misc:Depends}, libqt5webenginewidgets5
+Depends: ${misc:Depends}, libqt5webenginewidgets5 qtvirtualkeyboard-plugin
 Description: QT Kiosk is simple kiosk browser written in QT
  <insert long description, indented with spaces>
