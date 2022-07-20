@@ -14,13 +14,23 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     webPage->setWhiteList(this->config->getWhiteList());
     webPage->setPermissions(this->config->getPermissions());
     this->webView->setPage(webPage);
-
     this->webView->setContextMenuPolicy(Qt::ContextMenuPolicy::NoContextMenu);
-    this->webView->setUrl(this->initialUrl);
+
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     mainLayout->setMargin(0);
     mainLayout->setSpacing(0);
+
+    QAction *favAction = new QAction(this);
+    QLineEdit *addressBar = new QLineEdit(this);
+    addressBar->setClearButtonEnabled(true);
+    addressBar->addAction(favAction, QLineEdit::LeadingPosition);
+    if (!this->config->isDisplayAddressBar()) {
+        addressBar->hide();
+    }
+
+    mainLayout->addWidget(addressBar);
+
     mainLayout->addWidget(this->webView);
 
     QWidget *centralWidget = new QWidget(this);
@@ -28,6 +38,11 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     this->setCentralWidget(centralWidget);
 
     this->barWidget = new BarWidget(this);
+
+    if (!this->config->isDisplayNavBar()) {
+        this->barWidget->hide();
+    }
+
     this->progressBar = new ProgressBarWidget(this);
     this->resetTimer = new ResetTimer(this);
 
@@ -46,6 +61,15 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     connect(this->webView, &QWebEngineView::loadProgress, this, &MainWindow::handleWebViewLoadProgress);
     connect(this->webView, &QWebEngineView::loadFinished, this, &MainWindow::handleLoadFinished);
     connect(this->webView, &WebView::webActionEnabledChanged, this, &MainWindow::handleWebActionEnabledChanged);
+
+    connect(this->webView, &QWebEngineView::urlChanged, this, [this, addressBar](const QUrl &url) {
+        addressBar->setText(url.toDisplayString());
+    });
+    connect(addressBar, &QLineEdit::returnPressed, this, [this, addressBar]() {
+        this->webView->setUrl(QUrl::fromUserInput(addressBar->text()));
+    });
+
+    connect(this->webView, &QWebEngineView::iconChanged, favAction, &QAction::setIcon);
 
     //Reset timer events
     connect(this->resetTimer, &ResetTimer::timeout, this, &MainWindow::checkReset);
@@ -68,9 +92,14 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     // End of initial configuration
     // ============================
 
-    QRect windowGeometry = this->geometry();
+    //Plot initial geometry
+    /*QRect windowGeometry = this->geometry();
+    qDebug() << windowGeometry;
     this->barWidget->plot(windowGeometry.width(), windowGeometry.height());
-    this->progressBar->plot(windowGeometry.width(), windowGeometry.height());
+    this->progressBar->plot(windowGeometry.width(), windowGeometry.height());*/
+
+    //Load URL
+    this->webView->setUrl(this->initialUrl);
 }
 
 
@@ -113,14 +142,30 @@ void MainWindow::onUserActivity() {
     this->lastUserActivity = QDateTime::currentSecsSinceEpoch();
 }
 
+void MainWindow::plot(QSize size) {
+    this->barWidget->plot(size.width(), size.height());
+    this->progressBar->plot(size.width(), size.height());
+}
+
 void MainWindow::resizeEvent(QResizeEvent* event) {
-    if (event->spontaneous()) {
-        QSize size = event->size();
-        this->barWidget->plot(size.width(), size.height());
-        this->progressBar->plot(size.width(), size.height());
+    if (event->spontaneous()) { // Handle resize event after window system renders the window
+        this->plot(event->size());
     }
 
     QMainWindow::resizeEvent(event);
+}
+
+void MainWindow::changeEvent(QEvent *event){
+    if (event->type() == QEvent::WindowStateChange) {
+        this->plot(this->size());
+    }
+
+    QMainWindow::changeEvent(event);
+}
+
+void MainWindow::showEvent(QShowEvent *event) {
+    this->plot(this->size());
+    QMainWindow::showEvent(event);
 }
 
 void MainWindow::handleLoadStarted() {

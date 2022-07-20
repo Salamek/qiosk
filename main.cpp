@@ -78,6 +78,14 @@ int main(int argc, char *argv[])
     QCommandLineOption allowFeatureOption(QStringList() << "a" << "allow-feature", QCoreApplication::translate("main", "Allow feature"), permissionOptionsMapKeys.join("|"));
     parser.addOption(allowFeatureOption);
 
+    // A boolean option (--display-navbar)
+    QCommandLineOption displayNavBarOption(QString("display-navbar"), QCoreApplication::translate("main", "Display navbar with navigation buttons."));
+    parser.addOption(displayNavBarOption);
+
+    // A boolean option (--display-addressbar)
+    QCommandLineOption displayAddressBarOption(QString("display-addressbar"), QCoreApplication::translate("main", "Display address bar."));
+    parser.addOption(displayAddressBarOption);
+
     // Process the actual command line arguments given by the user
     parser.process(a);
 
@@ -96,6 +104,9 @@ int main(int argc, char *argv[])
 
     config->setNavbarWidth(parser.value(navbarWidthOption).toInt());
     config->setNavbarHeight(parser.value(navbarHeightOption).toInt());
+
+    config->setDisplayNavBar(parser.isSet(displayNavBarOption));
+    config->setDisplayAddressBar(parser.isSet(displayAddressBarOption));
 
     if (parser.isSet(whiteListOption)) {
         config->setWhiteList(parser.values(whiteListOption));

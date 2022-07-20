@@ -12,6 +12,8 @@ Configuration::Configuration(QObject *parent)
     this->navbarHorizontalPosition = BarWidget::HorizontalPosition::Center;
     this->navbarWidth = 25; //%
     this->navbarHeight = 5; //%
+    this->displayAddressBar = false;
+    this->displayNavBar = false;
     //this->permissions = WebPage::Permission::AllowGeolocation | WebPage::Permission::AllowInvalidCertificate | WebPage::Permission::AllowNotifications | WebPage::Permission::AllowDesktopVideoCapture;
 }
 
@@ -62,6 +64,14 @@ void Configuration::setPermissions(WebPage::Permissions permissions) {
     this->permissions = permissions;
 }
 
+void Configuration::setDisplayAddressBar(bool displayAddressBar) {
+    this->displayAddressBar = displayAddressBar;
+}
+
+void Configuration::setDisplayNavBar(bool displayNavBar) {
+    this->displayNavBar = displayNavBar;
+}
+
 bool Configuration::isFullscreen() {
     return this->fullscreen;
 }
@@ -96,4 +106,12 @@ QStringList Configuration::getWhiteList() {
 
 WebPage::Permissions Configuration::getPermissions() {
     return this->permissions;
+}
+
+bool Configuration::isDisplayAddressBar() {
+    return this->displayAddressBar;
+}
+
+bool Configuration::isDisplayNavBar() {
+    return this->displayNavBar;
 }

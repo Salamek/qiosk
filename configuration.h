@@ -14,6 +14,8 @@ public:
     QUrl url;
     bool fullscreen; // Fullscreen enabled
     bool touchscreen; // @TODO Touchscreen support enabled
+    bool displayAddressBar;  // Is address bar displayed?
+    bool displayNavBar;  // Is navbar displayed?
     int idleTime; // Timeout to reset the browser to initial state, 0 is disabled
     QStringList whiteList; // List of whitelisted URLs in GLOB format
     //bool navbarEnabled; // Is navbar displayed
@@ -35,6 +37,8 @@ public:
     void setNavbarWidth(int navbarWidth);
     void setNavbarHeight(int navbarHeight);
     void setPermissions(WebPage::Permissions permissions);
+    void setDisplayAddressBar(bool displayAddressBar);
+    void setDisplayNavBar(bool displayNavBar);
 
     bool isFullscreen();
     QUrl getUrl();
@@ -45,6 +49,8 @@ public:
     BarWidget::VerticalPosition getNavbarVerticalPosition();
     BarWidget::HorizontalPosition getNavbarHorizontalPosition();
     WebPage::Permissions getPermissions();
+    bool isDisplayAddressBar();
+    bool isDisplayNavBar();
 
 signals:
 

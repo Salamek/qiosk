@@ -7,6 +7,8 @@
 #include <QWebEngineProfile>
 #include <QResizeEvent>
 #include <QProgressBar>
+#include <QLineEdit>
+#include <QAction>
 
 #include "enum.h"
 #include "barwidget.h"
@@ -31,6 +33,8 @@ public slots:
     void onUserActivity();
 protected:
     void resizeEvent(QResizeEvent *event) override;
+    void changeEvent(QEvent *event) override;
+    void showEvent(QShowEvent *event) override;
 private:
     qint64 lastUserActivity;
     Configuration *config;
@@ -46,6 +50,7 @@ private:
     void handleLoadStarted();
     void setupReloadStopButton(bool loading);
     void checkReset();
+    void plot(QSize size);
 private slots:
     void goHome();
     void doReload();
