@@ -8,6 +8,7 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     this->resetHistoryLock = false;
     this->refreshWebAction = QWebEnginePage::Reload;
     this->initialUrl = this->config->getUrl();
+    this->lastUserActivity = QDateTime::currentSecsSinceEpoch(); // Set last user activity to NOW
 
     this->webView = new WebView();
     WebPage *webPage = new WebPage(QWebEngineProfile::defaultProfile(), this->webView);
@@ -84,7 +85,7 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
 
     // Configure reset timer, disable this if timeout==0
     if (this->config->getIdleTime() != 0) {
-        this->resetTimer->setTimeout(this->config->getIdleTime());
+        this->resetTimer->setTimeout(1); //Check each 1s
         this->resetTimer->start();
     }
 
@@ -113,7 +114,7 @@ void MainWindow::doReload() {
 
 
 void MainWindow::checkReset() {
-    if (this->config->getIdleTime() > 0 && this->lastUserActivity + this->config->getIdleTime() < QDateTime::currentSecsSinceEpoch()) {
+    if (this->config->getIdleTime() > 0 && this->lastUserActivity + this->config->getIdleTime() <= QDateTime::currentSecsSinceEpoch()) {
         this->doReset();
     }
 }
