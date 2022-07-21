@@ -1,3 +1,22 @@
+qiosk (1.1.1) unstable; urgency=medium
+
+  * Fixes
+    * IdleReset
+      * de2d65b Fix bug when idle reset did not trigger correctly
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Thu, 21 Jul 2022 14:26:35 +0000
+
+
+qiosk (1.1) unstable; urgency=medium
+
+  * Features
+    * UX
+      * a3b8837 Added option to display address bar and navbar using CLI
+    * README
+      * b0db8dc Add reset info
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Wed, 20 Jul 2022 02:12:09 +0200
+
 qiosk (1.1) unstable; urgency=medium
 
   * Features
