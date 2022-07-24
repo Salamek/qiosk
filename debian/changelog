@@ -1,3 +1,11 @@
+qiosk (1.1.2) unstable; urgency=medium
+
+  * Features
+    * IdleReset
+      * 040d9fe Clear cookies and visited links
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Sun, 24 Jul 2022 19:52:56 +0000
+
 qiosk (1.1.1) unstable; urgency=medium
 
   * Fixes
