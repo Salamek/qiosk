@@ -136,6 +136,12 @@ void MainWindow::doReset() {
 
     // Reset zoom
     this->webView->setZoomFactor(1.0);
+
+    // Reset cookies
+    this->webView->page()->profile()->cookieStore()->deleteAllCookies();
+
+    // Clear visited links
+    this->webView->page()->profile()->clearAllVisitedLinks();
 }
 
 
