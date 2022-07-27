@@ -11,6 +11,7 @@
 #include <cstring>
 
 
+// @FIXME HACK is this still present on Debian QT 5.15.5>???
 static void handleVisibleChanged(){
     if (!QGuiApplication::inputMethod()->isVisible())
         return;
@@ -32,7 +33,7 @@ int main(int argc, char *argv[])
     //qputenv("QT_ASSUME_STDERR_HAS_CONSOLE", "1");
     //qputenv("QTWEBENGINE_REMOTE_DEBUGGING", "9988"); //https://developer.chrome.com/docs/devtools/
     //qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-logging");
-    qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
+    //qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
     QCoreApplication::setOrganizationName("Adam Schubert");
     QCoreApplication::setApplicationName("qiosk");
     QCoreApplication::setApplicationVersion("1.1.4");
