@@ -7,19 +7,39 @@
 #include <QWebEngineProfile>
 #include <QCommandLineParser>
 
+#include <QWindow>
+#include <cstring>
+
+
+static void handleVisibleChanged(){
+    if (!QGuiApplication::inputMethod()->isVisible())
+        return;
+    for(QWindow * w: QGuiApplication::allWindows()){
+        if(std::strcmp(w->metaObject()->className(), "QtVirtualKeyboard::InputView") == 0){
+            if(QObject *keyboard = w->findChild<QObject *>("keyboard")){
+                QRect r = w->geometry();
+                r.moveTop(keyboard->property("y").toDouble());
+                w->setMask(r);
+                return;
+            }
+        }
+    }
+}
+
+
 int main(int argc, char *argv[])
 {
     //qputenv("QT_ASSUME_STDERR_HAS_CONSOLE", "1");
     //qputenv("QTWEBENGINE_REMOTE_DEBUGGING", "9988"); //https://developer.chrome.com/docs/devtools/
     //qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-logging");
-    //qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
+    qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
     QCoreApplication::setOrganizationName("Adam Schubert");
     QCoreApplication::setApplicationName("qiosk");
     QCoreApplication::setApplicationVersion("1.1.3");
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication a(argc, argv);
-
+    QObject::connect(QGuiApplication::inputMethod(), &QInputMethod::visibleChanged, &handleVisibleChanged);
     QStringList navbarHorizontalPositionOptions;
     navbarHorizontalPositionOptions << "left" << "right" << "center";
 
