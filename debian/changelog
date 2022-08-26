@@ -1,3 +1,11 @@
+qiosk (1.1.8) unstable; urgency=medium
+
+  * Features
+    * VirtualKeyboard
+      * f081c16 Enable hack for QT 5.15.4 too :(
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Fri, 26 Aug 2022 13:08:04 +0000
+
 qiosk (1.1.7) unstable; urgency=medium
 
   * Fixes
