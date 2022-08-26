@@ -6,6 +6,7 @@
 #include <QWebEngineSettings>
 #include <QWebEngineProfile>
 #include <QCommandLineParser>
+#include <QVersionNumber>
 
 #include <QWindow>
 #include <cstring>
@@ -41,10 +42,14 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
 
-#if QT_VERSION <= QT_VERSION_CHECK(5, 15, 3)
-    // Hack to ~fix virtual keyboard viewport on older QT versions
-    QObject::connect(QGuiApplication::inputMethod(), &QInputMethod::visibleChanged, &handleVisibleChanged);
-#endif
+    const char *qt_version = qVersion();
+    QVersionNumber currentVersion = QVersionNumber::fromString(qt_version);
+    QVersionNumber brokenVersion(5, 15, 3);
+    if(currentVersion <= brokenVersion) {
+        // Hack to ~fix virtual keyboard viewport on older QT versions
+        QObject::connect(QGuiApplication::inputMethod(), &QInputMethod::visibleChanged, &handleVisibleChanged);
+        qWarning() << "You are using QT " << currentVersion << " that is known to have bugs in virtualkeyboard and PDF reader, please consider upgrading your QT to 5.15.4 or higher!";
+    }
 
     QStringList navbarHorizontalPositionOptions;
     navbarHorizontalPositionOptions << "left" << "right" << "center";
