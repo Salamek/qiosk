@@ -11,7 +11,6 @@
 #include <cstring>
 
 
-// @FIXME HACK is this still present on Debian QT 5.15.5>???
 static void handleVisibleChanged(){
     if (!QGuiApplication::inputMethod()->isVisible())
         return;
@@ -40,7 +39,13 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication a(argc, argv);
+
+
+#if QT_VERSION <= QT_VERSION_CHECK(5, 15, 3)
+    // Hack to ~fix virtual keyboard viewport on older QT versions
     QObject::connect(QGuiApplication::inputMethod(), &QInputMethod::visibleChanged, &handleVisibleChanged);
+#endif
+
     QStringList navbarHorizontalPositionOptions;
     navbarHorizontalPositionOptions << "left" << "right" << "center";
 
