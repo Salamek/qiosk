@@ -1,3 +1,11 @@
+qiosk (1.1.7) unstable; urgency=medium
+
+  * Fixes
+    * VirtualKeyboard
+      * 2006e8b Check version at runtime to toggle the HACK
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Fri, 26 Aug 2022 11:03:28 +0000
+
 qiosk (1.1.6) unstable; urgency=medium
 
   * Fixes
