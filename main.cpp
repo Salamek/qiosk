@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 
     const char *qt_version = qVersion();
     QVersionNumber currentVersion = QVersionNumber::fromString(qt_version);
-    QVersionNumber brokenVersion(5, 15, 3);
+    QVersionNumber brokenVersion(5, 15, 4);
     if(currentVersion <= brokenVersion) {
         // Hack to ~fix virtual keyboard viewport on older QT versions
         QObject::connect(QGuiApplication::inputMethod(), &QInputMethod::visibleChanged, &handleVisibleChanged);
