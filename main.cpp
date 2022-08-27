@@ -18,8 +18,10 @@ static void handleVisibleChanged(){
     for(QWindow * w: QGuiApplication::allWindows()){
         if(std::strcmp(w->metaObject()->className(), "QtVirtualKeyboard::InputView") == 0){
             if(QObject *keyboard = w->findChild<QObject *>("keyboard")){
+                int offset = 170;
                 QRect r = w->geometry();
-                r.moveTop(keyboard->property("y").toDouble());
+                r.setHeight(r.height() - offset);
+                r.moveTop(keyboard->property("y").toDouble() - offset);
                 w->setMask(r);
                 return;
             }
