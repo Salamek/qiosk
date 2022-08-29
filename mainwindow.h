@@ -6,6 +6,7 @@
 #include <QWebEngineHistory>
 #include <QWebEngineProfile>
 #include <QWebEngineCookieStore>
+#include <QWebEngineSettings>
 #include <QResizeEvent>
 #include <QProgressBar>
 #include <QLineEdit>

@@ -35,7 +35,9 @@ private:
     Permissions permissions;
     bool isFeatureAllowed(Feature feature);
 protected:
+#if QT_VERSION <=QT_VERSION_CHECK(6, 0, 0)
     bool certificateError(const QWebEngineCertificateError &error) override;
+#endif
     bool acceptNavigationRequest(const QUrl &url, QWebEnginePage::NavigationType type, bool isMainFrame) override;
 private slots:
     void handleAuthenticationRequired(const QUrl &requestUrl, QAuthenticator *auth);
@@ -44,6 +46,9 @@ private slots:
     void handleRegisterProtocolHandlerRequested(QWebEngineRegisterProtocolHandlerRequest request);
 #if !defined(QT_NO_SSL) && QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
     void handleSelectClientCertificate(QWebEngineClientCertificateSelection clientCertSelection);
+#endif
+#if QT_VERSION >=QT_VERSION_CHECK(6, 0, 0)
+    bool certificateError(const QWebEngineCertificateError &error);
 #endif
 };
 

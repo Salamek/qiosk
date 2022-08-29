@@ -14,12 +14,19 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     WebPage *webPage = new WebPage(QWebEngineProfile::defaultProfile(), this->webView);
     webPage->setWhiteList(this->config->getWhiteList());
     webPage->setPermissions(this->config->getPermissions());
+    QWebEngineSettings *settings = webPage->settings();
+
+    settings->setAttribute(QWebEngineSettings::PluginsEnabled, true);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+    settings->setAttribute(QWebEngineSettings::DnsPrefetchEnabled, true);
+#endif
+
     this->webView->setPage(webPage);
     this->webView->setContextMenuPolicy(Qt::ContextMenuPolicy::NoContextMenu);
 
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
 
     QAction *favAction = new QAction(this);

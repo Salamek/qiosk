@@ -4,7 +4,7 @@ BarWidget::BarWidget(QWidget *parent)
     : QWidget{parent}
 {
     QHBoxLayout *buttonBarLayout = new QHBoxLayout();
-    buttonBarLayout->setMargin(0);
+    buttonBarLayout->setContentsMargins(0, 0, 0, 0);
 
     static QIcon backIcon(QStringLiteral(":back.png"));
     static QIcon backIconDisabled(QStringLiteral(":back_disabled.png"));
@@ -36,7 +36,7 @@ BarWidget::BarWidget(QWidget *parent)
 void BarWidget::paintEvent(QPaintEvent *)
 {
     QStyleOption opt;
-    opt.init(this);
+    opt.initFrom(this);
     QPainter p(this);
     this->style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }

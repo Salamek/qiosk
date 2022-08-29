@@ -39,14 +39,17 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("Adam Schubert");
     QCoreApplication::setApplicationName("qiosk");
     QCoreApplication::setApplicationVersion("1.1.10");
+#if QT_VERSION <= QT_VERSION_CHECK(5, 15, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
     QApplication a(argc, argv);
 
 
     const char *qt_version = qVersion();
     QVersionNumber currentVersion = QVersionNumber::fromString(qt_version);
     QVersionNumber brokenVersion(5, 15, 4);
+    qDebug() << currentVersion;
     if(currentVersion <= brokenVersion) {
         // Hack to ~fix virtual keyboard viewport on older QT versions
         QObject::connect(QGuiApplication::inputMethod(), &QInputMethod::visibleChanged, &handleVisibleChanged);
@@ -191,13 +194,6 @@ int main(int argc, char *argv[])
     }
 
     config->setPermissions(permissions);
-
-
-    QWebEngineSettings::defaultSettings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
-    QWebEngineSettings::defaultSettings()->setAttribute(QWebEngineSettings::DnsPrefetchEnabled, true);
-    QWebEngineProfile::defaultProfile()->setUseForGlobalCertificateVerification();
-#endif
 
     MainWindow w(config);
     if (config->isFullscreen()) {

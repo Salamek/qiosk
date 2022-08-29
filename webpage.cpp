@@ -17,6 +17,10 @@ WebPage::WebPage(QWebEngineProfile *profile, QObject *parent)
 #if !defined(QT_NO_SSL) && QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
     connect(this, &QWebEnginePage::selectClientCertificate, this, &WebPage::handleSelectClientCertificate);
 #endif
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    connect(this, &QWebEnginePage::certificateError, this, &WebPage::certificateError);
+#endif
 }
 
 void WebPage::setWhiteList(QStringList whiteList) {
@@ -57,13 +61,18 @@ bool WebPage::isUrlInWhiteList(QUrl url) {
 bool WebPage::certificateError(const QWebEngineCertificateError &error)
 {
     bool ignoreCertificateError = this->permissions.testFlag(Permission::AllowInvalidCertificate);
-    QWidget *mainWindow = view()->window();
+
+    //QWidget *mainWindow = this->parent();
     if (error.isOverridable()) {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
         QWebEngineCertificateError deferredError = error;
         //deferredError.defer();
         if (ignoreCertificateError) {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
             deferredError.ignoreCertificateError();
+#else
+            deferredError.acceptCertificate();
+#endif
         } else {
             deferredError.rejectCertificate();
         }
@@ -72,7 +81,11 @@ bool WebPage::certificateError(const QWebEngineCertificateError &error)
         return ignoreCertificateError;
 #endif
     }
-    QMessageBox::critical(mainWindow, tr("Certificate Error"), error.errorDescription());
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    //QMessageBox::critical(mainWindow, tr("Certificate Error"), error.errorDescription());
+#else
+    //QMessageBox::critical(mainWindow, tr("Certificate Error"), error.description());
+#endif
 
     return false;
 }
