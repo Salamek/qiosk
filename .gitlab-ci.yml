@@ -44,7 +44,7 @@ package:debian:x86-64-qt6:
     - apt update -qy
     - apt upgrade -qy 
     - apt install dh-make build-essential cmake -qy
-    - apt install libqt6* libqt6webenginewidgets6 -t bullseye-backports -qy
+    - apt install qt6-base-dev libqt6webenginewidgets6 -t bullseye-backports -qy
     # Rename package to qt6-qiosk
     - mv debian/control debian/control.old && mv debian/control-qt6 debian/control
     - dpkg-buildpackage -us -uc
