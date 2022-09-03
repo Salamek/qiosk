@@ -35,6 +35,25 @@ package:debian:x86-64:
     paths:
       - ./qiosk*.deb
     expire_in: 1d
+    
+    
+package:debian:x86-64-qt6:
+  stage: package
+  script:
+    - apt update -qy
+    - apt upgrade -qy 
+    - apt install dh-make build-essential cmake libqt6webenginewidgets6 -qy
+    # Rename package to qt6-qiosk
+    - mv debian/control debian/control.old && mv /debian/control-qt6 /debian/control
+    - dpkg-buildpackage -us -uc
+    - mv ../qt6-qiosk*.deb .
+  tags:
+    - debian
+
+  artifacts:
+    paths:
+      - ./qiosk*.deb
+    expire_in: 1d
 
 
 #package:debian:arm64:
