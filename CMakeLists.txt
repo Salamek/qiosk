@@ -16,18 +16,18 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS WebEngineWidgets)
 
 set(PROJECT_SOURCES
-    barbutton.cpp barbutton.h
-    barwidget.cpp barwidget.h
-    configuration.cpp configuration.h
-    main.cpp
-    mainwindow.cpp mainwindow.h
-    progressbarwidget.cpp progressbarwidget.h
-    resettimer.cpp resettimer.h
-    tools.cpp tools.h
-    userinputeventfilter.cpp userinputeventfilter.h
-    webpage.cpp webpage.h
-    webview.cpp webview.h
-    qiosk.qrc
+    src/barbutton.cpp src/barbutton.h
+    src/barwidget.cpp src/barwidget.h
+    src/configuration.cpp src/configuration.h
+    src/main.cpp
+    src/mainwindow.cpp src/mainwindow.h
+    src/progressbarwidget.cpp src/progressbarwidget.h
+    src/resettimer.cpp src/resettimer.h
+    src/tools.cpp src/tools.h
+    src/userinputeventfilter.cpp src/userinputeventfilter.h
+    src/webpage.cpp src/webpage.h
+    src/webview.cpp src/webview.h
+    src/qiosk.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
