@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(qiosk VERSION 1.1.12 LANGUAGES CXX)
+project(qiosk VERSION 1.1.13 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
