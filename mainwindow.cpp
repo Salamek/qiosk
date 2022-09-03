@@ -108,6 +108,10 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
 
     //Load URL
     this->webView->setUrl(this->initialUrl);
+
+    //!FIXME Hack
+    //! Hack to fix bar position when sometines resizeEvent fails to trigger with correct window size when starting in fullscreen, so bar is calculated in wrong position
+    QTimer::singleShot(2000, this, &MainWindow::plotTimerHack);
 }
 
 
@@ -154,6 +158,10 @@ void MainWindow::doReset() {
 
 void MainWindow::onUserActivity() {
     this->lastUserActivity = QDateTime::currentSecsSinceEpoch();
+}
+
+void MainWindow::plotTimerHack() {
+    this->plot(this->size());
 }
 
 void MainWindow::plot(QSize size) {

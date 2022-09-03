@@ -58,5 +58,6 @@ private slots:
     void doReload();
     void handleWebActionEnabledChanged(QWebEnginePage::WebAction action, bool enabled);
     void doReset();
+    void plotTimerHack();
 };
 #endif // MAINWINDOW_H
