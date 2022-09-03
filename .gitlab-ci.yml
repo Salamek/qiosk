@@ -56,26 +56,11 @@ package:debian:x86-64-qt6:
     expire_in: 1d
 
 
-#package:debian:arm64:
-#  stage: package
-#  script:
-#    - apt update -qy
-#    - apt upgrade -qy 
-#    - apt install dh-make build-essential cmake qtwebengine5-dev -qy
-#    - dpkg-buildpackage -us -uc
-#    - mv ../qiosk*.deb .
-#  tags:
-#    - debian-arm64
-#
-#  artifacts:
-#    paths:
-#      - ./qiosk*.deb
-#    expire_in: 1d
-
 package:debian:arm64:
   stage: package
   script:
     - dpkg --add-architecture arm64
+    - echo "deb http://deb.debian.org/debian bullseye-backports main contrib non-free" | tee /etc/apt/sources.list.d/backports.list
     - apt update -qy
     - apt upgrade -qy 
     - apt install dh-make build-essential cmake crossbuild-essential-arm64 qtwebengine5-dev:arm64 -qy
