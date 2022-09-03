@@ -54,7 +54,7 @@ package:debian:x86-64-qt6:
 
   artifacts:
     paths:
-      - ./qiosk*.deb
+      - ./qt6-qiosk*.deb
     expire_in: 1d
 
 
@@ -127,8 +127,10 @@ repoupdate:
   script:
     - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/www/arch/pub/x86_64/qiosk*.pkg.tar.zst'
     - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/cache/deb/pub/all/qiosk*.deb'
+    - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/cache/deb/pub/all/qt6-qiosk*.deb'
     - scp archlinux/qiosk*.pkg.tar.zst www-data@repository:/var/www/repository.salamek.cz/www/arch/pub/x86_64
     - scp qiosk*.deb www-data@repository:/var/www/repository.salamek.cz/cache/deb/pub/all
+    - scp qt6-qiosk*.deb www-data@repository:/var/www/repository.salamek.cz/cache/deb/pub/all
     - ssh www-data@repository '/var/www/repository.salamek.cz/deb-pub-update.sh'
     - ssh www-data@repository '/var/www/repository.salamek.cz/arch-pub-update.sh'
   
@@ -137,6 +139,7 @@ repoupdate:
     - package:debian:armhf
     - package:debian:x86-64
     - package:archlinux:x86-64
+    - package:archlinux:x86-64-qt6
   tags:
     - debian
   only:

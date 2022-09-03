@@ -11,5 +11,6 @@ Homepage: https://github.com/salamek/qiosk
 Package: qiosk
 Architecture: any
 Depends: ${misc:Depends}, libqt5webenginewidgets5, qtvirtualkeyboard-plugin, qml-module-qtquick-controls, qml-module-qt-labs-folderlistmodel
+Conflicts: qt6-qiosk
 Description: QT Kiosk is simple kiosk browser written in QT
  <insert long description, indented with spaces>
