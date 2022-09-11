@@ -45,15 +45,9 @@ int main(int argc, char *argv[])
 #endif
     QApplication a(argc, argv);
 
-
-    const char *qt_version = qVersion();
-    QVersionNumber currentVersion = QVersionNumber::fromString(qt_version);
-    QVersionNumber brokenVersion(5, 15, 4);
-    qDebug() << currentVersion;
-    if(currentVersion <= brokenVersion) {
-        // Hack to ~fix virtual keyboard viewport on older QT versions
+    if(qgetenv("XDG_CURRENT_DESKTOP") == "") {
+        // Hack to ~fix virtual keyboard viewport on openbox
         QObject::connect(QGuiApplication::inputMethod(), &QInputMethod::visibleChanged, &handleVisibleChanged);
-        qWarning() << "You are using QT " << currentVersion << " that is known to have bugs in virtualkeyboard and PDF reader, please consider upgrading your QT to 5.15.4 or higher!";
     }
 
     QStringList navbarHorizontalPositionOptions;
