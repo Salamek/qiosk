@@ -1,3 +1,14 @@
+qiosk (1.1.15) unstable; urgency=medium
+
+  * Features
+    * Openbox
+      * 57533d5 Apply virtualkeyboard hack only for openbox (empty XDG_CURRENT_DESKTOP)
+  * Fixes
+    * QML
+      * ea7f52d Added missing requirements
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Sun, 11 Sep 2022 23:14:42 +0000
+
 qiosk (1.1.14) unstable; urgency=medium
 
   * Nothing worth mentioning

@@ -1,5 +1,5 @@
 pkgname=qiosk
-pkgver=1.1.14
+pkgver=1.1.15
 pkgdesc="QT Kiosk ."
 pkgrel=1
 arch=('x86_64')
