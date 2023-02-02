@@ -117,6 +117,9 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
 
 void MainWindow::goHome() {
     this->webView->load(this->initialUrl);
+
+    //Reset zoom on home button press
+    this->webView->setZoomFactor(1.0);
 }
 
 void MainWindow::doReload() {
