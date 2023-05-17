@@ -112,6 +112,22 @@ package:archlinux:x86-64:
     paths:
       - archlinux/qiosk*
     expire_in: 1d
+    
+package:archlinux:armhf:
+  stage: package
+  script:
+    - pacman -Sy sudo binutils fakeroot qt6-webengine qt6-virtualkeyboard cmake gcc make --noconfirm
+    - useradd -m -G users -s /bin/bash package
+    - chown -R package:users archlinux
+    - cd archlinux
+    - sudo -H -u package makepkg -f
+  tags:
+    - archlinux
+
+  artifacts:
+    paths:
+      - archlinux/qiosk*
+    expire_in: 1d
 
 repoupdate:
   stage: deploy
@@ -140,6 +156,7 @@ repoupdate:
     - package:debian:x86-64
     - package:debian:x86-64-qt6
     - package:archlinux:x86-64
+    - package:archlinux:armhf
   tags:
     - debian
   only:
