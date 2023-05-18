@@ -113,7 +113,7 @@ package:archlinux:x86-64:
       - archlinux/qiosk*
     expire_in: 1d
     
-package:archlinux:armhf:
+package:archlinux:armv7h:
   stage: package
   script:
     - sudo pacman -Sy binutils fakeroot qt5-webengine qt5-virtualkeyboard cmake gcc make --noconfirm
@@ -139,10 +139,12 @@ repoupdate:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
   script:
-    - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/www/arch/pub/x86_64/qiosk*.pkg.tar.zst'
+    - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/www/arch/pub/x86_64/qiosk*.pkg.tar.*'
+    - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/www/arch/pub/armv7h/qiosk*.pkg.tar.*'
     - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/cache/deb/pub/all/qiosk*.deb'
     - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/cache/deb/pub/all/qt6-qiosk*.deb'
-    - scp archlinux/qiosk*.pkg.tar.zst www-data@repository:/var/www/repository.salamek.cz/www/arch/pub/x86_64
+    - scp archlinux/qiosk-*-x86_64.pkg.tar.* www-data@repository:/var/www/repository.salamek.cz/www/arch/pub/x86_64
+    - scp archlinux/qiosk-*-armv7h.pkg.tar.* www-data@repository:/var/www/repository.salamek.cz/www/arch/pub/armv7h
     - scp qiosk*.deb www-data@repository:/var/www/repository.salamek.cz/cache/deb/pub/all
     - scp qt6-qiosk*.deb www-data@repository:/var/www/repository.salamek.cz/cache/deb/pub/all
     - ssh www-data@repository '/var/www/repository.salamek.cz/deb-pub-update.sh'
@@ -154,7 +156,7 @@ repoupdate:
     - package:debian:x86-64
     - package:debian:x86-64-qt6
     - package:archlinux:x86-64
-    - package:archlinux:armhf
+    - package:archlinux:armv7h
   tags:
     - debian
   only:
