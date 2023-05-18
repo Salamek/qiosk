@@ -6,12 +6,12 @@ arch=('x86_64')
 license=('GPL-3')
 url='https://github.com/salamek/qiosk'
 depends=(
-    'qt6-webengine'
-    'qt6-virtualkeyboard'
+    'qt5-webengine'
+    'qt5-virtualkeyboard'
 )
 
 makedepends=(
-    'qt6-webengine'
+    'qt5-webengine'
     'gcc'
     'make'
     'cmake'
