@@ -100,7 +100,7 @@ package:debian:armhf:
 package:archlinux:x86-64:
   stage: package
   script:
-    - pacman -Sy sudo binutils fakeroot qt5-webengine qt5-virtualkeyboard cmake gcc make --noconfirm
+    - pacman -Sy sudo binutils fakeroot qt6-webengine qt6-virtualkeyboard cmake gcc make --noconfirm
     - useradd -m -G users -s /bin/bash package
     - chown -R package:users archlinux
     - cd archlinux
@@ -116,9 +116,9 @@ package:archlinux:x86-64:
 package:archlinux:armhf:
   stage: package
   script:
-    - pacman -Sy sudo binutils fakeroot qt6-webengine qt6-virtualkeyboard cmake gcc make --noconfirm
-    - useradd -m -G users -s /bin/bash package
-    - chown -R package:users archlinux
+    - sudo pacman -Sy binutils fakeroot qt6-webengine qt6-virtualkeyboard cmake gcc make --noconfirm
+    - sudo useradd -m -G users -s /bin/bash package
+    - sudo chown -R package:users archlinux
     - cd archlinux
     - sudo -H -u package makepkg -f
   tags:
