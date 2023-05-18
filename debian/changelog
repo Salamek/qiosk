@@ -1,3 +1,21 @@
+qiosk (1.1.18) unstable; urgency=medium
+
+  * Features
+    * CI
+      * 28d1b01 Deploy armv7h to repository
+      * d7421d8 Enable armv7h in PKGBUILD
+      * 21774df Add archlinux armv7 build
+    * Archlinux
+      * 1ef9bb5 Buid QT6 version by default
+  * Fixes
+    * CI
+      * 1af29ec Archlinux armv7 qt6 is broken use qt5
+      * 009c7be Use correct tag for archlinux-arm7
+    * Archlinux
+      * daefc4b format arch correctly
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Thu, 18 May 2023 12:44:05 +0000
+
 qiosk (1.1.17) unstable; urgency=medium
 
   * Features
