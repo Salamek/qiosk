@@ -117,10 +117,8 @@ package:archlinux:armhf:
   stage: package
   script:
     - sudo pacman -Sy binutils fakeroot qt6-webengine qt6-virtualkeyboard cmake gcc make --noconfirm
-    - sudo useradd -m -G users -s /bin/bash package
-    - sudo chown -R package:users archlinux
     - cd archlinux
-    - sudo -H -u package makepkg -f
+    - makepkg -f
   tags:
     - archlinux-arm7
 
