@@ -5,6 +5,7 @@ pkgrel=1
 arch=(
   'x86_64'
   'armv7h'
+  'aarch64'
 )
 license=('GPL-3')
 url='https://github.com/salamek/qiosk'
