@@ -8,7 +8,7 @@ build:debian:x86-64:
   stage: build
   before_script:
     - apt update -qy
-    - apt install build-essential cmake qtwebengine5-dev -qy
+    - apt install build-essential cmake libxkbcommon-dev qt6-base-dev qt6-webengine-dev qt6-webengine-dev-tools libqt6webenginewidgets6 libqt6webenginecore6-bin -qy
   script:
     - cmake .
     - make
@@ -25,7 +25,7 @@ package:debian:x86-64:
   script:
     - apt update -qy
     - apt upgrade -qy 
-    - apt install dh-make build-essential cmake qtwebengine5-dev -qy
+    - apt install dh-make build-essential cmake libxkbcommon-dev qt6-base-dev qt6-webengine-dev qt6-webengine-dev-tools libqt6webenginewidgets6 libqt6webenginecore6-bin -qy
     - dpkg-buildpackage -us -uc
     - mv ../qiosk*.deb .
   tags:
@@ -35,36 +35,33 @@ package:debian:x86-64:
     paths:
       - ./qiosk*.deb
     expire_in: 1d
-    
-    
-package:debian:x86-64-qt6:
+
+
+package:debian:x86-64-qt5:
   stage: package
   script:
-    - echo "deb http://deb.debian.org/debian bullseye-backports main contrib non-free" | tee /etc/apt/sources.list.d/backports.list
     - apt update -qy
     - apt upgrade -qy 
-    - apt install dh-make build-essential cmake -qy
-    - apt install libxkbcommon-dev qt6-base-dev qt6-webengine-dev qt6-webengine-dev-tools libqt6webenginewidgets6 libqt6webenginecore6-bin -t bullseye-backports -qy
-    # Rename package to qt6-qiosk
-    - mv debian/control debian/control.old && mv debian/control-qt6 debian/control
+    - apt install dh-make build-essential cmake qtwebengine5-dev -qy
+    - mv debian/control debian/control.old && mv debian/control-qt5 debian/control
     - dpkg-buildpackage -us -uc
-    - mv ../qt6-qiosk*.deb .
+    - mv ../qt5-qiosk*.deb .
   tags:
     - debian
 
   artifacts:
     paths:
-      - ./qt6-qiosk*.deb
+      - ./qiosk*.deb
     expire_in: 1d
-
-
+    
+    
 package:debian:arm64:
   stage: package
   script:
     - dpkg --add-architecture arm64
     - apt update -qy
     - apt upgrade -qy 
-    - apt install dh-make build-essential cmake crossbuild-essential-arm64 qtwebengine5-dev:arm64 -qy
+    - apt install dh-make build-essential cmake crossbuild-essential-arm64 qt6-webengine-dev:arm64 -qy
     - export CONFIG_SITE=/etc/dpkg-cross/cross-config.arm64  
     - export DEB_BUILD_OPTIONS=nocheck 
     - dpkg-buildpackage -aarm64 -Pcross,nocheck -us -uc
@@ -83,7 +80,7 @@ package:debian:armhf:
     - dpkg --add-architecture armhf
     - apt update -qy
     - apt upgrade -qy 
-    - apt install dh-make build-essential cmake crossbuild-essential-armhf qtwebengine5-dev:armhf -qy
+    - apt install dh-make build-essential cmake crossbuild-essential-armhf qt6-webengine-dev:armhf -qy
     - export CONFIG_SITE=/etc/dpkg-cross/cross-config.armhf  
     - export DEB_BUILD_OPTIONS=nocheck 
     - dpkg-buildpackage -aarmhf -Pcross,nocheck -us -uc
@@ -158,12 +155,12 @@ repoupdate:
     - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/www/arch/pub/armv7h/qiosk*.pkg.tar.*'
     - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/www/arch/pub/aarch64/qiosk*.pkg.tar.*'
     - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/cache/deb/pub/all/qiosk*.deb'
-    - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/cache/deb/pub/all/qt6-qiosk*.deb'
+    - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/cache/deb/pub/all/qt5-qiosk*.deb'
     - scp archlinux/qiosk-*-x86_64.pkg.tar.* www-data@repository:/var/www/repository.salamek.cz/www/arch/pub/x86_64
     - scp archlinux/qiosk-*-armv7h.pkg.tar.* www-data@repository:/var/www/repository.salamek.cz/www/arch/pub/armv7h
     - scp archlinux/qiosk-*-aarch64.pkg.tar.* www-data@repository:/var/www/repository.salamek.cz/www/arch/pub/aarch64
     - scp qiosk*.deb www-data@repository:/var/www/repository.salamek.cz/cache/deb/pub/all
-    - scp qt6-qiosk*.deb www-data@repository:/var/www/repository.salamek.cz/cache/deb/pub/all
+    - scp qt5-qiosk*.deb www-data@repository:/var/www/repository.salamek.cz/cache/deb/pub/all
     - ssh www-data@repository '/var/www/repository.salamek.cz/deb-pub-update.sh'
     - ssh www-data@repository '/var/www/repository.salamek.cz/arch-pub-update.sh'
   
@@ -171,7 +168,7 @@ repoupdate:
     - package:debian:arm64
     - package:debian:armhf
     - package:debian:x86-64
-    - package:debian:x86-64-qt6
+    - package:debian:x86-64-qt5
     - package:archlinux:x86-64
     - package:archlinux:armv7h
     - package:archlinux:aarch64

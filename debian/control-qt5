@@ -8,9 +8,9 @@ Homepage: https://github.com/salamek/qiosk
 #Vcs-Git: https://anonscm.debian.org/collab-maint/qiosk.git
 #Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/qiosk.git
 
-Package: qt6-qiosk
+Package: qt5-qiosk
 Architecture: any
-Depends: ${misc:Depends}, libqt6webenginewidgets6, qt6-virtualkeyboard-plugin, qml6-module-qtquick-controls, qml6-module-qt-labs-folderlistmodel, qml6-module-qtqml-workerscript, qml6-module-qtquick-layouts, qml6-module-qtquick-window
+Depends: ${misc:Depends}, libqt5webenginewidgets5, qtvirtualkeyboard-plugin, qml-module-qtquick-controls, qml-module-qt-labs-folderlistmodel
 Conflicts: qiosk
 Description: QT Kiosk is simple kiosk browser written in QT
  <insert long description, indented with spaces>
