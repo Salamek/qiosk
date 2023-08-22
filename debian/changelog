@@ -1,3 +1,11 @@
+qiosk (1.2) unstable; urgency=medium
+
+  * Features
+    * QT
+      * e3a75f3 Migration to QT6 as default
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Tue, 22 Aug 2023 08:38:29 +0000
+
 qiosk (1.1.19) unstable; urgency=medium
 
   * Features
