@@ -51,7 +51,7 @@ package:debian:x86-64-qt5:
 
   artifacts:
     paths:
-      - ./qiosk*.deb
+      - ./qt5-qiosk*.deb
     expire_in: 1d
     
     
