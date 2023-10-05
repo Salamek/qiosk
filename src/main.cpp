@@ -112,6 +112,10 @@ int main(int argc, char *argv[])
     QCommandLineOption displayNavBarOption(QString("display-navbar"), QCoreApplication::translate("main", "Display navbar with navigation buttons."));
     parser.addOption(displayNavBarOption);
 
+    // A boolean option (--underlay-navbar)
+    QCommandLineOption underlayNavBarOption(QString("underlay-navbar"), QCoreApplication::translate("main", "Display navbar under the webview."));
+    parser.addOption(underlayNavBarOption);
+
     // A boolean option (--display-addressbar)
     QCommandLineOption displayAddressBarOption(QString("display-addressbar"), QCoreApplication::translate("main", "Display address bar."));
     parser.addOption(displayAddressBarOption);
@@ -137,6 +141,7 @@ int main(int argc, char *argv[])
 
     config->setDisplayNavBar(parser.isSet(displayNavBarOption));
     config->setDisplayAddressBar(parser.isSet(displayAddressBarOption));
+    config->setUnderlayNavBar(parser.isSet(underlayNavBarOption));
 
     if (parser.isSet(whiteListOption)) {
         config->setWhiteList(parser.values(whiteListOption));

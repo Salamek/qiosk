@@ -51,6 +51,10 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
         this->barWidget->hide();
     }
 
+    if (this->config->isUnderlayNavBar()) {
+        mainLayout->addWidget(this->barWidget);
+    }
+
     this->progressBar = new ProgressBarWidget(this);
     this->resetTimer = new ResetTimer(this);
 

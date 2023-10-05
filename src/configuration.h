@@ -16,6 +16,7 @@ public:
     bool touchscreen; // @TODO Touchscreen support enabled
     bool displayAddressBar;  // Is address bar displayed?
     bool displayNavBar;  // Is navbar displayed?
+    bool underlayNavBar;  // Is navbar floating?
     int idleTime; // Timeout to reset the browser to initial state, 0 is disabled
     QStringList whiteList; // List of whitelisted URLs in GLOB format
     //bool navbarEnabled; // Is navbar displayed
@@ -39,6 +40,7 @@ public:
     void setPermissions(WebPage::Permissions permissions);
     void setDisplayAddressBar(bool displayAddressBar);
     void setDisplayNavBar(bool displayNavBar);
+    void setUnderlayNavBar(bool underlayNavBar);
 
     bool isFullscreen();
     QUrl getUrl();
@@ -51,6 +53,7 @@ public:
     WebPage::Permissions getPermissions();
     bool isDisplayAddressBar();
     bool isDisplayNavBar();
+    bool isUnderlayNavBar();
 
 signals:
 

@@ -97,6 +97,7 @@ void BarWidget::plot(int parentWidth, int parentHeight) {
 
     this->move(barX, barY);
     this->resize(barWidth, barHeight);
+    this->setFixedSize(barWidth, barHeight);
 
     QString style = styleBackground;
     this->setStyleSheet(style);
