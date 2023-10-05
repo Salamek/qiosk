@@ -57,7 +57,6 @@ qiosk https://github.com
 More options:
 
 ```
-Usage: qiosk [options] url
 Kiosk browser written in QT
 
 Options:
@@ -75,13 +74,18 @@ Options:
   --navbar-horizontal-position <left|right|center>   Navbar horizontal position
   --navbar-width <%>                                 Navbar width
   --navbar-height <%>                                Navbar height
-  -a, --allow-feature <dektop-audio-video-capture|de Allow feature
-  sktop-video-capture|geolocation|invalid-certificat
-  e|media-audio-capture|media-audio-video-capture|me
-  dia-video-capture|mouse-lock|notifications>
+  -a, --allow-feature <desktop-audio-video-capture|d Allow feature
+  esktop-video-capture|geolocation|invalid-certifica
+  te|media-audio-capture|media-audio-video-capture|m
+  edia-video-capture|mouse-lock|notifications>
+  --display-navbar                                   Display navbar with
+                                                     navigation buttons.
+  --underlay-navbar                                  Display navbar under the
+                                                     webview.
+  --display-addressbar                               Display address bar.
 
 Arguments:
-  url   
+  url                                                URL to display.
 ```
 
 ### Q/A
