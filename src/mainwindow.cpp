@@ -11,7 +11,13 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     this->lastUserActivity = QDateTime::currentSecsSinceEpoch(); // Set last user activity to NOW
 
     this->webView = new WebView();
-    WebPage *webPage = new WebPage(QWebEngineProfile::defaultProfile(), this->webView);
+
+    QWebEngineProfile *profile = QWebEngineProfile::defaultProfile();
+    // Make sure correct cookie settings are set
+    profile->setPersistentCookiesPolicy(QWebEngineProfile::AllowPersistentCookies);
+
+
+    WebPage *webPage = new WebPage(profile, this->webView);
     webPage->setWhiteList(this->config->getWhiteList());
     webPage->setPermissions(this->config->getPermissions());
     QWebEngineSettings *settings = webPage->settings();
