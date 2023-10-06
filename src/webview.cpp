@@ -11,26 +11,39 @@ WebView::WebView(QWidget *parent)
 {
     connect(this, &QWebEngineView::renderProcessTerminated,
             [this](QWebEnginePage::RenderProcessTerminationStatus termStatus, int statusCode) {
-        QString status;
-        switch (termStatus) {
-        case QWebEnginePage::NormalTerminationStatus:
-            status = tr("Render process normal exit");
-            break;
-        case QWebEnginePage::AbnormalTerminationStatus:
-            status = tr("Render process abnormal exit");
-            break;
-        case QWebEnginePage::CrashedTerminationStatus:
-            status = tr("Render process crashed");
-            break;
-        case QWebEnginePage::KilledTerminationStatus:
-            status = tr("Render process killed");
-            break;
+
+        bool doReload = false;
+
+        // When render proccess terminates, reload
+        // Reload if last crash was more then one minute ago, if not, stop and display dialog
+        if (this->lastCrashReloadTime == -1 || this->lastCrashReloadTime + 60 < QDateTime::currentSecsSinceEpoch()) {
+            doReload = true;
+        } else {
+            QString status;
+            switch (termStatus) {
+            case QWebEnginePage::NormalTerminationStatus:
+                status = tr("Render process normal exit");
+                break;
+            case QWebEnginePage::AbnormalTerminationStatus:
+                status = tr("Render process abnormal exit");
+                break;
+            case QWebEnginePage::CrashedTerminationStatus:
+                status = tr("Render process crashed");
+                break;
+            case QWebEnginePage::KilledTerminationStatus:
+                status = tr("Render process killed");
+                break;
+            }
+            QMessageBox::StandardButton btn = QMessageBox::question(window(), status,
+                                                                    tr("Render process exited with code: %1\n"
+                                                                       "Do you want to reload the page ?").arg(statusCode));
+
+            doReload = btn == QMessageBox::Yes;
         }
-        QMessageBox::StandardButton btn = QMessageBox::question(window(), status,
-                                                   tr("Render process exited with code: %1\n"
-                                                      "Do you want to reload the page ?").arg(statusCode));
-        if (btn == QMessageBox::Yes) {
+
+        if (doReload) {
             QTimer::singleShot(0, this, SLOT(reload()));
+            this->lastCrashReloadTime = QDateTime::currentSecsSinceEpoch();
         }
     });
 }

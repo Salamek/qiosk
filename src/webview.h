@@ -20,6 +20,7 @@ signals:
     void webActionEnabledChanged(QWebEnginePage::WebAction webAction, bool enabled);
 private:
     void createWebActionTrigger(QWebEnginePage *page, QWebEnginePage::WebAction);
+    qint64 lastCrashReloadTime = -1;
 };
 
 #endif
