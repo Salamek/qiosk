@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     //qputenv("QTWEBENGINE_REMOTE_DEBUGGING", "9988"); //https://developer.chrome.com/docs/devtools/
     //qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-logging");
     //qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
-    QCoreApplication::setOrganizationName("Adam Schubert");
+    QCoreApplication::setOrganizationName("Salamek");
     QCoreApplication::setApplicationName("qiosk");
     QCoreApplication::setApplicationVersion("1.1.11");
 #if QT_VERSION <= QT_VERSION_CHECK(6, 0, 0)
