@@ -1,3 +1,26 @@
+qiosk (1.4) unstable; urgency=medium
+
+  * Features
+    * Settings
+      * 41fd8d3 Change orgName to Salamek
+    * UX
+      * 6f777e6 Autoreload on crash
+    * Cookies
+      * 4d59d83 Force correct cookie policy
+    * 
+      * 962a608 Update README.md
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Sat, 07 Oct 2023 20:37:49 +0000
+
+
+qiosk (1.3) unstable; urgency=medium
+
+  * Features
+    * Config
+      * 41f532a Added option to set navbar to underlay webview, Closes #6
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Thu, 05 Oct 2023 22:11:10 +0200
+
 qiosk (1.3) unstable; urgency=medium
 
   * Features
