@@ -93,6 +93,26 @@ package:debian:armhf:
       - ./qiosk*.deb
     expire_in: 1d
 
+package:debian:armhf-qt5:
+  stage: package
+  script:
+    - dpkg --add-architecture armhf
+    - apt update -qy
+    - apt upgrade -qy 
+    - apt install dh-make build-essential cmake crossbuild-essential-armhf qtwebengine5-dev:armhf -qy
+    - mv debian/control debian/control.old && mv debian/control-qt5 debian/control
+    - export CONFIG_SITE=/etc/dpkg-cross/cross-config.armhf  
+    - export DEB_BUILD_OPTIONS=nocheck 
+    - dpkg-buildpackage -aarmhf -Pcross,nocheck -us -uc
+    - mv ../qt5-qiosk*.deb .
+  tags:
+    - debian
+
+  artifacts:
+    paths:
+      - ./qt5-qiosk*.deb
+    expire_in: 1d
+
 
 package:archlinux:x86-64:
   stage: package
@@ -167,6 +187,7 @@ repoupdate:
   dependencies:
     - package:debian:arm64
     - package:debian:armhf
+    - package:debian:armhf-qt5
     - package:debian:x86-64
     - package:debian:x86-64-qt5
     - package:archlinux:x86-64
