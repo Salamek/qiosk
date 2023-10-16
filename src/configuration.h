@@ -26,6 +26,7 @@ public:
     WebPage::Permissions permissions;
     int navbarWidth; //%
     int navbarHeight; //%
+    QString profileName;
 
 
     void setUrl(QUrl url);
@@ -41,6 +42,7 @@ public:
     void setDisplayAddressBar(bool displayAddressBar);
     void setDisplayNavBar(bool displayNavBar);
     void setUnderlayNavBar(bool underlayNavBar);
+    void setProfileName(QString profileName);
 
     bool isFullscreen();
     QUrl getUrl();
@@ -54,6 +56,7 @@ public:
     bool isDisplayAddressBar();
     bool isDisplayNavBar();
     bool isUnderlayNavBar();
+    QString getProfileName();
 
 signals:
 

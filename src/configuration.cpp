@@ -15,6 +15,7 @@ Configuration::Configuration(QObject *parent)
     this->displayAddressBar = false;
     this->displayNavBar = false;
     this->underlayNavBar = false;
+    this->profileName = "default";
     //this->permissions = WebPage::Permission::AllowGeolocation | WebPage::Permission::AllowInvalidCertificate | WebPage::Permission::AllowNotifications | WebPage::Permission::AllowDesktopVideoCapture;
 }
 
@@ -77,6 +78,10 @@ void Configuration::setUnderlayNavBar(bool underlayNavBar) {
     this->underlayNavBar = underlayNavBar;
 }
 
+void Configuration::setProfileName(QString profileName) {
+    this->profileName = profileName;
+}
+
 bool Configuration::isFullscreen() {
     return this->fullscreen;
 }
@@ -123,4 +128,8 @@ bool Configuration::isDisplayNavBar() {
 
 bool Configuration::isUnderlayNavBar() {
     return this->underlayNavBar;
+}
+
+QString Configuration::getProfileName() {
+    return this->profileName;
 }

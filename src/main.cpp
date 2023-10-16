@@ -120,6 +120,10 @@ int main(int argc, char *argv[])
     QCommandLineOption displayAddressBarOption(QString("display-addressbar"), QCoreApplication::translate("main", "Display address bar."));
     parser.addOption(displayAddressBarOption);
 
+    // A string option (--profile-name)
+    QCommandLineOption profileNameOption(QString("profile-name"), QCoreApplication::translate("main", "Profile name, if not specified or default, default off-record profile is used."), QCoreApplication::translate("main", "Profile name."), "default");
+    parser.addOption(profileNameOption);
+
     // Process the actual command line arguments given by the user
     parser.process(a);
 
@@ -142,6 +146,7 @@ int main(int argc, char *argv[])
     config->setDisplayNavBar(parser.isSet(displayNavBarOption));
     config->setDisplayAddressBar(parser.isSet(displayAddressBarOption));
     config->setUnderlayNavBar(parser.isSet(underlayNavBarOption));
+    config->setProfileName(parser.value(profileNameOption));
 
     if (parser.isSet(whiteListOption)) {
         config->setWhiteList(parser.values(whiteListOption));

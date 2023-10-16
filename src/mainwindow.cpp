@@ -12,7 +12,8 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
 
     this->webView = new WebView();
 
-    QWebEngineProfile *profile = QWebEngineProfile::defaultProfile();
+    QWebEngineProfile *profile = (this->config->getProfileName() == "default" ? QWebEngineProfile::defaultProfile() : new QWebEngineProfile(this->config->getProfileName()));
+
     // Make sure correct cookie settings are set
     profile->setPersistentCookiesPolicy(QWebEngineProfile::AllowPersistentCookies);
 
