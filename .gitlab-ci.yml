@@ -148,7 +148,7 @@ package:archlinux:armv7h:
 package:archlinux:aarch64:
   stage: package
   script:
-    - sudo pacman -Sy binutils fakeroot qt6-webengine qt6-virtualkeyboard cmake gcc make --noconfirm
+    - sudo pacman -Syu binutils fakeroot qt6-webengine qt6-virtualkeyboard cmake gcc make --noconfirm
     - cd archlinux
     - makepkg -f
   tags:
