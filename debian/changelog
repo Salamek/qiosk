@@ -1,3 +1,11 @@
+qiosk (1.4.2) unstable; urgency=medium
+
+  * Features
+    * Profile
+      * 0393a60 Added option to specify profile name
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Mon, 16 Oct 2023 17:15:09 +0000
+
 qiosk (1.4.1) unstable; urgency=medium
 
   * Features
