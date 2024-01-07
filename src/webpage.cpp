@@ -163,3 +163,34 @@ void WebPage::handleSelectClientCertificate(QWebEngineClientCertificateSelection
     selection.select(selection.certificates().at(0));
 }
 #endif
+
+QMap<QString, WebPage::Permission> WebPage::getPermissionOptionMap() {
+    QMap<QString, WebPage::Permission> permissionOptionsMap;
+    permissionOptionsMap.insert("invalid-certificate", WebPage::Permission::AllowInvalidCertificate);
+    permissionOptionsMap.insert("notifications", WebPage::Permission::AllowNotifications);
+    permissionOptionsMap.insert("geolocation", WebPage::Permission::AllowGeolocation);
+    permissionOptionsMap.insert("media-audio-capture", WebPage::Permission::AllowMediaAudioCapture);
+    permissionOptionsMap.insert("media-video-capture", WebPage::Permission::AllowMediaVideoCapture);
+    permissionOptionsMap.insert("media-audio-video-capture", WebPage::Permission::AllowMediaAudioVideoCapture);
+    permissionOptionsMap.insert("mouse-lock", WebPage::Permission::AllowMouseLock);
+    permissionOptionsMap.insert("desktop-video-capture", WebPage::Permission::AllowDesktopVideoCapture);
+    permissionOptionsMap.insert("desktop-audio-video-capture", WebPage::Permission::AllowDesktopAudioVideoCapture);
+    return permissionOptionsMap;
+}
+
+
+WebPage::Permissions WebPage::namesToWebPagePermissions(QStringList allowPermissionNames){
+    QMap<QString, WebPage::Permission>permissionOptionsMap = WebPage::getPermissionOptionMap();
+    QString allowFeature;
+    WebPage::Permissions permissions;
+    foreach(allowFeature, allowPermissionNames) {
+        if (permissionOptionsMap.contains(allowFeature)) {
+            permissions |= permissionOptionsMap.value(allowFeature);
+        } else {
+            permissions |= WebPage::Permission::Unknown;
+            break;
+        }
+    }
+
+    return permissions;
+}

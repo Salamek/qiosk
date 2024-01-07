@@ -11,9 +11,10 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS WebEngineWidgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS WebSockets)
 
 set(PROJECT_SOURCES
     src/barbutton.cpp src/barbutton.h
@@ -27,6 +28,7 @@ set(PROJECT_SOURCES
     src/userinputeventfilter.cpp src/userinputeventfilter.h
     src/webpage.cpp src/webpage.h
     src/webview.cpp src/webview.h
+    src/websocketcontrol.h src/websocketcontrol.cpp
     src/qiosk.qrc
 )
 
@@ -54,7 +56,7 @@ else()
 endif()
 
 
-target_link_libraries(qiosk PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::WebEngineWidgets)
+target_link_libraries(qiosk PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::WebEngineWidgets Qt::WebSockets)
 
 set_target_properties(qiosk PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

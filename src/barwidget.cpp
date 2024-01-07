@@ -1,5 +1,10 @@
 #include "barwidget.h"
 
+
+QStringList BarWidget::navbarHorizontalPositionOptions = {"left", "right", "center"};
+QStringList BarWidget::navbarVerticalPositionOptions = {"top", "bottom"};
+
+
 BarWidget::BarWidget(QWidget *parent)
     : QWidget{parent}
 {
@@ -68,21 +73,26 @@ void BarWidget::plot(int parentWidth, int parentHeight) {
     int barY;
 
     switch(this->positionHorizontal) {
-    case HorizontalPosition::Center:
-        barX = (parentWidth / 2) - (barWidth / 2);
-        if (this->widthPercent < 100) {
-            styleBackground += " border-top-left-radius: 10px; border-top-right-radius: 10px;";
+        case HorizontalPosition::Center:
+            barX = (parentWidth / 2) - (barWidth / 2);
+            if (this->widthPercent < 100) {
+                styleBackground += " border-top-left-radius: 10px; border-top-right-radius: 10px;";
+            }
+            break;
+        case HorizontalPosition::Left:
+            barX = 0;
+            styleBackground += " border-top-right-radius: 10px;";
+            break;
+        case HorizontalPosition::Right:
+            barX = parentWidth - barWidth;
+            styleBackground += " border-top-left-radius: 10px;";
+            break;
+
+        case HorizontalPosition::Unknown:
+            // We put it here to make lint happy with our switch...
+            Q_ASSERT(this->positionHorizontal == HorizontalPosition::Unknown);
+            break;
         }
-        break;
-    case HorizontalPosition::Left:
-        barX = 0;
-        styleBackground += " border-top-right-radius: 10px;";
-        break;
-    case HorizontalPosition::Right:
-        barX = parentWidth - barWidth;
-        styleBackground += " border-top-left-radius: 10px;";
-        break;
-    }
 
     styleBackground += "}";
 
@@ -93,6 +103,10 @@ void BarWidget::plot(int parentWidth, int parentHeight) {
     case VerticalPosition::Top:
         barY = 0;
         break;
+    case VerticalPosition::Unknown:
+        // We put it here to make lint happy with our switch...
+        Q_ASSERT(this->positionVertical == VerticalPosition::Unknown);
+        break;
     }
 
     this->move(barX, barY);
@@ -102,3 +116,47 @@ void BarWidget::plot(int parentWidth, int parentHeight) {
     QString style = styleBackground;
     this->setStyleSheet(style);
 }
+
+BarWidget::HorizontalPosition BarWidget::nameToBarWidgetHorizontalPosition(QString name){
+    //QStringList navbarHorizontalPositionOptions;
+    //navbarHorizontalPositionOptions << "left" << "right" << "center";
+
+    switch(BarWidget::navbarHorizontalPositionOptions.indexOf(name)){
+    case 0:
+        return BarWidget::HorizontalPosition::Left;
+        break;
+
+    case 1:
+        return BarWidget::HorizontalPosition::Right;
+        break;
+
+    case 2:
+        return BarWidget::HorizontalPosition::Center;
+        break;
+    default:
+        return BarWidget::HorizontalPosition::Unknown;
+        break;
+    }
+}
+
+
+BarWidget::VerticalPosition BarWidget::nameToBarWidgetVerticalPosition(QString name){
+    //QStringList navbarVerticalPositionOptions;
+    //navbarVerticalPositionOptions << "top" << "bottom";
+
+    switch(BarWidget::navbarVerticalPositionOptions.indexOf(name)){
+    case 0:
+        return BarWidget::VerticalPosition::Top;
+        break;
+
+    case 1:
+        return BarWidget::VerticalPosition::Bottom;
+        break;
+
+    default:
+        return BarWidget::VerticalPosition::Unknown;
+        break;
+    }
+}
+
+

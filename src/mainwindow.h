@@ -19,6 +19,7 @@
 #include "webpage.h"
 #include "progressbarwidget.h"
 #include "resettimer.h"
+#include "websocketcontrol.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -38,21 +39,30 @@ protected:
     void changeEvent(QEvent *event) override;
     void showEvent(QShowEvent *event) override;
 private:
+    QVBoxLayout *mainLayout;
+    QLineEdit *addressBar;
     qint64 lastUserActivity;
+    int idleTime;
     Configuration *config;
     bool resetHistoryLock;
+    bool underlayNavBar;
     QUrl initialUrl;
     WebView *webView;
     BarWidget *barWidget;
     ProgressBarWidget *progressBar;
     QWebEnginePage::WebAction refreshWebAction;
     ResetTimer *resetTimer;
+    WebsocketControl *websocketControl;
     void handleWebViewLoadProgress(int progress);
     void handleLoadFinished(bool ok);
     void handleLoadStarted();
     void setupReloadStopButton(bool loading);
     void checkReset();
     void plot(QSize size);
+    void setIdleTime(int idleTime);
+    void setDisplayAddressBar(bool displayAddressBar);
+    void setDisplayNavBar(bool displayNavBar);
+    void setUnderlayNavBar(bool underlayNavBar);
 private slots:
     void goHome();
     void doReload();

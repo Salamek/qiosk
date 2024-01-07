@@ -28,4 +28,3 @@ QString Tools::wildcardToRegularExpression(QString pattern) {
     }
     return regex;
 }
-

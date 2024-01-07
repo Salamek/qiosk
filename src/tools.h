@@ -2,6 +2,7 @@
 #define TOOLS_H
 
 #include <QObject>
+#include "barwidget.h"
 
 class Tools : public QObject
 {

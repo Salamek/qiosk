@@ -14,6 +14,7 @@ public:
     void start();
     void reset();
     void setTimeout(int seconds);
+    void stop();
 private:
     int timeoutMs;
 signals:

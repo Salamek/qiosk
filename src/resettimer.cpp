@@ -18,6 +18,11 @@ void ResetTimer::start() {
     this->timer->start(this->timeoutMs);
 }
 
+void ResetTimer::stop() {
+    this->timer->stop();
+}
+
+
 void ResetTimer::reset() {
     this->timer->stop();
     this->timer->start(this->timeoutMs);

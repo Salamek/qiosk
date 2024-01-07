@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 
 
+
 MainWindow::MainWindow(Configuration *config, QWidget *parent)
     : QMainWindow(parent)
 {
@@ -9,6 +10,10 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     this->refreshWebAction = QWebEnginePage::Reload;
     this->initialUrl = this->config->getUrl();
     this->lastUserActivity = QDateTime::currentSecsSinceEpoch(); // Set last user activity to NOW
+
+    // Start websocket control server
+    this->websocketControl = new WebsocketControl(1791, true);
+
 
     this->webView = new WebView();
 
@@ -32,35 +37,28 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     this->webView->setContextMenuPolicy(Qt::ContextMenuPolicy::NoContextMenu);
 
 
-    QVBoxLayout *mainLayout = new QVBoxLayout();
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->setSpacing(0);
+    this->mainLayout = new QVBoxLayout();
+    this->mainLayout->setContentsMargins(0, 0, 0, 0);
+    this->mainLayout->setSpacing(0);
 
     QAction *favAction = new QAction(this);
-    QLineEdit *addressBar = new QLineEdit(this);
-    addressBar->setClearButtonEnabled(true);
-    addressBar->addAction(favAction, QLineEdit::LeadingPosition);
-    if (!this->config->isDisplayAddressBar()) {
-        addressBar->hide();
-    }
+    this->addressBar = new QLineEdit(this);
+    this->addressBar->setClearButtonEnabled(true);
+    this->addressBar->addAction(favAction, QLineEdit::LeadingPosition);
+    this->setDisplayAddressBar(this->config->isDisplayAddressBar());
 
-    mainLayout->addWidget(addressBar);
+    this->mainLayout->addWidget(this->addressBar);
 
-    mainLayout->addWidget(this->webView);
+    this->mainLayout->addWidget(this->webView);
 
     QWidget *centralWidget = new QWidget(this);
     centralWidget->setLayout(mainLayout);
     this->setCentralWidget(centralWidget);
 
     this->barWidget = new BarWidget(this);
+    this->setDisplayNavBar(this->config->isDisplayNavBar());
 
-    if (!this->config->isDisplayNavBar()) {
-        this->barWidget->hide();
-    }
-
-    if (this->config->isUnderlayNavBar()) {
-        mainLayout->addWidget(this->barWidget);
-    }
+    this->setUnderlayNavBar(this->config->isUnderlayNavBar());
 
     this->progressBar = new ProgressBarWidget(this);
     this->resetTimer = new ResetTimer(this);
@@ -81,17 +79,34 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     connect(this->webView, &QWebEngineView::loadFinished, this, &MainWindow::handleLoadFinished);
     connect(this->webView, &WebView::webActionEnabledChanged, this, &MainWindow::handleWebActionEnabledChanged);
 
-    connect(this->webView, &QWebEngineView::urlChanged, this, [this, addressBar](const QUrl &url) {
-        addressBar->setText(url.toDisplayString());
+    connect(this->webView, &QWebEngineView::urlChanged, this, [this](const QUrl &url) {
+        this->addressBar->setText(url.toDisplayString());
     });
-    connect(addressBar, &QLineEdit::returnPressed, this, [this, addressBar]() {
-        this->webView->setUrl(QUrl::fromUserInput(addressBar->text()));
+    connect(addressBar, &QLineEdit::returnPressed, this, [this]() {
+        this->webView->setUrl(QUrl::fromUserInput(this->addressBar->text()));
     });
 
     connect(this->webView, &QWebEngineView::iconChanged, favAction, &QAction::setIcon);
 
     //Reset timer events
     connect(this->resetTimer, &ResetTimer::timeout, this, &MainWindow::checkReset);
+
+    // Websocket control events
+    connect(this->websocketControl, &WebsocketControl::urlChange, this->webView, &WebView::setUrl);
+    connect(this->websocketControl, &WebsocketControl::fullscreenChange, [this](bool fullscreen) {
+        fullscreen ? showFullScreen() : showNormal();
+    });
+    connect(this->websocketControl, &WebsocketControl::idleTimeChange, this, &MainWindow::setIdleTime);
+    connect(this->websocketControl, &WebsocketControl::whiteListChange, webPage, &WebPage::setWhiteList);
+    connect(this->websocketControl, &WebsocketControl::permissionsChange, webPage, &WebPage::setPermissions);
+    connect(this->websocketControl, &WebsocketControl::navbarVerticalPositionsChange, this->barWidget, &BarWidget::setVerticalPosition);
+    connect(this->websocketControl, &WebsocketControl::navbarHorizontalPositionsChange, this->barWidget, &BarWidget::setHorizontalPosition);
+    connect(this->websocketControl, &WebsocketControl::navbarWidthChange, this->barWidget, &BarWidget::setWidth);
+    connect(this->websocketControl, &WebsocketControl::displayAddressBarChange, this, &MainWindow::setDisplayAddressBar);
+    connect(this->websocketControl, &WebsocketControl::displayNavBarChange, this, &MainWindow::setDisplayNavBar);
+    connect(this->websocketControl, &WebsocketControl::underlayNavBarChange, this, &MainWindow::setUnderlayNavBar);
+
+
 
     // ============================
     // Initial Configuration
@@ -102,10 +117,7 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     this->barWidget->setVerticalPosition(this->config->getNavbarVerticalPosition());
 
     // Configure reset timer, disable this if timeout==0
-    if (this->config->getIdleTime() != 0) {
-        this->resetTimer->setTimeout(1); //Check each 1s
-        this->resetTimer->start();
-    }
+    this->setIdleTime(this->config->getIdleTime());
 
     // ============================
     // End of initial configuration
@@ -139,7 +151,7 @@ void MainWindow::doReload() {
 
 
 void MainWindow::checkReset() {
-    if (this->config->getIdleTime() > 0 && this->lastUserActivity + this->config->getIdleTime() <= QDateTime::currentSecsSinceEpoch()) {
+    if (this->idleTime > 0 && this->lastUserActivity + this->idleTime <= QDateTime::currentSecsSinceEpoch()) {
         this->doReset();
     }
 }
@@ -261,8 +273,51 @@ void MainWindow::handleWebActionEnabledChanged(QWebEnginePage::WebAction action,
     }
 }
 
+void MainWindow::setIdleTime(int idleTime){
+    this->idleTime = idleTime;
+    if (this->idleTime != 0) {
+        this->resetTimer->setTimeout(1); //Check each 1s
+        this->resetTimer->start();
+    } else {
+        this->resetTimer->stop();
+    }
+}
+
+void MainWindow::setDisplayAddressBar(bool displayAddressBar){
+    if (displayAddressBar) {
+        this->addressBar->show();
+    } else {
+        this->addressBar->hide();
+    }
+}
+
+void MainWindow::setDisplayNavBar(bool displayNavBar){
+    if (displayNavBar) {
+        this->barWidget->show();
+    } else {
+        this->barWidget->hide();
+    }
+}
+
+void MainWindow::setUnderlayNavBar(bool underlayNavBar) {
+    // State is same, no nothing
+    if (this->underlayNavBar == underlayNavBar) {
+        return;
+    }
+
+    if (underlayNavBar) {
+        this->mainLayout->addWidget(this->barWidget);
+    } else {
+        this->mainLayout->removeWidget(this->barWidget);
+    }
+
+    this->underlayNavBar = underlayNavBar;
+}
+
+
 MainWindow::~MainWindow()
 {
+    delete this->websocketControl;
     delete this->webView;
     delete this->config;
 }

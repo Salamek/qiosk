@@ -22,13 +22,18 @@ public:
     enum class HorizontalPosition {
         Center,
         Left,
-        Right
+        Right,
+        Unknown
     };
 
     enum class VerticalPosition {
         Top,
-        Bottom
+        Bottom,
+        Unknown
     };
+
+    static QStringList navbarHorizontalPositionOptions;
+    static QStringList navbarVerticalPositionOptions;
 
     void plot(int parentWidth, int parentHeight);
     void setVerticalPosition(VerticalPosition positionVertical);
@@ -42,6 +47,8 @@ public:
     BarButton *backButton;
 
 
+    static BarWidget::HorizontalPosition nameToBarWidgetHorizontalPosition(QString name);
+    static BarWidget::VerticalPosition nameToBarWidgetVerticalPosition(QString name);
 private:
     VerticalPosition positionVertical;
     HorizontalPosition positionHorizontal;

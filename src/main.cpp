@@ -50,24 +50,6 @@ int main(int argc, char *argv[])
         QObject::connect(QGuiApplication::inputMethod(), &QInputMethod::visibleChanged, &handleVisibleChanged);
     }
 
-    QStringList navbarHorizontalPositionOptions;
-    navbarHorizontalPositionOptions << "left" << "right" << "center";
-
-    QStringList navbarVerticalPositionOptions;
-    navbarVerticalPositionOptions << "top" << "bottom";
-
-    QMap<QString, WebPage::Permission> permissionOptionsMap;
-    permissionOptionsMap.insert("invalid-certificate", WebPage::Permission::AllowInvalidCertificate);
-    permissionOptionsMap.insert("notifications", WebPage::Permission::AllowNotifications);
-    permissionOptionsMap.insert("geolocation", WebPage::Permission::AllowGeolocation);
-    permissionOptionsMap.insert("media-audio-capture", WebPage::Permission::AllowMediaAudioCapture);
-    permissionOptionsMap.insert("media-video-capture", WebPage::Permission::AllowMediaVideoCapture);
-    permissionOptionsMap.insert("media-audio-video-capture", WebPage::Permission::AllowMediaAudioVideoCapture);
-    permissionOptionsMap.insert("mouse-lock", WebPage::Permission::AllowMouseLock);
-    permissionOptionsMap.insert("desktop-video-capture", WebPage::Permission::AllowDesktopVideoCapture);
-    permissionOptionsMap.insert("desktop-audio-video-capture", WebPage::Permission::AllowDesktopAudioVideoCapture);
-
-
 
     QCommandLineParser parser;
     parser.setApplicationDescription("Kiosk browser written in QT");
@@ -88,11 +70,11 @@ int main(int argc, char *argv[])
     parser.addOption(whiteListOption);
 
     // A string option (--navbar-vertical-position)
-    QCommandLineOption navbarVerticalPositionOption(QString("navbar-vertical-position"), QCoreApplication::translate("main", "Navbar vertical position"), navbarVerticalPositionOptions.join("|"), "bottom");
+    QCommandLineOption navbarVerticalPositionOption(QString("navbar-vertical-position"), QCoreApplication::translate("main", "Navbar vertical position"), BarWidget::navbarVerticalPositionOptions.join("|"), "bottom");
     parser.addOption(navbarVerticalPositionOption);
 
     // A string option (--navbar-horizontal-position)
-    QCommandLineOption navbarHorizontalPositionOption(QString("navbar-horizontal-position"), QCoreApplication::translate("main", "Navbar horizontal position") ,navbarHorizontalPositionOptions.join("|"), "center");
+    QCommandLineOption navbarHorizontalPositionOption(QString("navbar-horizontal-position"), QCoreApplication::translate("main", "Navbar horizontal position") , BarWidget::navbarHorizontalPositionOptions.join("|"), "center");
     parser.addOption(navbarHorizontalPositionOption);
 
     // A string option (--navbar-width)
@@ -104,7 +86,7 @@ int main(int argc, char *argv[])
     parser.addOption(navbarHeightOption);
 
     // A string option with multiple names (-a, --allow-feature)
-    QStringList permissionOptionsMapKeys = permissionOptionsMap.keys();
+    QStringList permissionOptionsMapKeys = WebPage::getPermissionOptionMap().keys();
     QCommandLineOption allowFeatureOption(QStringList() << "a" << "allow-feature", QCoreApplication::translate("main", "Allow feature"), permissionOptionsMapKeys.join("|"));
     parser.addOption(allowFeatureOption);
 
@@ -152,51 +134,25 @@ int main(int argc, char *argv[])
         config->setWhiteList(parser.values(whiteListOption));
     }
 
-    switch(navbarHorizontalPositionOptions.indexOf(parser.value(navbarHorizontalPositionOption))){
-      case 0:
-        config->setNavbarHorizontalPosition(BarWidget::HorizontalPosition::Left);
-        break;
-
-      case 1:
-        config->setNavbarHorizontalPosition(BarWidget::HorizontalPosition::Right);
-        break;
-
-      case 2:
-        config->setNavbarHorizontalPosition(BarWidget::HorizontalPosition::Center);
-        break;
-      default:
+    BarWidget::HorizontalPosition horizontalPosition = BarWidget::nameToBarWidgetHorizontalPosition(parser.value(navbarHorizontalPositionOption));
+    if (horizontalPosition == BarWidget::HorizontalPosition::Unknown) {
         fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided horizontal position is unknown, use one of left|right|center.")));
         parser.showHelp(1);
-        break;
     }
+    config->setNavbarHorizontalPosition(horizontalPosition);
 
-    switch(navbarVerticalPositionOptions.indexOf(parser.value(navbarVerticalPositionOption))){
-      case 0:
-        config->setNavbarVerticalPosition(BarWidget::VerticalPosition::Top);
-        break;
-
-      case 1:
-        config->setNavbarVerticalPosition(BarWidget::VerticalPosition::Bottom);
-        break;
-
-      default:
+    BarWidget::VerticalPosition verticalPosition = BarWidget::nameToBarWidgetVerticalPosition(parser.value(navbarVerticalPositionOption));
+    if (verticalPosition == BarWidget::VerticalPosition::Unknown) {
         fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided vertical position is unknown, use one of top|bottom.")));
         parser.showHelp(1);
-        break;
     }
+    config->setNavbarVerticalPosition(verticalPosition);
 
-    QString allowFeature;
-    WebPage::Permissions permissions;
-    foreach(allowFeature, parser.values(allowFeatureOption)) {
-        if (permissionOptionsMap.contains(allowFeature)) {
-            permissions |= permissionOptionsMap.value(allowFeature);
-        } else {
-            fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided permission is unknown, use one of %s.")));
-            parser.showHelp(1);
-            break;
-        }
+    WebPage::Permissions permissions = WebPage::namesToWebPagePermissions(parser.values(allowFeatureOption));
+    if(permissions.testFlag(WebPage::Permission::Unknown)){
+        fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided permission is unknown, use one of %s.")));
+        parser.showHelp(1);
     }
-
     config->setPermissions(permissions);
 
     MainWindow w(config);

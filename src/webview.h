@@ -3,7 +3,9 @@
 
 #include <QWebEngineView>
 
-class WebPage;
+
+QT_FORWARD_DECLARE_CLASS(WebPage)
+//class WebPage;
 
 class WebView : public QWebEngineView
 {

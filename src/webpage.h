@@ -23,12 +23,15 @@ public:
         AllowMediaAudioVideoCapture,
         AllowMouseLock,
         AllowDesktopVideoCapture,
-        AllowDesktopAudioVideoCapture
+        AllowDesktopAudioVideoCapture,
+        Unknown
     };
     Q_DECLARE_FLAGS(Permissions, Permission)
 
     void setWhiteList(QStringList whiteList);
     void setPermissions(WebPage::Permissions permissions);
+    static WebPage::Permissions namesToWebPagePermissions(QStringList allowPermissionNames);
+    static QMap<QString, WebPage::Permission> getPermissionOptionMap();
 private:
     bool isUrlInWhiteList(QUrl url);
     QList<QRegularExpression> whiteListRegexps;

@@ -13,7 +13,6 @@ BarButton::BarButton(QIcon enabledIcon, QIcon disabledIcon, QWidget *parent)
     this->setMinimumWidth(50);
     this->setStyleSheet("QPushButton {background-color: transparent}");
     this->setIconSize(QSize(48, 48));
-
 }
 
 
