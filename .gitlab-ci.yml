@@ -8,7 +8,7 @@ build:debian:x86-64:
   stage: build
   before_script:
     - apt update -qy
-    - apt install build-essential cmake libxkbcommon-dev qt6-base-dev qt6-webengine-dev qt6-webengine-dev-tools libqt6webenginewidgets6 libqt6webenginecore6-bin -qy
+    - apt install build-essential cmake libxkbcommon-dev qt6-base-dev qt6-webengine-dev qt6-webengine-dev-tools libqt6webenginewidgets6 libqt6webenginecore6-bin qt6-websockets-dev -qy
   script:
     - cmake .
     - make
@@ -25,7 +25,7 @@ package:debian:x86-64:
   script:
     - apt update -qy
     - apt upgrade -qy 
-    - apt install dh-make build-essential cmake libxkbcommon-dev qt6-base-dev qt6-webengine-dev qt6-webengine-dev-tools libqt6webenginewidgets6 libqt6webenginecore6-bin -qy
+    - apt install dh-make build-essential cmake libxkbcommon-dev qt6-base-dev qt6-webengine-dev qt6-webengine-dev-tools libqt6webenginewidgets6 libqt6webenginecore6-bin qt6-websockets-dev -qy
     - dpkg-buildpackage -us -uc
     - mv ../qiosk*.deb .
   tags:
@@ -42,7 +42,7 @@ package:debian:x86-64-qt5:
   script:
     - apt update -qy
     - apt upgrade -qy 
-    - apt install dh-make build-essential cmake qtwebengine5-dev -qy
+    - apt install dh-make build-essential cmake qtwebengine5-dev libqt5websockets5 -qy
     - mv debian/control debian/control.old && mv debian/control-qt5 debian/control
     - dpkg-buildpackage -us -uc
     - mv ../qt5-qiosk*.deb .
@@ -61,7 +61,7 @@ package:debian:arm64:
     - dpkg --add-architecture arm64
     - apt update -qy
     - apt upgrade -qy 
-    - apt install dh-make build-essential cmake crossbuild-essential-arm64 qt6-webengine-dev:arm64 -qy
+    - apt install dh-make build-essential cmake crossbuild-essential-arm64 qt6-webengine-dev:arm64 qt6-websockets:arm64 -qy
     - export CONFIG_SITE=/etc/dpkg-cross/cross-config.arm64  
     - export DEB_BUILD_OPTIONS=nocheck 
     - dpkg-buildpackage -aarm64 -Pcross,nocheck -us -uc
@@ -80,7 +80,7 @@ package:debian:armhf:
     - dpkg --add-architecture armhf
     - apt update -qy
     - apt upgrade -qy 
-    - apt install dh-make build-essential cmake crossbuild-essential-armhf qt6-webengine-dev:armhf -qy
+    - apt install dh-make build-essential cmake crossbuild-essential-armhf qt6-webengine-dev:armhf qt6-websockets:armhf -qy
     - export CONFIG_SITE=/etc/dpkg-cross/cross-config.armhf  
     - export DEB_BUILD_OPTIONS=nocheck 
     - dpkg-buildpackage -aarmhf -Pcross,nocheck -us -uc
@@ -99,7 +99,7 @@ package:debian:armhf-qt5:
     - dpkg --add-architecture armhf
     - apt update -qy
     - apt upgrade -qy 
-    - apt install dh-make build-essential cmake crossbuild-essential-armhf qtwebengine5-dev:armhf -qy
+    - apt install dh-make build-essential cmake crossbuild-essential-armhf qtwebengine5-dev:armhf libqt5websockets5:armhf -qy
     - mv debian/control debian/control.old && mv debian/control-qt5 debian/control
     - export CONFIG_SITE=/etc/dpkg-cross/cross-config.armhf  
     - export DEB_BUILD_OPTIONS=nocheck 
@@ -117,7 +117,7 @@ package:debian:armhf-qt5:
 package:archlinux:x86-64:
   stage: package
   script:
-    - pacman -Syu sudo binutils fakeroot qt6-webengine qt6-virtualkeyboard cmake gcc make --noconfirm
+    - pacman -Syu sudo binutils fakeroot qt6-webengine qt6-virtualkeyboard qt6-websockets cmake gcc make --noconfirm
     - useradd -m -G users -s /bin/bash package
     - chown -R package:users archlinux
     - cd archlinux
@@ -133,7 +133,7 @@ package:archlinux:x86-64:
 package:archlinux:armv7h:
   stage: package
   script:
-    - sudo pacman -Sy binutils fakeroot qt5-webengine qt5-virtualkeyboard cmake gcc make --noconfirm
+    - sudo pacman -Sy binutils fakeroot qt5-webengine qt5-virtualkeyboard cmake gcc make qt5-websockets --noconfirm
     - cd archlinux
     - makepkg -f -p PKGBUILD-qt5
   tags:
@@ -148,7 +148,7 @@ package:archlinux:armv7h:
 package:archlinux:aarch64:
   stage: package
   script:
-    - sudo pacman -Syu binutils fakeroot qt6-webengine qt6-virtualkeyboard cmake gcc make --noconfirm
+    - sudo pacman -Syu binutils fakeroot qt6-webengine qt6-virtualkeyboard cmake gcc make qt6-websockets --noconfirm
     - cd archlinux
     - makepkg -f
   tags:
