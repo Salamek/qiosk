@@ -1,38 +1,41 @@
 #include "websocketcontrol.h"
-#include "QtWebSockets/qwebsocketserver.h"
-#include "QtWebSockets/qwebsocket.h"
 
 
-WebsocketControl::WebsocketControl(quint16 port, bool debug, QObject *parent) :
+
+WebsocketControl::WebsocketControl(QHostAddress host, quint16 port, bool debug, Configuration *configuration, QObject *parent) :
     QObject(parent),
-    m_pWebSocketServer(new QWebSocketServer(QStringLiteral("Qiosk Control Server"), QWebSocketServer::NonSecureMode, this)),
-    m_debug(debug)
+    pWebSocketServer(new QWebSocketServer(QStringLiteral("Qiosk Control Server"), QWebSocketServer::NonSecureMode, this)),
+    host(host),
+    port(port),
+    debug(debug),
+    configuration(configuration)
 {
-    if (m_pWebSocketServer->listen(QHostAddress::Any, port)) {
-        if (m_debug) {
-            qDebug() << "Qiosk Control Server listening on port" << port;
+    if (this->host != QHostAddress::Null && this->pWebSocketServer->listen(this->host, this->port)) {
+        if (this->debug) {
+            qDebug() << "Qiosk Control Server listening on port" << this->port;
         }
 
-        connect(m_pWebSocketServer, &QWebSocketServer::newConnection, this, &WebsocketControl::onNewConnection);
-        connect(m_pWebSocketServer, &QWebSocketServer::closed, this, &WebsocketControl::closed);
+        connect(this->pWebSocketServer, &QWebSocketServer::newConnection, this, &WebsocketControl::onNewConnection);
+        connect(this->pWebSocketServer, &QWebSocketServer::closed, this, &WebsocketControl::closed);
     }
 }
 
+
 WebsocketControl::~WebsocketControl()
 {
-    m_pWebSocketServer->close();
-    qDeleteAll(m_clients.begin(), m_clients.end());
+    this->pWebSocketServer->close();
+    qDeleteAll(this->clients.begin(), this->clients.end());
 }
 
 void WebsocketControl::onNewConnection()
 {
-    QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
+    QWebSocket *pSocket = this->pWebSocketServer->nextPendingConnection();
 
     connect(pSocket, &QWebSocket::textMessageReceived, this, &WebsocketControl::processTextMessage);
     connect(pSocket, &QWebSocket::binaryMessageReceived, this, &WebsocketControl::processBinaryMessage);
     connect(pSocket, &QWebSocket::disconnected, this, &WebsocketControl::socketDisconnected);
 
-    m_clients << pSocket;
+    this->clients << pSocket;
 }
 
 void WebsocketControl::processTextMessage(QString message)
@@ -43,8 +46,7 @@ void WebsocketControl::processTextMessage(QString message)
         return;
     }
 
-
-    if (m_debug)
+    if (this->debug)
         qDebug() << "Message received:" << message;
 
     QJsonDocument jsonRequest = QJsonDocument::fromJson(message.toUtf8());
@@ -73,52 +75,55 @@ void WebsocketControl::processTextMessage(QString message)
         return;
     }
 
-    QJsonValue optionsValue = jsonObject.value("options");
-    if (!optionsValue.isObject()) {
-        pClient->sendTextMessage(this->buildResponse(false, "Options has to be object", command));
+    QJsonValue dataValue = jsonObject.value("data");
+    if (!dataValue.isObject()) {
+        pClient->sendTextMessage(this->buildResponse(false, "data has to be object", command));
         return;
     }
-    QJsonObject options = optionsValue.toObject();
+    QJsonObject data = dataValue.toObject();
 
     switch(command){
         case WebsocketControl::Command::SetUrl:
-            this->commandSetUrl(options, pClient);
+            this->commandSetUrl(data, pClient);
             break;
         case WebsocketControl::Command::SetWindowMode:
-            this->commandSetWindowMode(options, pClient);
+            this->commandSetWindowMode(data, pClient);
             break;
         case WebsocketControl::Command::SetIdleTime:
-            this->commandSetIdleTime(options, pClient);
+            this->commandSetIdleTime(data, pClient);
             break;
         case WebsocketControl::Command::SetWhiteList:
-            this->commandSetWhiteList(options, pClient);
+            this->commandSetWhiteList(data, pClient);
             break;
         case WebsocketControl::Command::SetPermissions:
-            this->commandSetPermissions(options, pClient);
+            this->commandSetPermissions(data, pClient);
             break;
         case WebsocketControl::Command::SetNavbarVerticalPosition:
-            this->commandSetNavbarVerticalPosition(options, pClient);
+            this->commandSetNavbarVerticalPosition(data, pClient);
             break;
         case WebsocketControl::Command::SetNavbarHorizontalPosition:
-            this->commandSetNavbarHorizontalPosition(options, pClient);
+            this->commandSetNavbarHorizontalPosition(data, pClient);
             break;
         case WebsocketControl::Command::SetNavbarWidth:
-            this->commandSetNavbarWidth(options, pClient);
+            this->commandSetNavbarWidth(data, pClient);
             break;
         case WebsocketControl::Command::SetNavbarHeight:
-            this->commandSetNavbarHeight(options, pClient);
+            this->commandSetNavbarHeight(data, pClient);
             break;
         case WebsocketControl::Command::SetDisplayAddressBar:
-            this->commandSetDisplayAddressBar(options, pClient);
+            this->commandSetDisplayAddressBar(data, pClient);
             break;
         case WebsocketControl::Command::SetDisplayNavBar:
-            this->commandSetDisplayNavBar(options, pClient);
+            this->commandSetDisplayNavBar(data, pClient);
             break;
         case WebsocketControl::Command::SetUnderlayNavBar:
-            this->commandSetUnderlayNavBar(options, pClient);
+            this->commandSetUnderlayNavBar(data, pClient);
             break;
         case WebsocketControl::Command::SetOptions:
-            this->commandSetOptions(options, pClient);
+            this->commandSetOptions(data, pClient);
+            break;
+        case WebsocketControl::Command::GetConfiguration:
+            this->commandGetConfiguration(data, pClient);
             break;
         case WebsocketControl::Command::Unknown:
             Q_ASSERT(command == WebsocketControl::Command::Unknown);
@@ -141,7 +146,8 @@ WebsocketControl::Command WebsocketControl::commandNameToCommand(QString name){
         "setDisplayAddressBar",
         "setDisplayNavBar",
         "setUnderlayNavBar",
-        "setOptions"
+        "setOptions",
+        "getConfiguration"
     };
 
     switch(commandNames.indexOf(name)){
@@ -183,6 +189,9 @@ WebsocketControl::Command WebsocketControl::commandNameToCommand(QString name){
             break;
         case 12:
             return WebsocketControl::Command::SetOptions;
+            break;
+        case 13:
+            return WebsocketControl::Command::GetConfiguration;
             break;
         default:
             return WebsocketControl::Command::Unknown;
@@ -231,6 +240,9 @@ QString WebsocketControl::commandToCommandName(WebsocketControl::Command command
         case WebsocketControl::Command::SetOptions:
             return "setOptions";
             break;
+        case WebsocketControl::Command::GetConfiguration:
+            return "getConfiguration";
+            break;
         case WebsocketControl::Command::Unknown:
             Q_ASSERT(command == WebsocketControl::Command::Unknown);
             return "unknown"; // Just make lint happy
@@ -238,6 +250,17 @@ QString WebsocketControl::commandToCommandName(WebsocketControl::Command command
     }
 }
 
+QString WebsocketControl::buildResponse(bool isOk, QString message, WebsocketControl::Command command, QJsonObject data) {
+    QJsonObject errordObject;
+    errordObject.insert("isOk", QJsonValue::fromVariant(isOk));
+    errordObject.insert("message", QJsonValue::fromVariant(message));
+    errordObject.insert("command", QJsonValue::fromVariant(this->commandToCommandName(command)));
+    errordObject.insert("data", QJsonValue::fromVariant(data));
+
+    QJsonDocument jsonDocument(errordObject);
+
+    return jsonDocument.toJson();
+}
 
 QString WebsocketControl::buildResponse(bool isOk, QString message, WebsocketControl::Command command) {
     QJsonObject errordObject;
@@ -263,7 +286,7 @@ QString WebsocketControl::buildResponse(bool isOk, QString message) {
 void WebsocketControl::processBinaryMessage(QByteArray message)
 {
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-    if (m_debug)
+    if (this->debug)
         qDebug() << "Binary Message received:" << message;
     if (pClient) {
         pClient->sendBinaryMessage(message);
@@ -273,10 +296,10 @@ void WebsocketControl::processBinaryMessage(QByteArray message)
 void WebsocketControl::socketDisconnected()
 {
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-    if (m_debug)
+    if (this->debug)
         qDebug() << "socketDisconnected:" << pClient;
     if (pClient) {
-        m_clients.removeAll(pClient);
+        this->clients.removeAll(pClient);
         pClient->deleteLater();
     }
 }
@@ -285,9 +308,9 @@ void WebsocketControl::socketDisconnected()
  * Commands
  **********************/
 
-void WebsocketControl::commandSetUrl(QJsonObject options, QWebSocket *pClient) {
+void WebsocketControl::commandSetUrl(QJsonObject data, QWebSocket *pClient) {
     // set_url has only one option and that is url
-    QJsonValue urlValue = options.value("url");
+    QJsonValue urlValue = data.value("url");
     if (!urlValue.isString()) {
         pClient->sendTextMessage(this->buildResponse(false, "url has to be string", WebsocketControl::Command::SetUrl));
         return;
@@ -301,10 +324,10 @@ void WebsocketControl::commandSetUrl(QJsonObject options, QWebSocket *pClient) {
 }
 
 
-void WebsocketControl::commandSetWindowMode(QJsonObject options, QWebSocket *pClient) {
+void WebsocketControl::commandSetWindowMode(QJsonObject data, QWebSocket *pClient) {
     //showNormal() : showFullScreen();
     // setWindowMode has only one option and that is fullscreen
-    QJsonValue fullscreenValue = options.value("fullscreen");
+    QJsonValue fullscreenValue = data.value("fullscreen");
     if (!fullscreenValue.isBool()) {
         pClient->sendTextMessage(this->buildResponse(false, "fullscreenValue has to be boolean", WebsocketControl::Command::SetWindowMode));
         return;
@@ -317,9 +340,9 @@ void WebsocketControl::commandSetWindowMode(QJsonObject options, QWebSocket *pCl
     pClient->sendTextMessage(this->buildResponse(true, "OK", WebsocketControl::Command::SetWindowMode));
 }
 
-void WebsocketControl::commandSetIdleTime(QJsonObject options, QWebSocket *pClient) {
+void WebsocketControl::commandSetIdleTime(QJsonObject data, QWebSocket *pClient) {
     // setIdleTime has only one option and that is idleTime
-    QJsonValue idleTimeValue = options.value("idleTime");
+    QJsonValue idleTimeValue = data.value("idleTime");
     if (!idleTimeValue.isDouble()) {
         pClient->sendTextMessage(this->buildResponse(false, "idleTime has to be number", WebsocketControl::Command::SetIdleTime));
         return;
@@ -332,9 +355,9 @@ void WebsocketControl::commandSetIdleTime(QJsonObject options, QWebSocket *pClie
     pClient->sendTextMessage(this->buildResponse(true, "OK", WebsocketControl::Command::SetIdleTime));
 }
 
-void WebsocketControl::commandSetWhiteList(QJsonObject options, QWebSocket *pClient) {
+void WebsocketControl::commandSetWhiteList(QJsonObject data, QWebSocket *pClient) {
     // SetWhiteList has only one option and that is whitelist
-    QJsonValue whitelistValue = options.value("whitelist");
+    QJsonValue whitelistValue = data.value("whitelist");
     if (!whitelistValue.isArray()) {
         pClient->sendTextMessage(this->buildResponse(false, "whitelist has to be array", WebsocketControl::Command::SetWhiteList));
         return;
@@ -348,9 +371,9 @@ void WebsocketControl::commandSetWhiteList(QJsonObject options, QWebSocket *pCli
     pClient->sendTextMessage(this->buildResponse(true, "OK", WebsocketControl::Command::SetWhiteList));
 }
 
-void WebsocketControl::commandSetPermissions(QJsonObject options, QWebSocket *pClient) {
+void WebsocketControl::commandSetPermissions(QJsonObject data, QWebSocket *pClient) {
     // SetWhiteList has only one option and that is whitelist
-    QJsonValue permissionsValue = options.value("permissions");
+    QJsonValue permissionsValue = data.value("permissions");
     if (!permissionsValue.isArray()) {
         pClient->sendTextMessage(this->buildResponse(false, "permissions has to be array", WebsocketControl::Command::SetPermissions));
         return;
@@ -367,9 +390,9 @@ void WebsocketControl::commandSetPermissions(QJsonObject options, QWebSocket *pC
     pClient->sendTextMessage(this->buildResponse(true, "OK", WebsocketControl::Command::SetPermissions));
 }
 
-void WebsocketControl::commandSetNavbarVerticalPosition(QJsonObject options, QWebSocket *pClient) {
+void WebsocketControl::commandSetNavbarVerticalPosition(QJsonObject data, QWebSocket *pClient) {
     // SetWhiteList has only one option and that is whitelist
-    QJsonValue navbarVerticalPositionValue = options.value("navbarVerticalPosition");
+    QJsonValue navbarVerticalPositionValue = data.value("navbarVerticalPosition");
     if (!navbarVerticalPositionValue.isString()) {
         pClient->sendTextMessage(this->buildResponse(false, "navbarVerticalPosition has to be string", WebsocketControl::Command::SetNavbarVerticalPosition));
         return;
@@ -386,8 +409,8 @@ void WebsocketControl::commandSetNavbarVerticalPosition(QJsonObject options, QWe
     pClient->sendTextMessage(this->buildResponse(true, "OK", WebsocketControl::Command::SetNavbarVerticalPosition));
 }
 
-void WebsocketControl::commandSetNavbarHorizontalPosition(QJsonObject options, QWebSocket *pClient) {
-    QJsonValue navbarHorizontalPositionValue = options.value("navbarHorizontalPosition");
+void WebsocketControl::commandSetNavbarHorizontalPosition(QJsonObject data, QWebSocket *pClient) {
+    QJsonValue navbarHorizontalPositionValue = data.value("navbarHorizontalPosition");
     if (!navbarHorizontalPositionValue.isString()) {
         pClient->sendTextMessage(this->buildResponse(false, "navbarHorizontalPosition has to be string", WebsocketControl::Command::SetNavbarHorizontalPosition));
         return;
@@ -404,8 +427,8 @@ void WebsocketControl::commandSetNavbarHorizontalPosition(QJsonObject options, Q
     pClient->sendTextMessage(this->buildResponse(true, "OK", WebsocketControl::Command::SetNavbarHorizontalPosition));
 }
 
-void WebsocketControl::commandSetNavbarWidth(QJsonObject options, QWebSocket *pClient) {
-    QJsonValue navbarWidthValue = options.value("navbarWidth");
+void WebsocketControl::commandSetNavbarWidth(QJsonObject data, QWebSocket *pClient) {
+    QJsonValue navbarWidthValue = data.value("navbarWidth");
     if (!navbarWidthValue.isDouble()) {
         pClient->sendTextMessage(this->buildResponse(false, "navbarWidth has to be number", WebsocketControl::Command::SetNavbarWidth));
         return;
@@ -422,8 +445,8 @@ void WebsocketControl::commandSetNavbarWidth(QJsonObject options, QWebSocket *pC
     pClient->sendTextMessage(this->buildResponse(true, "OK", WebsocketControl::Command::SetNavbarWidth));
 }
 
-void WebsocketControl::commandSetNavbarHeight(QJsonObject options, QWebSocket *pClient) {
-    QJsonValue navbarHeightValue = options.value("navbarHeight");
+void WebsocketControl::commandSetNavbarHeight(QJsonObject data, QWebSocket *pClient) {
+    QJsonValue navbarHeightValue = data.value("navbarHeight");
     if (!navbarHeightValue.isDouble()) {
         pClient->sendTextMessage(this->buildResponse(false, "navbarHeight has to be number", WebsocketControl::Command::SetNavbarHeight));
         return;
@@ -440,8 +463,8 @@ void WebsocketControl::commandSetNavbarHeight(QJsonObject options, QWebSocket *p
     pClient->sendTextMessage(this->buildResponse(true, "OK", WebsocketControl::Command::SetNavbarHeight));
 }
 
-void WebsocketControl::commandSetDisplayAddressBar(QJsonObject options, QWebSocket *pClient) {
-    QJsonValue displayAddressBarValue = options.value("displayAddressBar");
+void WebsocketControl::commandSetDisplayAddressBar(QJsonObject data, QWebSocket *pClient) {
+    QJsonValue displayAddressBarValue = data.value("displayAddressBar");
     if (!displayAddressBarValue.isBool()) {
         pClient->sendTextMessage(this->buildResponse(false, "displayAddressBar has to be bool", WebsocketControl::Command::SetDisplayAddressBar));
         return;
@@ -452,8 +475,8 @@ void WebsocketControl::commandSetDisplayAddressBar(QJsonObject options, QWebSock
     pClient->sendTextMessage(this->buildResponse(true, "OK", WebsocketControl::Command::SetDisplayAddressBar));
 }
 
-void WebsocketControl::commandSetDisplayNavBar(QJsonObject options, QWebSocket *pClient) {
-    QJsonValue displayNavBarValue = options.value("displayNavBar");
+void WebsocketControl::commandSetDisplayNavBar(QJsonObject data, QWebSocket *pClient) {
+    QJsonValue displayNavBarValue = data.value("displayNavBar");
     if (!displayNavBarValue.isBool()) {
         pClient->sendTextMessage(this->buildResponse(false, "displayNavBar has to be bool", WebsocketControl::Command::SetDisplayNavBar));
         return;
@@ -464,8 +487,8 @@ void WebsocketControl::commandSetDisplayNavBar(QJsonObject options, QWebSocket *
     pClient->sendTextMessage(this->buildResponse(true, "OK", WebsocketControl::Command::SetDisplayNavBar));
 }
 
-void WebsocketControl::commandSetUnderlayNavBar(QJsonObject options, QWebSocket *pClient) {
-    QJsonValue underlayNavBarValue = options.value("underlayNavBar");
+void WebsocketControl::commandSetUnderlayNavBar(QJsonObject data, QWebSocket *pClient) {
+    QJsonValue underlayNavBarValue = data.value("underlayNavBar");
     if (!underlayNavBarValue.isBool()) {
         pClient->sendTextMessage(this->buildResponse(false, "underlayNavBar has to be bool", WebsocketControl::Command::SetUnderlayNavBar));
         return;
@@ -476,66 +499,85 @@ void WebsocketControl::commandSetUnderlayNavBar(QJsonObject options, QWebSocket 
     pClient->sendTextMessage(this->buildResponse(true, "OK", WebsocketControl::Command::SetUnderlayNavBar));
 }
 
-void WebsocketControl::commandSetOptions(QJsonObject options, QWebSocket *pClient) {
-    QJsonValue urlValue = options.value("url");
+void WebsocketControl::commandSetOptions(QJsonObject data, QWebSocket *pClient) {
+    QJsonValue urlValue = data.value("url");
     if (!urlValue.isUndefined()) {
-        this->commandSetUrl(options, pClient);
+        this->commandSetUrl(data, pClient);
     }
 
-    QJsonValue fullscreenValue = options.value("fullscreen");
+    QJsonValue fullscreenValue = data.value("fullscreen");
     if (!fullscreenValue.isUndefined()) {
-        this->commandSetWindowMode(options, pClient);
+        this->commandSetWindowMode(data, pClient);
     }
 
-    QJsonValue idleTimeValue = options.value("idleTime");
+    QJsonValue idleTimeValue = data.value("idleTime");
     if (!idleTimeValue.isUndefined()) {
-        this->commandSetIdleTime(options, pClient);
+        this->commandSetIdleTime(data, pClient);
     }
 
-    QJsonValue whitelistValue = options.value("whitelist");
+    QJsonValue whitelistValue = data.value("whitelist");
     if (!whitelistValue.isUndefined()) {
-        this->commandSetWhiteList(options, pClient);
+        this->commandSetWhiteList(data, pClient);
     }
 
-    QJsonValue permissionsValue = options.value("permissions");
+    QJsonValue permissionsValue = data.value("permissions");
     if (!permissionsValue.isUndefined()) {
-        this->commandSetPermissions(options, pClient);
+        this->commandSetPermissions(data, pClient);
     }
 
-    QJsonValue navbarVerticalPositionValue = options.value("navbarVerticalPosition");
+    QJsonValue navbarVerticalPositionValue = data.value("navbarVerticalPosition");
     if (!navbarVerticalPositionValue.isUndefined()) {
-        this->commandSetNavbarVerticalPosition(options, pClient);
+        this->commandSetNavbarVerticalPosition(data, pClient);
     }
 
-    QJsonValue navbarHorizontalPositionValue = options.value("navbarHorizontalPosition");
+    QJsonValue navbarHorizontalPositionValue = data.value("navbarHorizontalPosition");
     if (!navbarHorizontalPositionValue.isUndefined()) {
-        this->commandSetNavbarHorizontalPosition(options, pClient);
+        this->commandSetNavbarHorizontalPosition(data, pClient);
     }
 
-    QJsonValue navbarWidthValue = options.value("navbarWidth");
+    QJsonValue navbarWidthValue = data.value("navbarWidth");
     if (!navbarWidthValue.isUndefined()) {
-        this->commandSetNavbarWidth(options, pClient);
+        this->commandSetNavbarWidth(data, pClient);
     }
 
-    QJsonValue navbarHeightValue = options.value("navbarHeight");
+    QJsonValue navbarHeightValue = data.value("navbarHeight");
     if (!navbarHeightValue.isUndefined()) {
-        this->commandSetNavbarHeight(options, pClient);
+        this->commandSetNavbarHeight(data, pClient);
     }
 
-    QJsonValue displayAddressBarValue = options.value("displayAddressBar");
+    QJsonValue displayAddressBarValue = data.value("displayAddressBar");
     if (!displayAddressBarValue.isUndefined()) {
-        this->commandSetDisplayAddressBar(options, pClient);
+        this->commandSetDisplayAddressBar(data, pClient);
     }
 
-    QJsonValue displayNavBarValue = options.value("displayNavBar");
+    QJsonValue displayNavBarValue = data.value("displayNavBar");
     if (!displayNavBarValue.isUndefined()) {
-        this->commandSetDisplayNavBar(options, pClient);
+        this->commandSetDisplayNavBar(data, pClient);
     }
 
-    QJsonValue underlayNavBarValue = options.value("underlayNavBar");
+    QJsonValue underlayNavBarValue = data.value("underlayNavBar");
     if (!underlayNavBarValue.isUndefined()) {
-        this->commandSetUnderlayNavBar(options, pClient);
+        this->commandSetUnderlayNavBar(data, pClient);
     }
 
     pClient->sendTextMessage(this->buildResponse(true, "OK", WebsocketControl::Command::SetOptions));
+}
+
+void WebsocketControl::commandGetConfiguration(QJsonObject data, QWebSocket *pClient) {
+    QJsonObject dataObject;
+    dataObject.insert("url", QJsonValue::fromVariant(this->configuration->getUrl()));
+    dataObject.insert("isFullscreen", QJsonValue::fromVariant(this->configuration->isFullscreen()));
+    dataObject.insert("idleTime", QJsonValue::fromVariant(this->configuration->getIdleTime()));
+    dataObject.insert("whitelist", QJsonValue::fromVariant(this->configuration->getWhiteList()));
+    dataObject.insert("permissions", QJsonValue::fromVariant(WebPage::permissionTonames(this->configuration->getPermissions())));
+    dataObject.insert("navbarVerticalPosition", QJsonValue::fromVariant(BarWidget::verticalPositionToName(this->configuration->getNavbarVerticalPosition())));
+    dataObject.insert("navbarHorizontalPosition", QJsonValue::fromVariant(BarWidget::horizontalPositionToName(this->configuration->getNavbarHorizontalPosition())));
+    dataObject.insert("navbarWidth", QJsonValue::fromVariant(this->configuration->getNavbarWidth()));
+    dataObject.insert("navbarHeight", QJsonValue::fromVariant(this->configuration->getNavbarHeight()));
+    dataObject.insert("isDisplayAddressBar", QJsonValue::fromVariant(this->configuration->isDisplayAddressBar()));
+    dataObject.insert("isDisplayNavBar", QJsonValue::fromVariant(this->configuration->isDisplayNavBar()));
+    dataObject.insert("isUnderlayNavBar", QJsonValue::fromVariant(this->configuration->isUnderlayNavBar()));
+
+
+    pClient->sendTextMessage(this->buildResponse(true, "OK", WebsocketControl::Command::GetConfiguration, dataObject));
 }

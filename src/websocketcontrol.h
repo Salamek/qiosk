@@ -7,8 +7,10 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
-
+#include "QtWebSockets/qwebsocketserver.h"
+#include "QtWebSockets/qwebsocket.h"
 #include "webpage.h"
+#include "configuration.h"
 
 
 QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
@@ -34,13 +36,13 @@ public:
         SetDisplayNavBar,
         SetUnderlayNavBar,
         SetOptions,
+        GetConfiguration,
         Unknown
     };
 
 
-    explicit WebsocketControl(quint16 port, bool debug, QObject *parent = nullptr);
+    explicit WebsocketControl(QHostAddress host, quint16 port, bool debug, Configuration *configuration, QObject *parent = nullptr);
     ~WebsocketControl();
-
 Q_SIGNALS:
     void closed();
 
@@ -51,9 +53,12 @@ private Q_SLOTS:
     void socketDisconnected();
 
 private:
-    QWebSocketServer *m_pWebSocketServer;
-    QList<QWebSocket *> m_clients;
-    bool m_debug;
+    QWebSocketServer *pWebSocketServer;
+    QList<QWebSocket *> clients;
+    bool debug;
+    quint16 port;
+    QHostAddress host;
+    Configuration *configuration;
     void commandSetUrl(QJsonObject options, QWebSocket *pClient);
 
     void commandSetWindowMode(QJsonObject options, QWebSocket *pClient);
@@ -62,16 +67,20 @@ private:
     void commandSetPermissions(QJsonObject options, QWebSocket *pClient);
     WebsocketControl::Command commandNameToCommand(QString name);
     QString commandToCommandName(WebsocketControl::Command command);
+    QString buildResponse(bool isOk, QString message);
     QString buildResponse(bool isOk, QString message, WebsocketControl::Command command);
+    QString buildResponse(bool isOk, QString message, WebsocketControl::Command command, QJsonObject data);
     void commandSetOptions(QJsonObject options, QWebSocket *pClient);
     void commandSetNavbarVerticalPosition(QJsonObject options, QWebSocket *pClient);
     void commandSetNavbarHorizontalPosition(QJsonObject options, QWebSocket *pClient);
     void commandSetNavbarWidth(QJsonObject options, QWebSocket *pClient);
     void commandSetNavbarHeight(QJsonObject options, QWebSocket *pClient);
     void commandSetDisplayAddressBar(QJsonObject options, QWebSocket *pClient);
-    QString buildResponse(bool isOk, QString message);
+
     void commandSetDisplayNavBar(QJsonObject options, QWebSocket *pClient);
     void commandSetUnderlayNavBar(QJsonObject options, QWebSocket *pClient);
+    void commandGetConfiguration(QJsonObject options, QWebSocket *pClient);
+
 signals:
     void urlChange(QString url);
     void fullscreenChange(bool fullscreen);

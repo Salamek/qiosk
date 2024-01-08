@@ -1,6 +1,5 @@
 #include "webview.h"
 #include "mainwindow.h"
-#include <QDebug>
 #include <QMenu>
 #include <QMessageBox>
 #include <QWebEnginePage>

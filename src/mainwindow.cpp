@@ -12,8 +12,7 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     this->lastUserActivity = QDateTime::currentSecsSinceEpoch(); // Set last user activity to NOW
 
     // Start websocket control server
-    this->websocketControl = new WebsocketControl(1791, true);
-
+    this->websocketControl = new WebsocketControl(QHostAddress::LocalHost, 1791, false, this->config);
 
     this->webView = new WebView();
 

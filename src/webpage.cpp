@@ -194,3 +194,17 @@ WebPage::Permissions WebPage::namesToWebPagePermissions(QStringList allowPermiss
 
     return permissions;
 }
+
+QStringList WebPage::permissionTonames(WebPage::Permissions permissions){
+    QMap<QString, WebPage::Permission>permissionOptionsMap = WebPage::getPermissionOptionMap();
+
+    QStringList permissionNames;
+    WebPage::Permission permission;
+    foreach(permission, permissionOptionsMap.values()) {
+        if (permissions.testFlag(permission)) {
+            permissionNames << permissionOptionsMap.key(permission);
+        }
+    }
+
+    return permissionNames;
+}

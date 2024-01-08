@@ -118,9 +118,6 @@ void BarWidget::plot(int parentWidth, int parentHeight) {
 }
 
 BarWidget::HorizontalPosition BarWidget::nameToBarWidgetHorizontalPosition(QString name){
-    //QStringList navbarHorizontalPositionOptions;
-    //navbarHorizontalPositionOptions << "left" << "right" << "center";
-
     switch(BarWidget::navbarHorizontalPositionOptions.indexOf(name)){
     case 0:
         return BarWidget::HorizontalPosition::Left;
@@ -141,9 +138,6 @@ BarWidget::HorizontalPosition BarWidget::nameToBarWidgetHorizontalPosition(QStri
 
 
 BarWidget::VerticalPosition BarWidget::nameToBarWidgetVerticalPosition(QString name){
-    //QStringList navbarVerticalPositionOptions;
-    //navbarVerticalPositionOptions << "top" << "bottom";
-
     switch(BarWidget::navbarVerticalPositionOptions.indexOf(name)){
     case 0:
         return BarWidget::VerticalPosition::Top;
@@ -155,6 +149,42 @@ BarWidget::VerticalPosition BarWidget::nameToBarWidgetVerticalPosition(QString n
 
     default:
         return BarWidget::VerticalPosition::Unknown;
+        break;
+    }
+}
+
+QString BarWidget::verticalPositionToName(BarWidget::VerticalPosition verticalPosition){
+    switch(verticalPosition){
+    case BarWidget::VerticalPosition::Top:
+        return "top";
+        break;
+
+    case BarWidget::VerticalPosition::Bottom:
+        return "bottom";
+        break;
+
+    case BarWidget::VerticalPosition::Unknown:
+        return "unknown";
+        break;
+    }
+}
+
+QString BarWidget::horizontalPositionToName(BarWidget::HorizontalPosition horizontalPosition){
+    switch(horizontalPosition){
+    case BarWidget::HorizontalPosition::Center:
+        return "center";
+        break;
+
+    case BarWidget::HorizontalPosition::Left:
+        return "left";
+        break;
+
+    case BarWidget::HorizontalPosition::Right:
+        return "right";
+        break;
+
+    case BarWidget::HorizontalPosition::Unknown:
+        return "unknown";
         break;
     }
 }

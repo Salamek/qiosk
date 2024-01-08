@@ -4,7 +4,6 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QHBoxLayout>
-#include <QDebug>
 #include <QStyle>
 #include <QStyleOption>
 #include <QPainter>
@@ -49,6 +48,8 @@ public:
 
     static BarWidget::HorizontalPosition nameToBarWidgetHorizontalPosition(QString name);
     static BarWidget::VerticalPosition nameToBarWidgetVerticalPosition(QString name);
+    static QString verticalPositionToName(BarWidget::VerticalPosition verticalPosition);
+    static QString horizontalPositionToName(BarWidget::HorizontalPosition horizontalPosition);
 private:
     VerticalPosition positionVertical;
     HorizontalPosition positionHorizontal;

@@ -32,6 +32,7 @@ public:
     void setPermissions(WebPage::Permissions permissions);
     static WebPage::Permissions namesToWebPagePermissions(QStringList allowPermissionNames);
     static QMap<QString, WebPage::Permission> getPermissionOptionMap();
+    static QStringList permissionTonames(WebPage::Permissions permissions);
 private:
     bool isUrlInWhiteList(QUrl url);
     QList<QRegularExpression> whiteListRegexps;

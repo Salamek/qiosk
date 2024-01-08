@@ -1,5 +1,4 @@
 #include "userinputeventfilter.h"
-#include <QDebug>
 
 bool UserInputEventFilter::eventFilter(QObject *obj, QEvent *ev)
 {
