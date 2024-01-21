@@ -8,7 +8,7 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     this->config = config;
     this->resetHistoryLock = false;
     this->refreshWebAction = QWebEnginePage::Reload;
-    this->initialUrl = this->config->getUrl();
+    this->setHomePageUrl(this->config->getUrl());
     this->lastUserActivity = QDateTime::currentSecsSinceEpoch(); // Set last user activity to NOW
 
     // Start websocket control server
@@ -92,6 +92,9 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
 
     // Websocket control events
     connect(this->websocketControl, &WebsocketControl::urlChange, this->webView, &WebView::setUrl);
+    connect(this->websocketControl, &WebsocketControl::homePageUrlChange, [this](QString homePageUrl) {
+        this->setHomePageUrl(QUrl(homePageUrl));
+    });
     connect(this->websocketControl, &WebsocketControl::fullscreenChange, [this](bool fullscreen) {
         fullscreen ? showFullScreen() : showNormal();
     });
@@ -313,6 +316,10 @@ void MainWindow::setUnderlayNavBar(bool underlayNavBar) {
     this->underlayNavBar = underlayNavBar;
 }
 
+
+void MainWindow::setHomePageUrl(QUrl homePageUrl) {
+    this->initialUrl = homePageUrl;
+}
 
 MainWindow::~MainWindow()
 {

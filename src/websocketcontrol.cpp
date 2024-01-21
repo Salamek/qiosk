@@ -119,8 +119,8 @@ void WebsocketControl::processTextMessage(QString message)
         case WebsocketControl::Command::SetUnderlayNavBar:
             this->commandSetUnderlayNavBar(data, pClient);
             break;
-        case WebsocketControl::Command::SetOptions:
-            this->commandSetOptions(data, pClient);
+        case WebsocketControl::Command::SetHomePage:
+            this->commandSetHomePage(data, pClient);
             break;
         case WebsocketControl::Command::GetConfiguration:
             this->commandGetConfiguration(data, pClient);
@@ -146,7 +146,7 @@ WebsocketControl::Command WebsocketControl::commandNameToCommand(QString name){
         "setDisplayAddressBar",
         "setDisplayNavBar",
         "setUnderlayNavBar",
-        "setOptions",
+        "setHomePage",
         "getConfiguration"
     };
 
@@ -188,7 +188,7 @@ WebsocketControl::Command WebsocketControl::commandNameToCommand(QString name){
             return WebsocketControl::Command::SetUnderlayNavBar;
             break;
         case 12:
-            return WebsocketControl::Command::SetOptions;
+            return WebsocketControl::Command::SetHomePage;
             break;
         case 13:
             return WebsocketControl::Command::GetConfiguration;
@@ -237,8 +237,8 @@ QString WebsocketControl::commandToCommandName(WebsocketControl::Command command
         case WebsocketControl::Command::SetUnderlayNavBar:
             return "setUnderlayNavBar";
             break;
-        case WebsocketControl::Command::SetOptions:
-            return "setOptions";
+        case WebsocketControl::Command::SetHomePage:
+            return "setHomePage";
             break;
         case WebsocketControl::Command::GetConfiguration:
             return "getConfiguration";
@@ -499,6 +499,23 @@ void WebsocketControl::commandSetUnderlayNavBar(QJsonObject data, QWebSocket *pC
     pClient->sendTextMessage(this->buildResponse(true, "OK", WebsocketControl::Command::SetUnderlayNavBar));
 }
 
+
+void WebsocketControl::commandSetHomePage(QJsonObject data, QWebSocket *pClient) {
+    // set_url has only one option and that is url
+    QJsonValue homePageUrlValue = data.value("homePageUrl");
+    if (!homePageUrlValue.isString()) {
+        pClient->sendTextMessage(this->buildResponse(false, "homePageUrl has to be string", WebsocketControl::Command::SetHomePage));
+        return;
+    }
+
+    QString homePageUrl = homePageUrlValue.toString();
+    // Url is string, emit event and notify user
+    emit homePageUrlChange(homePageUrl);
+
+    pClient->sendTextMessage(this->buildResponse(true, "OK", WebsocketControl::Command::SetHomePage));
+}
+
+/*
 void WebsocketControl::commandSetOptions(QJsonObject data, QWebSocket *pClient) {
     QJsonValue urlValue = data.value("url");
     if (!urlValue.isUndefined()) {
@@ -561,7 +578,7 @@ void WebsocketControl::commandSetOptions(QJsonObject data, QWebSocket *pClient) 
     }
 
     pClient->sendTextMessage(this->buildResponse(true, "OK", WebsocketControl::Command::SetOptions));
-}
+}*/
 
 void WebsocketControl::commandGetConfiguration(QJsonObject data, QWebSocket *pClient) {
     QJsonObject dataObject;

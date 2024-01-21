@@ -32,6 +32,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(Configuration *config, QWidget *parent = nullptr);
     ~MainWindow();
+
 public slots:
     void onUserActivity();
 protected:
@@ -63,6 +64,7 @@ private:
     void setDisplayAddressBar(bool displayAddressBar);
     void setDisplayNavBar(bool displayNavBar);
     void setUnderlayNavBar(bool underlayNavBar);
+    void setHomePageUrl(QUrl homePageUrl);
 private slots:
     void goHome();
     void doReload();

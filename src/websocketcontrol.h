@@ -35,7 +35,7 @@ public:
         SetDisplayAddressBar,
         SetDisplayNavBar,
         SetUnderlayNavBar,
-        SetOptions,
+        SetHomePage,
         GetConfiguration,
         Unknown
     };
@@ -70,7 +70,7 @@ private:
     QString buildResponse(bool isOk, QString message);
     QString buildResponse(bool isOk, QString message, WebsocketControl::Command command);
     QString buildResponse(bool isOk, QString message, WebsocketControl::Command command, QJsonObject data);
-    void commandSetOptions(QJsonObject options, QWebSocket *pClient);
+    void commandSetHomePage(QJsonObject options, QWebSocket *pClient);
     void commandSetNavbarVerticalPosition(QJsonObject options, QWebSocket *pClient);
     void commandSetNavbarHorizontalPosition(QJsonObject options, QWebSocket *pClient);
     void commandSetNavbarWidth(QJsonObject options, QWebSocket *pClient);
@@ -83,6 +83,7 @@ private:
 
 signals:
     void urlChange(QString url);
+    void homePageUrlChange(QString homePageUrl);
     void fullscreenChange(bool fullscreen);
     void idleTimeChange(int idleTime);
     void whiteListChange(QStringList whitelist);
