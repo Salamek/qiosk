@@ -1,3 +1,19 @@
+qiosk (1.4.3) unstable; urgency=medium
+
+  * Features
+    * WebsocketControl
+      * 3fcd94a Added endpoint to set homePageUrl
+      * b6a7b9c Initial version of remote control via websocket
+    * CI
+      * 0b8655e Deps fixes
+      * 04b6763 Add websockets to deps
+    * Cmake
+      * 120ddd0 Enable QT5 again
+    * WebSocketControl
+      * 9865547 Added option to get config
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Sun, 21 Jan 2024 19:55:14 +0000
+
 qiosk (1.4.2) unstable; urgency=medium
 
   * Features
