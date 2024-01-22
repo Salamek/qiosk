@@ -138,7 +138,9 @@ Arguments:
 Since 2.4 qiosk can be remote controled via websocket connection on port 1791 binded to localhost
 
 
-### SetUrl
+### Commands
+
+#### SetUrl
 
 Sets currentyl displayed url
 
@@ -151,7 +153,7 @@ Sets currentyl displayed url
 }
 ```
 
-### SetWindowMode
+#### SetWindowMode
 
 Sets window mode, currently fullscreen=true/false
 
@@ -164,7 +166,7 @@ Sets window mode, currently fullscreen=true/false
 } 
 ```
 
-### SetIdleTime
+#### SetIdleTime
 
 Sets idle time to reload to homePage, idle time is in seconds
 
@@ -177,7 +179,7 @@ Sets idle time to reload to homePage, idle time is in seconds
 }  
 ```
 
-### SetWhiteList
+#### SetWhiteList
 
 Sets and enables white list, set list of allowed urls or empty to disable
 
@@ -190,7 +192,7 @@ Sets and enables white list, set list of allowed urls or empty to disable
 }    
 ```
 
-### SetPermissions(
+#### SetPermissions(
 
 Sets enabled permissions for browser like access to camera/mic/gps etc...
 
@@ -216,7 +218,7 @@ Permissions are
 }
 ```
 
-### SetNavbarVerticalPosition
+#### SetNavbarVerticalPosition
 
 Sets navbar veritcal positon:
 
@@ -232,7 +234,7 @@ Sets navbar veritcal positon:
 }  
 ```
 
-### SetNavbarHorizontalPosition
+#### SetNavbarHorizontalPosition
 
 Set navbar horizontal position:
 
@@ -249,7 +251,7 @@ Set navbar horizontal position:
 }    
 ```
 
-### SetNavbarWidth
+#### SetNavbarWidth
 
 Sets nawbar width in %
 
@@ -262,7 +264,7 @@ Sets nawbar width in %
 }    
 ```
 
-### SetNavbarHeight
+#### SetNavbarHeight
 
 Sets nawbar height in %
 
@@ -275,7 +277,7 @@ Sets nawbar height in %
 }      
 ```  
 
-### SetDisplayAddressBar
+#### SetDisplayAddressBar
 
 Sets if addess bar is displayed or not
 
@@ -288,7 +290,7 @@ Sets if addess bar is displayed or not
 }      
 ``` 
 
-### SetDisplayNavBar
+#### SetDisplayNavBar
 
 Sets if navbar is displayed or not
 
@@ -301,7 +303,7 @@ Sets if navbar is displayed or not
 }
 ``` 
 
-### SetUnderlayNavBar
+#### SetUnderlayNavBar
 
 Sets if navbar is displayed under or over the web content
 
@@ -314,7 +316,7 @@ Sets if navbar is displayed under or over the web content
 }
 ``` 
 
-### SetHomePage
+#### SetHomePage
 
 Sets home page
 
@@ -327,6 +329,31 @@ Sets home page
     }
 }
 ``` 
+
+
+### Events
+
+#### Active event
+Triggers when browser becomes active
+
+```json
+{
+   "event": "active",
+   "message": "Browser went to active state"
+}
+```
+
+#### Idle
+
+Triggers when browser becomes idle
+
+```json
+{
+    "event": "idle",
+    "message": "Browser went to idle state"
+}
+```
+
 
 
 
