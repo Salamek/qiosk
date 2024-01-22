@@ -3,9 +3,11 @@
 
 
 MainWindow::MainWindow(Configuration *config, QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent),
+    config(config)
 {
-    this->config = config;
+    //this->config = config;
+    this->isIdle = false;
     this->resetHistoryLock = false;
     this->refreshWebAction = QWebEnginePage::Reload;
     this->setHomePageUrl(this->config->getUrl());
@@ -92,10 +94,10 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
 
     // Websocket control events
     connect(this->websocketControl, &WebsocketControl::urlChange, this->webView, &WebView::setUrl);
-    connect(this->websocketControl, &WebsocketControl::homePageUrlChange, [this](QString homePageUrl) {
+    connect(this->websocketControl, &WebsocketControl::homePageUrlChange, this, [this](QString homePageUrl) {
         this->setHomePageUrl(QUrl(homePageUrl));
     });
-    connect(this->websocketControl, &WebsocketControl::fullscreenChange, [this](bool fullscreen) {
+    connect(this->websocketControl, &WebsocketControl::fullscreenChange, this, [this](bool fullscreen) {
         fullscreen ? showFullScreen() : showNormal();
     });
     connect(this->websocketControl, &WebsocketControl::idleTimeChange, this, &MainWindow::setIdleTime);
@@ -153,8 +155,10 @@ void MainWindow::doReload() {
 
 
 void MainWindow::checkReset() {
-    if (this->idleTime > 0 && this->lastUserActivity + this->idleTime <= QDateTime::currentSecsSinceEpoch()) {
+    if (this->idleTime > 0 && this->lastUserActivity + this->idleTime <= QDateTime::currentSecsSinceEpoch() && !this->isIdle) {
         this->doReset();
+        this->websocketControl->onIdle();
+        this->isIdle = true;
     }
 }
 
@@ -185,6 +189,12 @@ void MainWindow::doReset() {
 
 
 void MainWindow::onUserActivity() {
+    // Check if we are comming out from idle state or not
+    if (this->isIdle) {
+        this->websocketControl->onActive();
+        this->isIdle = false;
+    }
+
     this->lastUserActivity = QDateTime::currentSecsSinceEpoch();
 }
 

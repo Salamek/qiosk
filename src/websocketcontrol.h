@@ -43,6 +43,9 @@ public:
 
     explicit WebsocketControl(QHostAddress host, quint16 port, bool debug, Configuration *configuration, QObject *parent = nullptr);
     ~WebsocketControl();
+
+    void onIdle();
+    void onActive();
 Q_SIGNALS:
     void closed();
 
@@ -80,6 +83,8 @@ private:
     void commandSetDisplayNavBar(QJsonObject options, QWebSocket *pClient);
     void commandSetUnderlayNavBar(QJsonObject options, QWebSocket *pClient);
     void commandGetConfiguration(QJsonObject options, QWebSocket *pClient);
+    void broadcastMessage(QString message);
+    void onEvent(QString eventName, QString eventMessage);
 
 signals:
     void urlChange(QString url);

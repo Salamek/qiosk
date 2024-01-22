@@ -38,6 +38,38 @@ void WebsocketControl::onNewConnection()
     this->clients << pSocket;
 }
 
+
+void WebsocketControl::onIdle() {
+    this->onEvent("idle", "Browser went to idle state");
+}
+
+void WebsocketControl::onActive() {
+    this->onEvent("active", "Browser went to active state");
+}
+
+void WebsocketControl::onEvent(QString eventName, QString eventMessage) {
+    QJsonObject errordObject;
+    errordObject.insert("message", QJsonValue::fromVariant(eventMessage));
+    errordObject.insert("event", QJsonValue::fromVariant(eventName));
+
+    QJsonDocument jsonDocument(errordObject);
+
+    this->broadcastMessage(jsonDocument.toJson());
+}
+
+
+void WebsocketControl::broadcastMessage(QString message){
+    if (this->clients.isEmpty()) {
+        return;
+    }
+
+    for (QWebSocket *pClient : this->clients)
+    {
+        pClient->sendTextMessage(message);
+    }
+}
+
+
 void WebsocketControl::processTextMessage(QString message)
 {
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());

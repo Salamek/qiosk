@@ -45,6 +45,7 @@ private:
     qint64 lastUserActivity;
     int idleTime;
     Configuration *config;
+    bool isIdle;
     bool resetHistoryLock;
     bool underlayNavBar;
     QUrl initialUrl;
