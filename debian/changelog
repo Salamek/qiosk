@@ -1,3 +1,39 @@
+qiosk (1.6.1) unstable; urgency=medium
+
+  * Fixes
+    * NavBar
+      * adf099e Replot navbar on width/height/position change
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Mon, 22 Jan 2024 20:54:25 +0000
+
+
+qiosk (1.6) unstable; urgency=medium
+
+  * Fixes
+    * Deps
+      * 329f9ca Add qt*-websockets to archlinux builds
+      * c7b62c2 Install correct deps in debian build
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Mon, 22 Jan 2024 19:40:19 +0100
+
+
+qiosk (1.5) unstable; urgency=medium
+
+  * Features
+    * doct
+      * e5c04d1 Added websocket events
+    * WebsocketControl
+      * 485ae03 Added events idle/active
+    * README
+      * 58b8c96 Add link to docs
+    * Docs
+      * a9668fd Added docs
+  * Fixes
+    * doc
+      * 1d77568 Fix JSON format
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Mon, 22 Jan 2024 18:25:29 +0100
+
 qiosk (1.6) unstable; urgency=medium
 
   * Fixes
