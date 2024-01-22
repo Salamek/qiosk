@@ -11,11 +11,13 @@ license=('GPL-3')
 url='https://github.com/salamek/qiosk'
 depends=(
     'qt6-webengine'
+    'qt6-websockets'
     'qt6-virtualkeyboard'
 )
 
 makedepends=(
     'qt6-webengine'
+    'qt6-websockets'
     'gcc'
     'make'
     'cmake'
