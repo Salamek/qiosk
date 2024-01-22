@@ -185,7 +185,7 @@ Sets and enables white list, set list of allowed urls or empty to disable
 {
     "command": "setWhiteList",
     "data": {
-        "whitelist": ['https://github.com/*']
+        "whitelist": ["https://github.com/*"]
     }
 }    
 ```
@@ -211,7 +211,7 @@ Permissions are
 {
     "command": "setPermissions",
     "data": {
-        "permissions": ['geolocation']
+        "permissions": ["geolocation"]
     }
 }
 ```
@@ -227,7 +227,7 @@ Sets navbar veritcal positon:
 {  
     "command": "setNavbarVerticalPosition",
     "data": {
-        "navbarVerticalPosition": 'bottom'
+        "navbarVerticalPosition": "bottom"
     }
 }  
 ```
@@ -244,7 +244,7 @@ Set navbar horizontal position:
 {
     "command": "setNavbarHorizontalPosition",
     "data": {
-        "navbarHorizontalPosition": 'center'
+        "navbarHorizontalPosition": "center"
     }
 }    
 ```
