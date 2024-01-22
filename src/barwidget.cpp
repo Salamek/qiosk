@@ -48,33 +48,45 @@ void BarWidget::paintEvent(QPaintEvent *)
 
 void BarWidget::setVerticalPosition(VerticalPosition positionVertical) {
     this->positionVertical = positionVertical;
+    this->plot();
 }
 
 void BarWidget::setHorizontalPosition(HorizontalPosition positionHorizontal) {
     this->positionHorizontal = positionHorizontal;
+    this->plot();
 }
 
 void BarWidget::setWidth(int widthPercent) {
     this->widthPercent = widthPercent;
+    this->plot();
 }
 
 void BarWidget::setHeight(int heightPercent) {
     this->heightPercent = heightPercent;
+    this->plot();
 }
 
-void BarWidget::plot(int parentWidth, int parentHeight) {
+
+void BarWidget::plot() {
+    this->plot(this->parentWidget()->size());
+}
+
+
+void BarWidget::plot(QSize parentSize) {
+
+
     QString styleBackground = "BarWidget{background-color: rgba(53, 53, 53, .85);";
     int minHeight = 50; //px
     int minWidth = 48 * 4 + 10; //px
 
-    int barWidth = qMax(parentWidth * this->widthPercent / 100 , minWidth);
-    int barHeight = qMax(parentHeight * this->heightPercent / 100, minHeight);
+    int barWidth = qMax(parentSize.width() * this->widthPercent / 100 , minWidth);
+    int barHeight = qMax(parentSize.height() * this->heightPercent / 100, minHeight);
     int barX;
     int barY;
 
     switch(this->positionHorizontal) {
         case HorizontalPosition::Center:
-            barX = (parentWidth / 2) - (barWidth / 2);
+            barX = (parentSize.width() / 2) - (barWidth / 2);
             if (this->widthPercent < 100) {
                 styleBackground += " border-top-left-radius: 10px; border-top-right-radius: 10px;";
             }
@@ -84,7 +96,7 @@ void BarWidget::plot(int parentWidth, int parentHeight) {
             styleBackground += " border-top-right-radius: 10px;";
             break;
         case HorizontalPosition::Right:
-            barX = parentWidth - barWidth;
+            barX = parentSize.width() - barWidth;
             styleBackground += " border-top-left-radius: 10px;";
             break;
 
@@ -98,7 +110,7 @@ void BarWidget::plot(int parentWidth, int parentHeight) {
 
     switch(this->positionVertical) {
     case VerticalPosition::Bottom:
-        barY = parentHeight - barHeight;
+        barY = parentSize.height() - barHeight;
         break;
     case VerticalPosition::Top:
         barY = 0;

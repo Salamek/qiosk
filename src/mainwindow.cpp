@@ -106,6 +106,7 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     connect(this->websocketControl, &WebsocketControl::navbarVerticalPositionsChange, this->barWidget, &BarWidget::setVerticalPosition);
     connect(this->websocketControl, &WebsocketControl::navbarHorizontalPositionsChange, this->barWidget, &BarWidget::setHorizontalPosition);
     connect(this->websocketControl, &WebsocketControl::navbarWidthChange, this->barWidget, &BarWidget::setWidth);
+    connect(this->websocketControl, &WebsocketControl::navbarHeightChange, this->barWidget, &BarWidget::setHeight);
     connect(this->websocketControl, &WebsocketControl::displayAddressBarChange, this, &MainWindow::setDisplayAddressBar);
     connect(this->websocketControl, &WebsocketControl::displayNavBarChange, this, &MainWindow::setDisplayNavBar);
     connect(this->websocketControl, &WebsocketControl::underlayNavBarChange, this, &MainWindow::setUnderlayNavBar);
@@ -126,12 +127,6 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     // ============================
     // End of initial configuration
     // ============================
-
-    //Plot initial geometry
-    /*QRect windowGeometry = this->geometry();
-    qDebug() << windowGeometry;
-    this->barWidget->plot(windowGeometry.width(), windowGeometry.height());
-    this->progressBar->plot(windowGeometry.width(), windowGeometry.height());*/
 
     //Load URL
     this->webView->setUrl(this->initialUrl);
@@ -203,8 +198,8 @@ void MainWindow::plotTimerHack() {
 }
 
 void MainWindow::plot(QSize size) {
-    this->barWidget->plot(size.width(), size.height());
-    this->progressBar->plot(size.width(), size.height());
+    this->barWidget->plot(size);
+    this->progressBar->plot(size);
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event) {

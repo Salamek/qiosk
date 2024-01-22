@@ -12,7 +12,7 @@ class ProgressBarWidget : public QProgressBar
     Q_OBJECT
 public:
     ProgressBarWidget(QWidget *parent = nullptr);
-    void plot(int parentWidth, int parentHeight);
+    void plot(QSize parentSize);
     void setValue(int value);
 
 private:

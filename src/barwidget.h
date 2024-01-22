@@ -34,7 +34,7 @@ public:
     static QStringList navbarHorizontalPositionOptions;
     static QStringList navbarVerticalPositionOptions;
 
-    void plot(int parentWidth, int parentHeight);
+    void plot(QSize parentSize);
     void setVerticalPosition(VerticalPosition positionVertical);
     void setHorizontalPosition(HorizontalPosition positionHorizontal);
     void setWidth(int widthPercent);
@@ -50,6 +50,7 @@ public:
     static BarWidget::VerticalPosition nameToBarWidgetVerticalPosition(QString name);
     static QString verticalPositionToName(BarWidget::VerticalPosition verticalPosition);
     static QString horizontalPositionToName(BarWidget::HorizontalPosition horizontalPosition);
+    void plot();
 private:
     VerticalPosition positionVertical;
     HorizontalPosition positionHorizontal;

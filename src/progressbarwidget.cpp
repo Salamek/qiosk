@@ -9,9 +9,8 @@ ProgressBarWidget::ProgressBarWidget(QWidget *parent)
     this->move(0, 0);
 }
 
-void ProgressBarWidget::plot(int parentWidth, int parentHeight) {
-    Q_UNUSED(parentHeight);
-    this->resize(parentWidth, 1);
+void ProgressBarWidget::plot(QSize parentSize) {
+    this->resize(parentSize.width(), 1);
 }
 
 void ProgressBarWidget::setValue(int value) {
