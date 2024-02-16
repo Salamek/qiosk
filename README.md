@@ -9,6 +9,7 @@ Qiosk is a "kiosk first" web browser written in QT as a core part of [chromium-k
 * Integrated whitelist
 * Resets to default settings when idle for specified amount of time
 * Configurable button bar with options to specify height/width, position
+* Websocket API for ~remote control
 * Uses QT [QWebEngine](https://wiki.qt.io/QtWebEngine) so it is basically build on chromium
 
 
