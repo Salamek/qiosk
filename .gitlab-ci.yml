@@ -129,20 +129,21 @@ package:archlinux:x86-64:
     paths:
       - archlinux/qiosk*
     expire_in: 1d
-    
-package:archlinux:armv7h:
-  stage: package
-  script:
-    - sudo pacman -Sy binutils fakeroot qt5-webengine qt5-virtualkeyboard cmake gcc make qt5-websockets qt5-quickcontrols base-devel --noconfirm
-    - cd archlinux
-    - makepkg -f -p PKGBUILD-qt5
-  tags:
-    - archlinux-arm7
+ 
+# latest cmake is broken on armv7h   
+#package:archlinux:armv7h:
+#  stage: package
+#  script:
+#    - sudo pacman -Sy binutils fakeroot qt5-webengine qt5-virtualkeyboard cmake gcc make qt5-websockets qt5-quickcontrols base-devel --noconfirm
+#    - cd archlinux
+#    - makepkg -f -p PKGBUILD-qt5
+#  tags:
+#    - archlinux-arm7
 
-  artifacts:
-    paths:
-      - archlinux/qiosk*
-    expire_in: 1d
+#  artifacts:
+#    paths:
+#      - archlinux/qiosk*
+#    expire_in: 1d
 
 
 package:archlinux:aarch64:
@@ -172,12 +173,12 @@ repoupdate:
 
   script:
     - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/www/arch/pub/x86_64/qiosk*.pkg.tar.*'
-    - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/www/arch/pub/armv7h/qiosk*.pkg.tar.*'
+#    - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/www/arch/pub/armv7h/qiosk*.pkg.tar.*'
     - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/www/arch/pub/aarch64/qiosk*.pkg.tar.*'
     - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/cache/deb/pub/all/qiosk*.deb'
     - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/cache/deb/pub/all/qt5-qiosk*.deb'
     - scp archlinux/qiosk-*-x86_64.pkg.tar.* www-data@repository:/var/www/repository.salamek.cz/www/arch/pub/x86_64
-    - scp archlinux/qiosk-*-armv7h.pkg.tar.* www-data@repository:/var/www/repository.salamek.cz/www/arch/pub/armv7h
+#    - scp archlinux/qiosk-*-armv7h.pkg.tar.* www-data@repository:/var/www/repository.salamek.cz/www/arch/pub/armv7h
     - scp archlinux/qiosk-*-aarch64.pkg.tar.* www-data@repository:/var/www/repository.salamek.cz/www/arch/pub/aarch64
     - scp qiosk*.deb www-data@repository:/var/www/repository.salamek.cz/cache/deb/pub/all
     - scp qt5-qiosk*.deb www-data@repository:/var/www/repository.salamek.cz/cache/deb/pub/all
@@ -191,7 +192,7 @@ repoupdate:
     - package:debian:x86-64
     - package:debian:x86-64-qt5
     - package:archlinux:x86-64
-    - package:archlinux:armv7h
+#    - package:archlinux:armv7h
     - package:archlinux:aarch64
   tags:
     - debian
