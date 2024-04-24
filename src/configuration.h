@@ -16,6 +16,7 @@ public:
     bool touchscreen; // @TODO Touchscreen support enabled
     bool displayAddressBar;  // Is address bar displayed?
     bool displayNavBar;  // Is navbar displayed?
+    bool displayScrollBars; // Are scroll bars displayed
     bool underlayNavBar;  // Is navbar floating?
     int idleTime; // Timeout to reset the browser to initial state, 0 is disabled
     QStringList whiteList; // List of whitelisted URLs in GLOB format
@@ -58,6 +59,8 @@ public:
     bool isUnderlayNavBar();
     QString getProfileName();
 
+    bool isDisplayScrollBars();
+    void setDisplayScrollBars(bool displayScrollBars);
 signals:
 
 };

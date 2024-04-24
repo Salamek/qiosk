@@ -14,6 +14,7 @@ Configuration::Configuration(QObject *parent)
     this->navbarHeight = 5; //%
     this->displayAddressBar = false;
     this->displayNavBar = false;
+    this->displayScrollBars = false;
     this->underlayNavBar = false;
     this->profileName = "default";
     //this->permissions = WebPage::Permission::AllowGeolocation | WebPage::Permission::AllowInvalidCertificate | WebPage::Permission::AllowNotifications | WebPage::Permission::AllowDesktopVideoCapture;
@@ -74,6 +75,10 @@ void Configuration::setDisplayNavBar(bool displayNavBar) {
     this->displayNavBar = displayNavBar;
 }
 
+void Configuration::setDisplayScrollBars(bool displayScrollBars) {
+    this->displayScrollBars = displayScrollBars;
+}
+
 void Configuration::setUnderlayNavBar(bool underlayNavBar) {
     this->underlayNavBar = underlayNavBar;
 }
@@ -124,6 +129,10 @@ bool Configuration::isDisplayAddressBar() {
 
 bool Configuration::isDisplayNavBar() {
     return this->displayNavBar;
+}
+
+bool Configuration::isDisplayScrollBars() {
+    return this->displayScrollBars;
 }
 
 bool Configuration::isUnderlayNavBar() {

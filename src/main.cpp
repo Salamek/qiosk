@@ -94,6 +94,10 @@ int main(int argc, char *argv[])
     QCommandLineOption displayNavBarOption(QString("display-navbar"), QCoreApplication::translate("main", "Display navbar with navigation buttons."));
     parser.addOption(displayNavBarOption);
 
+    // A boolean option (--display-scroll-bars)
+    QCommandLineOption displayScrollBarsOption(QString("display-scroll-bars"), QCoreApplication::translate("main", "Display scroll bars."));
+    parser.addOption(displayScrollBarsOption);
+
     // A boolean option (--underlay-navbar)
     QCommandLineOption underlayNavBarOption(QString("underlay-navbar"), QCoreApplication::translate("main", "Display navbar under the webview."));
     parser.addOption(underlayNavBarOption);
@@ -127,6 +131,7 @@ int main(int argc, char *argv[])
 
     config->setDisplayNavBar(parser.isSet(displayNavBarOption));
     config->setDisplayAddressBar(parser.isSet(displayAddressBarOption));
+    config->setDisplayScrollBars(parser.isSet(displayScrollBarsOption));
     config->setUnderlayNavBar(parser.isSet(underlayNavBarOption));
     config->setProfileName(parser.value(profileNameOption));
 
