@@ -31,8 +31,8 @@ prepare() {
 
 build() {
   cd build
-  cmake -B build -S ../../../ -DCMAKE_INSTALL_PREFIX=/usr
-  cmake --build build
+  cmake -B build -S ../../../ -DCMAKE_INSTALL_PREFIX=/usr 
+  cmake --build build -D CMAKE_BUILD_TYPE=Release
 }
 
 package() {
