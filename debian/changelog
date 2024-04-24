@@ -1,3 +1,20 @@
+qiosk (1.7.1) unstable; urgency=medium
+
+  * Features
+    * CI
+      * 52ae5c8 Archlinux install base-devel
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Wed, 24 Apr 2024 17:53:24 +0000
+
+
+qiosk (1.7) unstable; urgency=medium
+
+  * Features
+    * Scrollbars
+      * 39c6797 Added option to enable/disable scrollbars
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Wed, 24 Apr 2024 17:34:19 +0200
+
 qiosk (1.7) unstable; urgency=medium
 
   * Features
