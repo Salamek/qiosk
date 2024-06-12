@@ -16,6 +16,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS WebEngineWidgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS WebSockets)
 
+
 set(PROJECT_SOURCES
     src/barbutton.cpp src/barbutton.h
     src/barwidget.cpp src/barwidget.h
@@ -29,6 +30,7 @@ set(PROJECT_SOURCES
     src/webpage.cpp src/webpage.h
     src/webview.cpp src/webview.h
     src/websocketcontrol.h src/websocketcontrol.cpp
+    src/connectionchecker.h src/connectionchecker.cpp
     src/qiosk.qrc
 )
 
@@ -56,19 +58,29 @@ else()
 endif()
 
 
-target_link_libraries(qiosk PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::WebEngineWidgets Qt::WebSockets)
+target_link_libraries(qiosk PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::WebEngineWidgets Qt${QT_VERSION_MAJOR}::WebSockets)
 
+# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
+# If you are developing for iOS or macOS you should consider setting an
+# explicit, fixed bundle identifier manually though.
+if(${QT_VERSION} VERSION_LESS 6.1.0)
+  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.qiosk)
+endif()
 set_target_properties(qiosk PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
+    ${BUNDLE_ID_OPTION}
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
 
-install(TARGETS qiosk DESTINATION bin)
+include(GNUInstallDirs)
+install(TARGETS qiosk
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(qiosk)
 endif()
-

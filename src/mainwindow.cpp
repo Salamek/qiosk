@@ -16,6 +16,9 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     // Start websocket control server
     this->websocketControl = new WebsocketControl(QHostAddress::LocalHost, 1791, false, this->config);
 
+    // Initialize connection checker
+    this->connectionChecker = new ConnectionChecker(this);
+
     this->webView = new WebView();
 
     QWebEngineProfile *profile = (this->config->getProfileName() == "default" ? QWebEngineProfile::defaultProfile() : new QWebEngineProfile(this->config->getProfileName()));
@@ -66,6 +69,8 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     this->progressBar = new ProgressBarWidget(this);
     this->resetTimer = new ResetTimer(this);
 
+
+
     //Bar events
     connect(this->barWidget->homeButton, &QPushButton::clicked, this, &MainWindow::goHome);
     connect(this->barWidget->reloadButton, &QPushButton::clicked, this, &MainWindow::doReload);
@@ -112,6 +117,12 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     connect(this->websocketControl, &WebsocketControl::displayAddressBarChange, this, &MainWindow::setDisplayAddressBar);
     connect(this->websocketControl, &WebsocketControl::displayNavBarChange, this, &MainWindow::setDisplayNavBar);
     connect(this->websocketControl, &WebsocketControl::underlayNavBarChange, this, &MainWindow::setUnderlayNavBar);
+
+    // Connection checker events
+    connect(this->connectionChecker, &ConnectionChecker::urlAccessible, this, [this]() {
+        qDebug() << "URL is accessible. Reloading the page.";
+        this->doReload();
+    });
 
 
 
@@ -239,7 +250,11 @@ void MainWindow::handleWebViewLoadProgress(int progress)
 }
 
 void MainWindow::handleLoadFinished(bool ok) {
-    Q_UNUSED(ok);
+    if (!ok) {
+        qDebug() << "Load finished with error. Checking URL accessibility.";
+        this->connectionChecker->checkUrlAccessibility(this->webView->url());
+    }
+
     this->setupReloadStopButton(false);
     if (this->resetHistoryLock == true) {
         this->webView->history()->clear();

@@ -161,6 +161,7 @@ int main(int argc, char *argv[])
     config->setPermissions(permissions);
 
     MainWindow w(config);
+
     if (config->isFullscreen()) {
         w.showFullScreen();
     } else {

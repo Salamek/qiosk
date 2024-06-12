@@ -20,6 +20,7 @@
 #include "progressbarwidget.h"
 #include "resettimer.h"
 #include "websocketcontrol.h"
+#include "connectionchecker.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -55,6 +56,7 @@ private:
     QWebEnginePage::WebAction refreshWebAction;
     ResetTimer *resetTimer;
     WebsocketControl *websocketControl;
+    ConnectionChecker *connectionChecker;
     void handleWebViewLoadProgress(int progress);
     void handleLoadFinished(bool ok);
     void handleLoadStarted();

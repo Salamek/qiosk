@@ -280,6 +280,7 @@ QString WebsocketControl::commandToCommandName(WebsocketControl::Command command
             return "unknown"; // Just make lint happy
             break;
     }
+    return "unknown"; // Just make lint happy
 }
 
 QString WebsocketControl::buildResponse(bool isOk, QString message, WebsocketControl::Command command, QJsonObject data) {

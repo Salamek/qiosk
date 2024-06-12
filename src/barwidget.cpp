@@ -179,6 +179,8 @@ QString BarWidget::verticalPositionToName(BarWidget::VerticalPosition verticalPo
         return "unknown";
         break;
     }
+
+    return "unknown";
 }
 
 QString BarWidget::horizontalPositionToName(BarWidget::HorizontalPosition horizontalPosition){
@@ -199,6 +201,8 @@ QString BarWidget::horizontalPositionToName(BarWidget::HorizontalPosition horizo
         return "unknown";
         break;
     }
+
+    return "unknown";
 }
 
 
