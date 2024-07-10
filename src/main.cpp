@@ -110,6 +110,11 @@ int main(int argc, char *argv[])
     QCommandLineOption profileNameOption(QString("profile-name"), QCoreApplication::translate("main", "Profile name, if not specified or default, default off-record profile is used."), QCoreApplication::translate("main", "Profile name."), "default");
     parser.addOption(profileNameOption);
 
+
+    // A boolean option (--hide-cursor)
+    QCommandLineOption hideCursor(QString("hide-cursor"), QCoreApplication::translate("main", "Hide cursor."));
+    parser.addOption(hideCursor);
+
     // Process the actual command line arguments given by the user
     parser.process(a);
 
@@ -173,5 +178,10 @@ int main(int argc, char *argv[])
     QObject::connect(&userInputEventFilter, &UserInputEventFilter::userActivity, &w, &MainWindow::onUserActivity);
 
     a.installEventFilter(&userInputEventFilter);
+
+    if (parser.isSet(hideCursor)){
+      a.setOverrideCursor(Qt::BlankCursor);
+    }
+
     return a.exec();
 }
