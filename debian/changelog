@@ -1,3 +1,13 @@
+qiosk (1.8) unstable; urgency=medium
+
+  * Features
+    * CLI
+      * 8a68051 Added option to hide cursor --hide-cursor
+    * Connection
+      * 2c9ecb0 Initial implementation of connection checker
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Fri, 12 Jul 2024 00:33:16 +0000
+
 qiosk (1.7.1) unstable; urgency=medium
 
   * Features
