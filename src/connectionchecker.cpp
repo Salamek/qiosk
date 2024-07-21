@@ -32,12 +32,15 @@ void ConnectionChecker::handleNetworkReply(QNetworkReply *reply) {
     if (reply->error() == QNetworkReply::NoError) {
         emit urlAccessible();
         this->currentInterval = this->initialInterval; // Reset interval on success
+        this->timer->stop();
     } else {
         qDebug() << "URL is not accessible.";
         if (this->currentInterval < this->maxInterval) {
             this->currentInterval = qMin(this->currentInterval + this->incrementStep, this->maxInterval);
         }
+
+        this->timer->start(this->currentInterval); // Adjust the interval
     }
-    timer->start(this->currentInterval); // Adjust the interval
+
     reply->deleteLater();
 }
