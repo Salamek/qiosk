@@ -110,10 +110,14 @@ int main(int argc, char *argv[])
     QCommandLineOption profileNameOption(QString("profile-name"), QCoreApplication::translate("main", "Profile name, if not specified or default, default off-record profile is used."), QCoreApplication::translate("main", "Profile name."), "default");
     parser.addOption(profileNameOption);
 
-
     // A boolean option (--hide-cursor)
     QCommandLineOption hideCursor(QString("hide-cursor"), QCoreApplication::translate("main", "Hide cursor."));
     parser.addOption(hideCursor);
+
+    // A string option (--navbar-enable-button)
+    QStringList enableButtonOptionsMapKeys = BarWidget::navbarEnabledButtonOptions;
+    QCommandLineOption navbarEnableButtonOption(QString("navbar-enable-buttons"), QCoreApplication::translate("main", "Navbar enabled button"), enableButtonOptionsMapKeys.join(","), enableButtonOptionsMapKeys.join(","));
+    parser.addOption(navbarEnableButtonOption);
 
     // Process the actual command line arguments given by the user
     parser.process(a);
@@ -160,10 +164,18 @@ int main(int argc, char *argv[])
 
     WebPage::Permissions permissions = WebPage::namesToWebPagePermissions(parser.values(allowFeatureOption));
     if(permissions.testFlag(WebPage::Permission::Unknown)){
-        fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided permission is unknown, use one of %s.")));
+        fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided permission is unknown, use one of %s.", permissionOptionsMapKeys.join("|").toLatin1())));
         parser.showHelp(1);
     }
     config->setPermissions(permissions);
+
+
+    QList<BarWidget::Button> buttons = BarWidget::buttonNamesToButtons(parser.value(navbarEnableButtonOption).split(","));
+    if(buttons.contains(BarWidget::Button::Unknown)){
+        fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided enabled-button is unknown, use one of %s separated by comma.", enableButtonOptionsMapKeys.join("|").toLatin1())));
+        parser.showHelp(1);
+    }
+    config->setNavbarEnabledButtons(buttons);
 
     MainWindow w(config);
 

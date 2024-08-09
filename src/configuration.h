@@ -25,6 +25,7 @@ public:
     BarWidget::VerticalPosition navbarVerticalPosition;
     BarWidget::HorizontalPosition navbarHorizontalPosition;
     WebPage::Permissions permissions;
+    QList<BarWidget::Button> navBarEnabledButtons;
     int navbarWidth; //%
     int navbarHeight; //%
     QString profileName;
@@ -61,6 +62,8 @@ public:
 
     bool isDisplayScrollBars();
     void setDisplayScrollBars(bool displayScrollBars);
+    QList<BarWidget::Button> getNavBarEnabledButtons();
+    void setNavbarEnabledButtons(QList<BarWidget::Button> navBarEnabledButtons);
 signals:
 
 };

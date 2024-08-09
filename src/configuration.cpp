@@ -87,6 +87,10 @@ void Configuration::setProfileName(QString profileName) {
     this->profileName = profileName;
 }
 
+void Configuration::setNavbarEnabledButtons(QList<BarWidget::Button> navBarEnabledButtons) {
+    this->navBarEnabledButtons = navBarEnabledButtons;
+}
+
 bool Configuration::isFullscreen() {
     return this->fullscreen;
 }
@@ -121,6 +125,10 @@ QStringList Configuration::getWhiteList() {
 
 WebPage::Permissions Configuration::getPermissions() {
     return this->permissions;
+}
+
+QList<BarWidget::Button> Configuration::getNavBarEnabledButtons() {
+    return this->navBarEnabledButtons;
 }
 
 bool Configuration::isDisplayAddressBar() {

@@ -31,14 +31,24 @@ public:
         Unknown
     };
 
+    enum class Button {
+        Home,
+        Reload,
+        Forward,
+        Back,
+        Unknown
+    };
+
     static QStringList navbarHorizontalPositionOptions;
     static QStringList navbarVerticalPositionOptions;
+    static QStringList navbarEnabledButtonOptions;
 
     void plot(QSize parentSize);
     void setVerticalPosition(VerticalPosition positionVertical);
     void setHorizontalPosition(HorizontalPosition positionHorizontal);
     void setWidth(int widthPercent);
     void setHeight(int heightPercent);
+    void setNavBarEnabledButtons(QList<BarWidget::Button> enabledButtons);
 
     BarButton *homeButton;
     BarButton *reloadButton;
@@ -48,9 +58,17 @@ public:
 
     static BarWidget::HorizontalPosition nameToBarWidgetHorizontalPosition(QString name);
     static BarWidget::VerticalPosition nameToBarWidgetVerticalPosition(QString name);
+    static BarWidget::Button nameToBarWidgetButton(QString name);
     static QString verticalPositionToName(BarWidget::VerticalPosition verticalPosition);
     static QString horizontalPositionToName(BarWidget::HorizontalPosition horizontalPosition);
+    static QString buttonToName(BarWidget::Button button);
+    static QList<BarWidget::Button> buttonNamesToButtons(QStringList buttonNames);
+
     void plot();
+    void setDisplayBackButton(bool display);
+    void setDisplayForwardButton(bool display);
+    void setDisplayReloadButton(bool display);
+    void setDisplayHomeButton(bool display);
 private:
     VerticalPosition positionVertical;
     HorizontalPosition positionHorizontal;

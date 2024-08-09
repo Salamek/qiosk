@@ -3,6 +3,7 @@
 
 QStringList BarWidget::navbarHorizontalPositionOptions = {"left", "right", "center"};
 QStringList BarWidget::navbarVerticalPositionOptions = {"top", "bottom"};
+QStringList BarWidget::navbarEnabledButtonOptions = {"back", "forward", "reload", "home"};
 
 
 BarWidget::BarWidget(QWidget *parent)
@@ -23,6 +24,7 @@ BarWidget::BarWidget(QWidget *parent)
     backButton = new BarButton(backIcon, backIconDisabled);
     forwardButton = new BarButton(forwardIcon, forwardIconDisabled);
     reloadButton = new BarButton(reloadIcon, reloadIconDisabled);
+    reloadButton->setShortcut(Qt::Key_F5);
     homeButton = new BarButton(homeIcon, homeIconDisabled);
     QSpacerItem *horizontalSpacerOne = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
     buttonBarLayout->addItem(horizontalSpacerOne);
@@ -32,10 +34,50 @@ BarWidget::BarWidget(QWidget *parent)
     buttonBarLayout->addWidget(reloadButton);
     buttonBarLayout->addWidget(homeButton);
 
+
     QSpacerItem *horizontalSpacerTwo = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
     buttonBarLayout->addItem(horizontalSpacerTwo);
 
     this->setLayout(buttonBarLayout);
+}
+
+void BarWidget::setDisplayBackButton(bool display){
+    if (display) {
+        this->backButton->show();
+    } else {
+        this->backButton->hide();
+    }
+}
+
+void BarWidget::setDisplayForwardButton(bool display){
+    if (display) {
+        this->forwardButton->show();
+    } else {
+        this->forwardButton->hide();
+    }
+}
+
+void BarWidget::setDisplayReloadButton(bool display){
+    if (display) {
+        this->reloadButton->show();
+    } else {
+        this->reloadButton->hide();
+    }
+}
+
+void BarWidget::setDisplayHomeButton(bool display){
+    if (display) {
+        this->homeButton->show();
+    } else {
+        this->homeButton->hide();
+    }
+}
+
+void BarWidget::setNavBarEnabledButtons(QList<BarWidget::Button> enabledButtons) {
+    this->setDisplayBackButton(enabledButtons.contains(BarWidget::Button::Back));
+    this->setDisplayForwardButton(enabledButtons.contains(BarWidget::Button::Forward));
+    this->setDisplayReloadButton(enabledButtons.contains(BarWidget::Button::Reload));
+    this->setDisplayHomeButton(enabledButtons.contains(BarWidget::Button::Home));
 }
 
 void BarWidget::paintEvent(QPaintEvent *)
@@ -81,8 +123,8 @@ void BarWidget::plot(QSize parentSize) {
 
     int barWidth = qMax(parentSize.width() * this->widthPercent / 100 , minWidth);
     int barHeight = qMax(parentSize.height() * this->heightPercent / 100, minHeight);
-    int barX;
-    int barY;
+    int barX = 0;
+    int barY = 0;
 
     switch(this->positionHorizontal) {
         case HorizontalPosition::Center:
@@ -129,6 +171,30 @@ void BarWidget::plot(QSize parentSize) {
     this->setStyleSheet(style);
 }
 
+BarWidget::Button BarWidget::nameToBarWidgetButton(QString name){
+    switch(BarWidget::navbarEnabledButtonOptions.indexOf(name)){
+    case 0:
+        return BarWidget::Button::Back;
+        break;
+
+    case 1:
+        return BarWidget::Button::Forward;
+        break;
+
+    case 2:
+        return BarWidget::Button::Reload;
+        break;
+
+    case 3:
+        return BarWidget::Button::Home;
+        break;
+
+    default:
+        return BarWidget::Button::Unknown;
+        break;
+    }
+}
+
 BarWidget::HorizontalPosition BarWidget::nameToBarWidgetHorizontalPosition(QString name){
     switch(BarWidget::navbarHorizontalPositionOptions.indexOf(name)){
     case 0:
@@ -164,6 +230,33 @@ BarWidget::VerticalPosition BarWidget::nameToBarWidgetVerticalPosition(QString n
         break;
     }
 }
+
+QString BarWidget::buttonToName(BarWidget::Button button){
+    switch(button){
+    case BarWidget::Button::Back:
+        return "back";
+        break;
+
+    case BarWidget::Button::Forward:
+        return "forward";
+        break;
+
+    case BarWidget::Button::Reload:
+        return "reload";
+        break;
+
+    case BarWidget::Button::Home:
+        return "home";
+        break;
+
+    case BarWidget::Button::Unknown:
+        return "unknown";
+        break;
+    }
+
+    return "unknown";
+}
+
 
 QString BarWidget::verticalPositionToName(BarWidget::VerticalPosition verticalPosition){
     switch(verticalPosition){
@@ -205,4 +298,13 @@ QString BarWidget::horizontalPositionToName(BarWidget::HorizontalPosition horizo
     return "unknown";
 }
 
+
+QList<BarWidget::Button> BarWidget::buttonNamesToButtons(QStringList buttonNames) {
+    QList<BarWidget::Button> buttons;
+    foreach (QString buttonName, buttonNames) {
+        buttons.append(BarWidget::nameToBarWidgetButton(buttonName));
+    }
+
+    return buttons;
+}
 

@@ -133,6 +133,7 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     this->barWidget->setWidth(this->config->getNavbarWidth()); //%
     this->barWidget->setHorizontalPosition(this->config->getNavbarHorizontalPosition());
     this->barWidget->setVerticalPosition(this->config->getNavbarVerticalPosition());
+    this->barWidget->setNavBarEnabledButtons(this->config->getNavBarEnabledButtons());
 
     // Configure reset timer, disable this if timeout==0
     this->setIdleTime(this->config->getIdleTime());
@@ -338,6 +339,10 @@ void MainWindow::setUnderlayNavBar(bool underlayNavBar) {
     this->underlayNavBar = underlayNavBar;
 }
 
+
+void MainWindow::setNavBarEnabledButtons(QStringList enabledButtons) {
+    this->barWidget->setNavBarEnabledButtons(BarWidget::buttonNamesToButtons(enabledButtons));
+}
 
 void MainWindow::setHomePageUrl(QUrl homePageUrl) {
     this->initialUrl = homePageUrl;
