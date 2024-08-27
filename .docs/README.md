@@ -99,13 +99,14 @@ qiosk https://github.com
 More options:
 
 ```
+Usage: qiosk [options] url
 Kiosk browser written in QT
 
 Options:
   -h, --help                                         Displays help on
                                                      commandline options.
-  --help-all                                         Displays help including Qt
-                                                     specific options.
+  --help-all                                         Displays help, including
+                                                     generic Qt options.
   -v, --version                                      Displays version
                                                      information.
   -f, --fullscreen                                   Run browser in fullscreen
@@ -122,12 +123,20 @@ Options:
   edia-video-capture|mouse-lock|notifications>
   --display-navbar                                   Display navbar with
                                                      navigation buttons.
+  --display-scroll-bars                              Display scroll bars.
   --underlay-navbar                                  Display navbar under the
                                                      webview.
   --display-addressbar                               Display address bar.
+  --profile-name <Profile name.>                     Profile name, if not
+                                                     specified or default,
+                                                     default off-record profile
+                                                     is used.
+  --hide-cursor                                      Hide cursor.
+  --navbar-enable-buttons <back,forward,reload,home> Navbar enabled button
 
 Arguments:
   url                                                URL to display.
+                                        URL to display.
 ```
 
 
