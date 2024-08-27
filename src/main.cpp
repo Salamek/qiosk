@@ -62,32 +62,32 @@ int main(int argc, char *argv[])
     parser.addOption(fullscreenOption);
 
     // A int option with multiple names (-i, --idle)
-    QCommandLineOption idleTimeOption(QStringList() << "i" << "idle", QCoreApplication::translate("main", "Timeout to reset") ,QCoreApplication::translate("main", "seconds"), "0");
+    QCommandLineOption idleTimeOption(QStringList() << "i" << "idle", QCoreApplication::translate("main", "Timeout to reset to home page.") ,QCoreApplication::translate("main", "seconds"), "0");
     parser.addOption(idleTimeOption);
 
     // A int option with multiple names (-w, --white-list)
-    QCommandLineOption whiteListOption(QStringList() << "w" << "white-list", QCoreApplication::translate("main", "Whitelist with glob syntax") ,QCoreApplication::translate("main", "string"));
+    QCommandLineOption whiteListOption(QStringList() << "w" << "white-list", QCoreApplication::translate("main", "Whitelist with glob syntax.") ,QCoreApplication::translate("main", "string"));
     parser.addOption(whiteListOption);
 
     // A string option (--navbar-vertical-position)
-    QCommandLineOption navbarVerticalPositionOption(QString("navbar-vertical-position"), QCoreApplication::translate("main", "Navbar vertical position"), BarWidget::navbarVerticalPositionOptions.join("|"), "bottom");
+    QCommandLineOption navbarVerticalPositionOption(QString("navbar-vertical-position"), QCoreApplication::translate("main", "Navbar vertical position."), BarWidget::navbarVerticalPositionOptions.join("|"), "bottom");
     parser.addOption(navbarVerticalPositionOption);
 
     // A string option (--navbar-horizontal-position)
-    QCommandLineOption navbarHorizontalPositionOption(QString("navbar-horizontal-position"), QCoreApplication::translate("main", "Navbar horizontal position") , BarWidget::navbarHorizontalPositionOptions.join("|"), "center");
+    QCommandLineOption navbarHorizontalPositionOption(QString("navbar-horizontal-position"), QCoreApplication::translate("main", "Navbar horizontal position.") , BarWidget::navbarHorizontalPositionOptions.join("|"), "center");
     parser.addOption(navbarHorizontalPositionOption);
 
     // A string option (--navbar-width)
-    QCommandLineOption navbarWidthOption(QString("navbar-width"), QCoreApplication::translate("main", "Navbar width") ,QCoreApplication::translate("main", "%"), "100");
+    QCommandLineOption navbarWidthOption(QString("navbar-width"), QCoreApplication::translate("main", "Navbar width.") ,QCoreApplication::translate("main", "%"), "100");
     parser.addOption(navbarWidthOption);
 
     // A string option (--navbar-height)
-    QCommandLineOption navbarHeightOption(QString("navbar-height"), QCoreApplication::translate("main", "Navbar height") ,QCoreApplication::translate("main", "%"), "5");
+    QCommandLineOption navbarHeightOption(QString("navbar-height"), QCoreApplication::translate("main", "Navbar height.") ,QCoreApplication::translate("main", "%"), "5");
     parser.addOption(navbarHeightOption);
 
     // A string option with multiple names (-a, --allow-feature)
     QStringList permissionOptionsMapKeys = WebPage::getPermissionOptionMap().keys();
-    QCommandLineOption allowFeatureOption(QStringList() << "a" << "allow-feature", QCoreApplication::translate("main", "Allow feature"), permissionOptionsMapKeys.join("|"));
+    QCommandLineOption allowFeatureOption(QStringList() << "a" << "allow-feature", QCoreApplication::translate("main", "Allow feature."), permissionOptionsMapKeys.join("|"));
     parser.addOption(allowFeatureOption);
 
     // A boolean option (--display-navbar)
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
 
     // A string option (--navbar-enable-button)
     QStringList enableButtonOptionsMapKeys = BarWidget::navbarEnabledButtonOptions;
-    QCommandLineOption navbarEnableButtonOption(QString("navbar-enable-buttons"), QCoreApplication::translate("main", "Navbar enabled button"), enableButtonOptionsMapKeys.join(","), enableButtonOptionsMapKeys.join(","));
+    QCommandLineOption navbarEnableButtonOption(QString("navbar-enable-buttons"), QCoreApplication::translate("main", "Navbar enabled button."), enableButtonOptionsMapKeys.join(","), enableButtonOptionsMapKeys.join(","));
     parser.addOption(navbarEnableButtonOption);
 
     // Process the actual command line arguments given by the user
