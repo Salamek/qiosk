@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
     parser.addOption(displayAddressBarOption);
 
     // A string option (--profile-name)
-    QCommandLineOption profileNameOption(QString("profile-name"), QCoreApplication::translate("main", "Profile name, if not specified or default, default off-record profile is used."), QCoreApplication::translate("main", "Profile name."), "default");
+    QCommandLineOption profileNameOption(QString("profile-name"), QCoreApplication::translate("main", "Profile name, if not specified or default, default off-record profile is used."), QCoreApplication::translate("main", "profile_name."), "default");
     parser.addOption(profileNameOption);
 
     // A boolean option (--hide-cursor)
