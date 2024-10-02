@@ -36,6 +36,9 @@ int main(int argc, char *argv[])
     //qputenv("QTWEBENGINE_REMOTE_DEBUGGING", "9988"); //https://developer.chrome.com/docs/devtools/
     //qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-logging");
     //qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
+
+
+
     QCoreApplication::setOrganizationName("Salamek");
     QCoreApplication::setApplicationName("qiosk");
     QCoreApplication::setApplicationVersion("1.1.11");
@@ -54,7 +57,9 @@ int main(int argc, char *argv[])
     QCommandLineParser parser;
     parser.setApplicationDescription("Kiosk browser written in QT");
     parser.addHelpOption();
-    parser.addVersionOption();
+    QCommandLineOption versionOption(QStringList() << QStringLiteral("v") << QStringLiteral("version"), QCoreApplication::translate("main", "Displays version information."));
+    parser.addOption(versionOption);
+
     parser.addPositionalArgument("url", QCoreApplication::translate("main", "URL to display."));
 
     // A boolean option with multiple names (-f, --fullscreen)
@@ -121,6 +126,11 @@ int main(int argc, char *argv[])
 
     // Process the actual command line arguments given by the user
     parser.process(a);
+
+    if (parser.isSet(versionOption)) {
+        QTextStream(stdout) << QCoreApplication::applicationName() << ": " << QCoreApplication::applicationVersion() << "\n" << "chromium: " << qWebEngineChromiumVersion() << "\nQWebEngine: " << qWebEngineVersion() << "\n";
+        ::exit(EXIT_SUCCESS);
+    }
 
     const QStringList args = parser.positionalArguments();
     // url is args.at(0)
