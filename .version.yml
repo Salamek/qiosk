@@ -13,7 +13,7 @@ REGEXPS:
 VERSION_FILES:
     'CMakeLists.txt': 'CMakeLists.txt'
     'archlinux/PKGBUILD': 'PKGBUILD'
-    'main.cpp': 'main.cpp'
+    'src/main.cpp': 'main.cpp'
 
 
 CHANGE_LOGS:
