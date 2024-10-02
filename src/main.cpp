@@ -128,7 +128,10 @@ int main(int argc, char *argv[])
     parser.process(a);
 
     if (parser.isSet(versionOption)) {
-        QTextStream(stdout) << QCoreApplication::applicationName() << ": " << QCoreApplication::applicationVersion() << "\n" << "Chromium: " << qWebEngineChromiumVersion() << "\nQWebEngine: " << qWebEngineVersion() << "\n";
+        QTextStream(stdout) << QCoreApplication::applicationName() << ": " << QCoreApplication::applicationVersion() << "\n";
+#if QT_VERSION >= QT_VERSION_CHECK(6, 2, 0)
+        QTextStream(stdout) << "Chromium: " << qWebEngineChromiumVersion() << "\nQWebEngine: " << qWebEngineVersion() << "\n";
+#endif
         ::exit(EXIT_SUCCESS);
     }
 
