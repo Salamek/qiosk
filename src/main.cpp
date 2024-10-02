@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 
     QCoreApplication::setOrganizationName("Salamek");
     QCoreApplication::setApplicationName("qiosk");
-    QCoreApplication::setApplicationVersion("1.1.11");
+    QCoreApplication::setApplicationVersion("1.10.0");
 #if QT_VERSION <= QT_VERSION_CHECK(6, 0, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
     parser.process(a);
 
     if (parser.isSet(versionOption)) {
-        QTextStream(stdout) << QCoreApplication::applicationName() << ": " << QCoreApplication::applicationVersion() << "\n" << "chromium: " << qWebEngineChromiumVersion() << "\nQWebEngine: " << qWebEngineVersion() << "\n";
+        QTextStream(stdout) << QCoreApplication::applicationName() << ": " << QCoreApplication::applicationVersion() << "\n" << "Chromium: " << qWebEngineChromiumVersion() << "\nQWebEngine: " << qWebEngineVersion() << "\n";
         ::exit(EXIT_SUCCESS);
     }
 
