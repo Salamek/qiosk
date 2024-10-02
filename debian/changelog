@@ -1,3 +1,23 @@
+qiosk (1.10.0) unstable; urgency=medium
+
+  * Features
+    * CLI
+      * 4cdf38d Display chromium & QWebEngine versions when calling -v
+  * Fixes
+    * CLI
+      * 8704317 Fix command options descriptions.
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Wed, 02 Oct 2024 14:07:58 +0000
+
+
+qiosk (1.9) unstable; urgency=medium
+
+  * Features
+    * NavBar
+      * d70fe12 Added option to allow setting enabled buttons, all buttons are enabled by default.
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Fri, 09 Aug 2024 14:19:14 +0200
+
 qiosk (1.9) unstable; urgency=medium
 
   * Features
