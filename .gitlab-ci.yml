@@ -134,7 +134,7 @@ package:archlinux:x86-64:
 #package:archlinux:armv7h:
 #  stage: package
 #  script:
-#    - sudo pacman -Sy binutils fakeroot qt5-webengine qt5-virtualkeyboard cmake gcc make qt5-websockets qt5-quickcontrols base-devel --noconfirm
+#    - sudo pacman -Sy binutils fakeroot qt5-webengine qt5-virtualkeyboard cmake gcc make qt5-websockets qt5-quickcontrols base-devel --noconfirm --needed
 #    - cd archlinux
 #    - makepkg -f -p PKGBUILD-qt5
 #  tags:
@@ -149,7 +149,7 @@ package:archlinux:x86-64:
 package:archlinux:aarch64:
   stage: package
   script:
-    - sudo pacman -Syu binutils fakeroot qt6-webengine qt6-virtualkeyboard cmake gcc make qt6-websockets base-devel --noconfirm
+    - sudo pacman -Syu binutils fakeroot qt6-webengine qt6-virtualkeyboard cmake gcc make qt6-websockets base-devel --noconfirm --needed
     - cd archlinux
     - makepkg -f
   tags:
