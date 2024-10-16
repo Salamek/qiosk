@@ -1,3 +1,11 @@
+qiosk (1.11.0) unstable; urgency=medium
+
+  * Features
+    * Config
+      * 89e49c0 Added option to set Accept-Language and User-Agent HTTP headers with autodetection when not set
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Wed, 16 Oct 2024 10:52:17 +0000
+
 qiosk (1.10.2) unstable; urgency=medium
 
   * Fixes
