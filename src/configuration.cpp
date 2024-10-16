@@ -17,6 +17,7 @@ Configuration::Configuration(QObject *parent)
     this->displayScrollBars = false;
     this->underlayNavBar = false;
     this->profileName = "default";
+    this->acceptLanguage = QLocale().name(QLocale::TagSeparator::Dash);
     //this->permissions = WebPage::Permission::AllowGeolocation | WebPage::Permission::AllowInvalidCertificate | WebPage::Permission::AllowNotifications | WebPage::Permission::AllowDesktopVideoCapture;
 }
 
@@ -91,6 +92,14 @@ void Configuration::setNavbarEnabledButtons(QList<BarWidget::Button> navBarEnabl
     this->navBarEnabledButtons = navBarEnabledButtons;
 }
 
+void Configuration::setAcceptLanguage(QString acceptLanguage) {
+    this->acceptLanguage = acceptLanguage;
+}
+
+void Configuration::setUserAgent(QString userAgent) {
+    this->userAgent = userAgent;
+}
+
 bool Configuration::isFullscreen() {
     return this->fullscreen;
 }
@@ -149,4 +158,12 @@ bool Configuration::isUnderlayNavBar() {
 
 QString Configuration::getProfileName() {
     return this->profileName;
+}
+
+QString Configuration::getAcceptLanguage() {
+    return this->acceptLanguage;
+}
+
+QString Configuration::getUserAgent() {
+    return this->userAgent;
 }

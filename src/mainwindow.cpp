@@ -6,7 +6,6 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     : QMainWindow(parent),
     config(config)
 {
-    //this->config = config;
     this->isIdle = false;
     this->resetHistoryLock = false;
     this->refreshWebAction = QWebEnginePage::Reload;
@@ -25,6 +24,26 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
 
     // Make sure correct cookie settings are set
     profile->setPersistentCookiesPolicy(QWebEngineProfile::AllowPersistentCookies);
+
+    // Set AcceptLanguage header
+    profile->setHttpAcceptLanguage(this->config->getAcceptLanguage());
+
+    // Set UserAgent header
+    QString userAgent;
+    if (this->config->getUserAgent().isNull()) {
+        // User-Agent not set, set our default
+        userAgent = profile->httpUserAgent();
+
+        QStringList newAppString(QCoreApplication::applicationName());
+        newAppString << QCoreApplication::applicationVersion();
+
+        static QRegularExpression re = QRegularExpression("QtWebEngine/\\S+");
+        userAgent = userAgent.replace(re, newAppString.join("/"));
+    } else {
+        userAgent = this->config->getUserAgent();
+    }
+
+    profile->setHttpUserAgent(userAgent);
 
 
     WebPage *webPage = new WebPage(profile, this->webView);

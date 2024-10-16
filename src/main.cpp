@@ -37,8 +37,6 @@ int main(int argc, char *argv[])
     //qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-logging");
     //qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
 
-
-
     QCoreApplication::setOrganizationName("Salamek");
     QCoreApplication::setApplicationName("qiosk");
     QCoreApplication::setApplicationVersion("1.10.2");
@@ -124,6 +122,14 @@ int main(int argc, char *argv[])
     QCommandLineOption navbarEnableButtonOption(QString("navbar-enable-buttons"), QCoreApplication::translate("main", "Navbar enabled button."), enableButtonOptionsMapKeys.join(","), enableButtonOptionsMapKeys.join(","));
     parser.addOption(navbarEnableButtonOption);
 
+    // A string option (--accept-language), sets content of Accept-Language header
+    QCommandLineOption acceptLanguage(QString("accept-language"), QCoreApplication::translate("main", "Set content of Accept-Language header, autodetect when not set."),  QCoreApplication::translate("main", "accept_language"));
+    parser.addOption(acceptLanguage);
+
+    // A string option (--user-agent), sets content of User-Agent header
+    QCommandLineOption userAgent(QString("user-agent"), QCoreApplication::translate("main", "Set content of User-Agent header, autodetect when not set."),  QCoreApplication::translate("main", "user_agent"));
+    parser.addOption(userAgent);
+
     // Process the actual command line arguments given by the user
     parser.process(a);
 
@@ -189,6 +195,15 @@ int main(int argc, char *argv[])
         parser.showHelp(1);
     }
     config->setNavbarEnabledButtons(buttons);
+
+    if (parser.isSet(acceptLanguage)) {
+        config->setAcceptLanguage(parser.value(acceptLanguage));
+    }
+
+    if (parser.isSet(userAgent)) {
+        config->setUserAgent(parser.value(userAgent));
+    }
+
 
     MainWindow w(config);
 

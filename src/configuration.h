@@ -29,6 +29,8 @@ public:
     int navbarWidth; //%
     int navbarHeight; //%
     QString profileName;
+    QString acceptLanguage;
+    QString userAgent;
 
 
     void setUrl(QUrl url);
@@ -45,6 +47,9 @@ public:
     void setDisplayNavBar(bool displayNavBar);
     void setUnderlayNavBar(bool underlayNavBar);
     void setProfileName(QString profileName);
+    void setNavbarEnabledButtons(QList<BarWidget::Button> navBarEnabledButtons);
+    void setAcceptLanguage(QString acceptLanguage);
+    void setUserAgent(QString userAgent);
 
     bool isFullscreen();
     QUrl getUrl();
@@ -63,7 +68,8 @@ public:
     bool isDisplayScrollBars();
     void setDisplayScrollBars(bool displayScrollBars);
     QList<BarWidget::Button> getNavBarEnabledButtons();
-    void setNavbarEnabledButtons(QList<BarWidget::Button> navBarEnabledButtons);
+    QString getAcceptLanguage();
+    QString getUserAgent();
 signals:
 
 };
