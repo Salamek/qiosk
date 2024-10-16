@@ -11,6 +11,7 @@
 #include <QProgressBar>
 #include <QLineEdit>
 #include <QAction>
+#include <QApplication>
 
 #include "enum.h"
 #include "barwidget.h"
