@@ -35,7 +35,7 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
         acceptLanguage = QLocale().name(QLocale::TagSeparator::Dash);
 #endif
     } else {
-        acceptLanguage = this->config->getAcceptLanguage()
+        acceptLanguage = this->config->getAcceptLanguage();
     }
 
     profile->setHttpAcceptLanguage(acceptLanguage);
