@@ -17,7 +17,6 @@ Configuration::Configuration(QObject *parent)
     this->displayScrollBars = false;
     this->underlayNavBar = false;
     this->profileName = "default";
-    this->acceptLanguage = QLocale().name(QLocale::TagSeparator::Dash);
     //this->permissions = WebPage::Permission::AllowGeolocation | WebPage::Permission::AllowInvalidCertificate | WebPage::Permission::AllowNotifications | WebPage::Permission::AllowDesktopVideoCapture;
 }
 

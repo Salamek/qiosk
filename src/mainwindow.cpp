@@ -23,10 +23,22 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     QWebEngineProfile *profile = (this->config->getProfileName() == "default" ? QWebEngineProfile::defaultProfile() : new QWebEngineProfile(this->config->getProfileName()));
 
     // Make sure correct cookie settings are set
+
     profile->setPersistentCookiesPolicy(QWebEngineProfile::AllowPersistentCookies);
 
     // Set AcceptLanguage header
-    profile->setHttpAcceptLanguage(this->config->getAcceptLanguage());
+    QString acceptLanguage;
+    if (this->config->getAcceptLanguage().isNull()) {
+#if QT_VERSION <= QT_VERSION_CHECK(6, 7, 0)
+        acceptLanguage = QLocale().name().replace("_", "-");
+#else
+        acceptLanguage = QLocale().name(QLocale::TagSeparator::Dash);
+#endif
+    } else {
+        acceptLanguage = this->config->getAcceptLanguage()
+    }
+
+    profile->setHttpAcceptLanguage(acceptLanguage);
 
     // Set UserAgent header
     QString userAgent;
