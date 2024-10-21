@@ -21,7 +21,6 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     this->webView = new WebView();
 
     QWebEngineProfile *profile = (this->config->getProfileName() == "default" ? QWebEngineProfile::defaultProfile() : new QWebEngineProfile(this->config->getProfileName()));
-
     // Make sure correct cookie settings are set
 
     profile->setPersistentCookiesPolicy(QWebEngineProfile::AllowPersistentCookies);
@@ -57,7 +56,6 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
 
     profile->setHttpUserAgent(userAgent);
 
-
     WebPage *webPage = new WebPage(profile, this->webView);
     webPage->setWhiteList(this->config->getWhiteList());
     webPage->setPermissions(this->config->getPermissions());
@@ -87,9 +85,8 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     this->mainLayout->addWidget(this->addressBar);
 
     this->mainLayout->addWidget(this->webView);
-
     QWidget *centralWidget = new QWidget(this);
-    centralWidget->setLayout(mainLayout);
+    centralWidget->setLayout(this->mainLayout);
     this->setCentralWidget(centralWidget);
 
     this->barWidget = new BarWidget(this);
@@ -283,7 +280,7 @@ void MainWindow::handleWebViewLoadProgress(int progress)
 
 void MainWindow::handleLoadFinished(bool ok) {
     if (!ok) {
-        qDebug() << "Load finished with error. Checking URL accessibility.";
+        qDebug() << "Load finished with error. Checking URL accessibility of" << this->webView->url();
         this->connectionChecker->checkUrlAccessibility(this->webView->url());
     }
 

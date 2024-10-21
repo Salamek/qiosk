@@ -38,8 +38,20 @@ void WebPage::setPermissions(WebPage::Permissions permissions) {
 bool WebPage::acceptNavigationRequest(const QUrl &url, QWebEnginePage::NavigationType type, bool isMainFrame) {
     Q_UNUSED(type);
     Q_UNUSED(isMainFrame);
+
     if (this->whiteListRegexps.count() > 0) {
-        return this->isUrlInWhiteList(url);
+        bool inWhiteList = this->isUrlInWhiteList(url);
+        if (!inWhiteList && this->isUrlInWhiteList(this->url())) {
+            // This is kinda ~hacky, we had an issue with blocked URL attempting to load in new tab using target="_blank"
+            // that made it to open a new tab (well reset current page, see webview.cpp createWindow) before this method is called resulting in blank white page.
+            // Since url whitelist validation was technically performed in "new" tab (not really since we do not allow tabs), this "new" tab ended up blank (haha, as target requested right? :-D :-D)
+            // So since QWebEngine does not provide requested url in WebView::createWindow so we could block a new tab creation (that sux),
+            // only thing we can really do is to load currently loaded url that is still stored in WebPage::url to "newly" created tab after we validate requested URL here in acceptNavigation
+            // that causes refresh, but still better than blank page, right?
+            // TODO maybe check QWebEngineUrlRequestInterceptor if we can do more there???
+            this->setUrl(this->url());
+        }
+        return inWhiteList;
     }
 
     return true; // Allow URL
