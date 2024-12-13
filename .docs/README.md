@@ -151,7 +151,7 @@ Since 2.4 qiosk can be remote controled via websocket connection on port 1791 bi
 
 #### SetUrl
 
-Sets currentyl displayed url
+Sets currently displayed url
 
 ```json
 {
