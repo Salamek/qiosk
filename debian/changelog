@@ -1,3 +1,11 @@
+qiosk (1.12.0) unstable; urgency=medium
+
+  * Features
+    * Config
+      * 25a1a89 Added option to control window mode to set fullscreen/minimized/maximized/hidden... Closes #12
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Sat, 04 Jan 2025 12:06:21 +0000
+
 qiosk (1.11.2) unstable; urgency=medium
 
   * Fixes
