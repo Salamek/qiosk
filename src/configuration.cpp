@@ -1,15 +1,17 @@
 #include "configuration.h"
 
+QStringList Configuration::windowModeOptions = {"hidden", "automaticvisibility", "windowed", "minimized", "maximized", "fullscreen"};
+
 Configuration::Configuration(QObject *parent)
     : QObject{parent}
 {
     this->url = QUrl("https://salamek.github.io/chromium-kiosk/");
-    this->fullscreen = false;
     this->touchscreen = true;
     this->idleTime = 0;
     this->whiteList = QStringList();
     this->navbarVerticalPosition = BarWidget::VerticalPosition::Bottom;
     this->navbarHorizontalPosition = BarWidget::HorizontalPosition::Center;
+    this->windowMode = QWindow::Visibility::AutomaticVisibility;
     this->navbarWidth = 25; //%
     this->navbarHeight = 5; //%
     this->displayAddressBar = false;
@@ -25,8 +27,8 @@ void Configuration::setUrl(QUrl url) {
     this->url = url;
 }
 
-void Configuration::setFullscreen(bool fullscreen) {
-    this->fullscreen = fullscreen;
+void Configuration::setWindowMode(QWindow::Visibility windowMode) {
+    this->windowMode = windowMode;
 }
 
 void Configuration::setTouchscreen(bool touchscreen) {
@@ -99,9 +101,6 @@ void Configuration::setUserAgent(QString userAgent) {
     this->userAgent = userAgent;
 }
 
-bool Configuration::isFullscreen() {
-    return this->fullscreen;
-}
 
 QUrl Configuration::getUrl() {
     return this->url;
@@ -165,4 +164,71 @@ QString Configuration::getAcceptLanguage() {
 
 QString Configuration::getUserAgent() {
     return this->userAgent;
+}
+
+QWindow::Visibility Configuration::getWindowMode() {
+    return this->windowMode;
+}
+
+QWindow::Visibility Configuration::nameToWindowMode(QString name){
+    switch(Configuration::windowModeOptions.indexOf(name)){
+    case 0:
+        return QWindow::Visibility::Hidden;
+        break;
+
+    case 1:
+        return QWindow::Visibility::AutomaticVisibility;
+        break;
+
+    case 2:
+        return QWindow::Visibility::Windowed;
+        break;
+
+    case 3:
+        return QWindow::Visibility::Minimized;
+        break;
+
+    case 4:
+        return QWindow::Visibility::Maximized;
+        break;
+
+    case 5:
+        return QWindow::Visibility::FullScreen;
+        break;
+
+    default:
+        return QWindow::Visibility::AutomaticVisibility;
+        break;
+    }
+}
+
+QString Configuration::windowModeToName(QWindow::Visibility visibility){
+    switch(visibility){
+    case QWindow::Visibility::Hidden:
+        return Configuration::windowModeOptions.at(0);
+        break;
+
+    case QWindow::Visibility::AutomaticVisibility:
+        return Configuration::windowModeOptions.at(1);
+        break;
+
+    case QWindow::Visibility::Windowed:
+        return Configuration::windowModeOptions.at(2);
+        break;
+
+    case QWindow::Visibility::Minimized:
+        return Configuration::windowModeOptions.at(3);
+        break;
+
+    case QWindow::Visibility::Maximized:
+        return Configuration::windowModeOptions.at(4);
+        break;
+
+    case QWindow::Visibility::FullScreen:
+        return Configuration::windowModeOptions.at(5);
+        break;
+
+    }
+
+    return Configuration::windowModeOptions.at(1);
 }

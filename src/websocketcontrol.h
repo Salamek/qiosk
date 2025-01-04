@@ -89,7 +89,7 @@ private:
 signals:
     void urlChange(QString url);
     void homePageUrlChange(QString homePageUrl);
-    void fullscreenChange(bool fullscreen);
+    void windowModeChange(QWindow::Visibility windowMode);
     void idleTimeChange(int idleTime);
     void whiteListChange(QStringList whitelist);
     void permissionsChange(WebPage::Permissions permissions);

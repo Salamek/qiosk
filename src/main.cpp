@@ -64,6 +64,9 @@ int main(int argc, char *argv[])
     QCommandLineOption fullscreenOption(QStringList() << "f" << "fullscreen", QCoreApplication::translate("main", "Run browser in fullscreen mode."));
     parser.addOption(fullscreenOption);
 
+    QCommandLineOption windowModeOption(QStringList() << "m" << "window-mode", QCoreApplication::translate("main", "Set window mode.") , Configuration::windowModeOptions.join("|"));
+    parser.addOption(windowModeOption);
+
     // A int option with multiple names (-i, --idle)
     QCommandLineOption idleTimeOption(QStringList() << "i" << "idle", QCoreApplication::translate("main", "Timeout to reset to home page.") ,QCoreApplication::translate("main", "seconds"), "0");
     parser.addOption(idleTimeOption);
@@ -151,9 +154,7 @@ int main(int argc, char *argv[])
     // Prefill Configuration
     Configuration *config = new Configuration();
     config->setUrl(args.at(0));
-    config->setFullscreen(parser.isSet(fullscreenOption));
     config->setIdleTime(parser.value(idleTimeOption).toInt());
-
     config->setNavbarWidth(parser.value(navbarWidthOption).toInt());
     config->setNavbarHeight(parser.value(navbarHeightOption).toInt());
 
@@ -196,6 +197,20 @@ int main(int argc, char *argv[])
     }
     config->setNavbarEnabledButtons(buttons);
 
+
+    if (parser.isSet(fullscreenOption)) {
+        config->setWindowMode(QWindow::Visibility::FullScreen);
+    } else {
+        QString windowMode = parser.value(windowModeOption);
+        if (!Configuration::windowModeOptions.contains(windowMode))
+        {
+            fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided window-mode is unknown, use one of %s.", Configuration::windowModeOptions.join("|").toLatin1())));
+            parser.showHelp(1);
+        }
+        QWindow::Visibility visibility = Configuration::nameToWindowMode(windowMode);
+        config->setWindowMode(visibility);
+    }
+
     if (parser.isSet(acceptLanguage)) {
         config->setAcceptLanguage(parser.value(acceptLanguage));
     }
@@ -207,11 +222,7 @@ int main(int argc, char *argv[])
 
     MainWindow w(config);
 
-    if (config->isFullscreen()) {
-        w.showFullScreen();
-    } else {
-        w.show();
-    }
+    w.setWindowMode(config->getWindowMode());
 
     UserInputEventFilter userInputEventFilter;
 

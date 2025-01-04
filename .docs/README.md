@@ -109,8 +109,7 @@ Options:
                                                      generic Qt options.
   -v, --version                                      Displays version
                                                      information.
-  -f, --fullscreen                                   Run browser in fullscreen
-                                                     mode.
+  -m  --window-mode                                  Set window mode.
   -i, --idle <seconds>                               Timeout to reset
   -w, --white-list <string>                          Whitelist with glob syntax
   --navbar-vertical-position <top|bottom>            Navbar vertical position
@@ -164,13 +163,13 @@ Sets currently displayed url
 
 #### SetWindowMode
 
-Sets window mode, currently fullscreen=true/false
+Sets window mode, one of "hidden", "automaticvisibility", "windowed", "minimized", "maximized", "fullscreen"
 
 ```json
 { 
     "command": "setWindowMode",
     "data": { 
-        "fullscreen": true
+        "windowMode": "fullscreen"
     }
 } 
 ```

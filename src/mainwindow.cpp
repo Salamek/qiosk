@@ -2,6 +2,7 @@
 
 
 
+
 MainWindow::MainWindow(Configuration *config, QWidget *parent)
     : QMainWindow(parent),
     config(config)
@@ -132,9 +133,7 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     connect(this->websocketControl, &WebsocketControl::homePageUrlChange, this, [this](QString homePageUrl) {
         this->setHomePageUrl(QUrl(homePageUrl));
     });
-    connect(this->websocketControl, &WebsocketControl::fullscreenChange, this, [this](bool fullscreen) {
-        fullscreen ? showFullScreen() : showNormal();
-    });
+    connect(this->websocketControl, &WebsocketControl::windowModeChange, this, &MainWindow::setWindowMode);
     connect(this->websocketControl, &WebsocketControl::idleTimeChange, this, &MainWindow::setIdleTime);
     connect(this->websocketControl, &WebsocketControl::whiteListChange, webPage, &WebPage::setWhiteList);
     connect(this->websocketControl, &WebsocketControl::permissionsChange, webPage, &WebPage::setPermissions);
@@ -178,6 +177,28 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     QTimer::singleShot(2000, this, &MainWindow::plotTimerHack);
 }
 
+void MainWindow::setWindowMode(QWindow::Visibility windowMode) {
+    switch(windowMode) {
+    case QWindow::Visibility::Windowed:
+        show();
+        break;
+    case QWindow::Visibility::FullScreen:
+        showFullScreen();
+        break;
+    case QWindow::Visibility::Maximized:
+        showMaximized();
+        break;
+    case QWindow::Visibility::Minimized:
+        showMinimized();
+        break;
+    case QWindow::Visibility::Hidden:
+        hide();
+        break;
+    case QWindow::Visibility::AutomaticVisibility:
+        showNormal();
+        break;
+    }
+}
 
 void MainWindow::goHome() {
     this->webView->load(this->initialUrl);
@@ -375,6 +396,7 @@ void MainWindow::setNavBarEnabledButtons(QStringList enabledButtons) {
 void MainWindow::setHomePageUrl(QUrl homePageUrl) {
     this->initialUrl = homePageUrl;
 }
+
 
 MainWindow::~MainWindow()
 {

@@ -360,15 +360,20 @@ void WebsocketControl::commandSetUrl(QJsonObject data, QWebSocket *pClient) {
 void WebsocketControl::commandSetWindowMode(QJsonObject data, QWebSocket *pClient) {
     //showNormal() : showFullScreen();
     // setWindowMode has only one option and that is fullscreen
-    QJsonValue fullscreenValue = data.value("fullscreen");
-    if (!fullscreenValue.isBool()) {
-        pClient->sendTextMessage(this->buildResponse(false, "fullscreenValue has to be boolean", WebsocketControl::Command::SetWindowMode));
+    QJsonValue windowModeValue = data.value("windowMode");
+    if (!windowModeValue.isString()) {
+        pClient->sendTextMessage(this->buildResponse(false, "windowMode has to be string", WebsocketControl::Command::SetWindowMode));
         return;
     }
 
-    bool fullscreen = fullscreenValue.toBool();
-    // Url is string, emit event and notify user
-    emit fullscreenChange(fullscreen);
+    QString windowMode = windowModeValue.toString();
+    if (!Configuration::windowModeOptions.contains(windowMode)) {
+        pClient->sendTextMessage(this->buildResponse(false, "windowMode has to be one of valid values " + Configuration::windowModeOptions.join("|"), WebsocketControl::Command::SetWindowMode));
+        return;
+    }
+
+
+    emit windowModeChange(Configuration::nameToWindowMode(windowMode));
 
     pClient->sendTextMessage(this->buildResponse(true, "OK", WebsocketControl::Command::SetWindowMode));
 }
@@ -616,7 +621,7 @@ void WebsocketControl::commandSetOptions(QJsonObject data, QWebSocket *pClient) 
 void WebsocketControl::commandGetConfiguration(QJsonObject data, QWebSocket *pClient) {
     QJsonObject dataObject;
     dataObject.insert("url", QJsonValue::fromVariant(this->configuration->getUrl()));
-    dataObject.insert("isFullscreen", QJsonValue::fromVariant(this->configuration->isFullscreen()));
+    dataObject.insert("windowMode", QJsonValue::fromVariant(Configuration::windowModeToName(this->configuration->getWindowMode())));
     dataObject.insert("idleTime", QJsonValue::fromVariant(this->configuration->getIdleTime()));
     dataObject.insert("whitelist", QJsonValue::fromVariant(this->configuration->getWhiteList()));
     dataObject.insert("permissions", QJsonValue::fromVariant(WebPage::permissionTonames(this->configuration->getPermissions())));

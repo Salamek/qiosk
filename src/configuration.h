@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QUrl>
+#include <QWindow>
 #include "barwidget.h"
 #include "webpage.h"
 
@@ -11,8 +12,12 @@ class Configuration : public QObject
     Q_OBJECT
 public:
     explicit Configuration(QObject *parent = nullptr);
+    static QStringList windowModeOptions;
+
+    static QString windowModeToName(QWindow::Visibility visibility);
+    static QWindow::Visibility nameToWindowMode(QString name);
+
     QUrl url;
-    bool fullscreen; // Fullscreen enabled
     bool touchscreen; // @TODO Touchscreen support enabled
     bool displayAddressBar;  // Is address bar displayed?
     bool displayNavBar;  // Is navbar displayed?
@@ -24,6 +29,7 @@ public:
     //QStringList navbarButtons; // Enabled buttons on navbar, order matters ['home', 'reload', 'back', 'forward']
     BarWidget::VerticalPosition navbarVerticalPosition;
     BarWidget::HorizontalPosition navbarHorizontalPosition;
+    QWindow::Visibility windowMode;
     WebPage::Permissions permissions;
     QList<BarWidget::Button> navBarEnabledButtons;
     int navbarWidth; //%
@@ -35,6 +41,7 @@ public:
 
     void setUrl(QUrl url);
     void setFullscreen(bool fullscreen);
+    void setMaximized(bool maximized);
     void setTouchscreen(bool touchscreen);
     void setIdleTime(int idleTime);
     void setWhiteList(QStringList whiteList);
@@ -52,6 +59,7 @@ public:
     void setUserAgent(QString userAgent);
 
     bool isFullscreen();
+    bool isMaximized();
     QUrl getUrl();
     int getNavbarWidth();
     int getNavbarHeight();
@@ -70,6 +78,8 @@ public:
     QList<BarWidget::Button> getNavBarEnabledButtons();
     QString getAcceptLanguage();
     QString getUserAgent();
+    QWindow::Visibility getWindowMode();
+    void setWindowMode(QWindow::Visibility windowMode);
 signals:
 
 };

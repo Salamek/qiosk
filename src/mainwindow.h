@@ -22,6 +22,7 @@
 #include "resettimer.h"
 #include "websocketcontrol.h"
 #include "connectionchecker.h"
+#include <QWindow>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -35,7 +36,7 @@ public:
     MainWindow(Configuration *config, QWidget *parent = nullptr);
     ~MainWindow();
 
-
+    void setWindowMode(QWindow::Visibility windowMode);
 public slots:
     void onUserActivity();
 protected:
