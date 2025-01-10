@@ -6,6 +6,7 @@
 - [Usage](#usage)
 - [Tips and tricks](#tips-and-tricks)
   - [Remote control](#remote-control)
+  - [Virtual keyboard](#virtual-keyboard)
 
 
 ## Installation
@@ -362,7 +363,16 @@ Triggers when browser becomes idle
 }
 ```
 
-
+## Virtual keyboard
+To enable virtual keyboard you have to have QT virtual keyboard (qt6-virtualkeyboard-plugin) installed and specify envirement variable:
+```bash
+QT_IM_MODULE=qtvirtualkeyboard qiosk ...
+```
+or
+```bash
+set QT_IM_MODULE=qtvirtualkeyboard
+qiosk ...
+```
 
 
 
