@@ -1,3 +1,11 @@
+qiosk (1.12.2) unstable; urgency=medium
+
+  * Fixes
+    * CLI
+      * 2c1825f We can pass QString directly
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Sun, 23 Mar 2025 17:48:07 +0000
+
 qiosk (1.12.1) unstable; urgency=medium
 
   * Features
