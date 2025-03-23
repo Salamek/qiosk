@@ -184,7 +184,7 @@ int main(int argc, char *argv[])
 
     WebPage::Permissions permissions = WebPage::namesToWebPagePermissions(parser.values(allowFeatureOption));
     if(permissions.testFlag(WebPage::Permission::Unknown)){
-        fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided permission is unknown, use one of %1.").arg(permissionOptionsMapKeys.join("|").toLatin1())));
+        fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided permission is unknown, use one of %1.").arg(permissionOptionsMapKeys.join("|"))));
         parser.showHelp(1);
     }
     config->setPermissions(permissions);
@@ -192,7 +192,7 @@ int main(int argc, char *argv[])
 
     QList<BarWidget::Button> buttons = BarWidget::buttonNamesToButtons(parser.value(navbarEnableButtonOption).split(","));
     if(buttons.contains(BarWidget::Button::Unknown)){
-        fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided enabled-button is unknown, use one of %1 separated by comma.").arg(enableButtonOptionsMapKeys.join("|").toLatin1())));
+        fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided enabled-button is unknown, use one of %1 separated by comma.").arg(enableButtonOptionsMapKeys.join("|"))));
         parser.showHelp(1);
     }
     config->setNavbarEnabledButtons(buttons);
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
         QString windowMode = parser.value(windowModeOption);
         if (!Configuration::windowModeOptions.contains(windowMode))
         {
-            fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided window-mode is unknown, use one of %1.").arg(Configuration::windowModeOptions.join("|").toLatin1())));
+            fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided window-mode is unknown, use one of %1.").arg(Configuration::windowModeOptions.join("|"))));
             parser.showHelp(1);
         }
         QWindow::Visibility visibility = Configuration::nameToWindowMode(windowMode);
