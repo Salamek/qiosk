@@ -1,3 +1,14 @@
+qiosk (1.12.1) unstable; urgency=medium
+
+  * Features
+    * Examples
+      * e8bcf58 Added examples folder, moved websocket-control.py here from chromium-kiosk
+  * Fixes
+    * CLI
+      * c56f04f Use automaticvisibility as window mode when not specified
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Sun, 23 Mar 2025 11:39:56 +0000
+
 qiosk (1.12.0) unstable; urgency=medium
 
   * Features
