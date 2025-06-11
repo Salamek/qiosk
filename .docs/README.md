@@ -375,7 +375,13 @@ qiosk ...
 ```
 
 
-
+## Passing arguments to underlying Chromium
+Sometimes there is a need to pass arguments to underlying chromium for options that are not supported by qiosk directly, this can be achieved by:
+```
+# Disables pinch zoom
+QTWEBENGINE_CHROMIUM_FLAGS="--disable-pinch" qiosk <url>
+````
+(Mostly)All possible options are listed at https://gist.github.com/dodying/34ea4760a699b47825a766051f47d43b or https://peter.sh/experiments/chromium-command-line-switches/ 
 
 
 
