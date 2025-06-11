@@ -7,6 +7,7 @@
 - [Tips and tricks](#tips-and-tricks)
   - [Remote control](#remote-control)
   - [Virtual keyboard](#virtual-keyboard)
+  - [Passing arguments to underlying chromium](#passing-arguments-to-underlying-chromium)
 
 
 ## Installation
