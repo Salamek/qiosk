@@ -126,20 +126,36 @@ void BarWidget::plot(QSize parentSize) {
     int barX = 0;
     int barY = 0;
 
+    QString radiusVerticalPosition = "top";
+    switch(this->positionVertical) {
+    case VerticalPosition::Bottom:
+        barY = parentSize.height() - barHeight;
+        break;
+    case VerticalPosition::Top:
+        radiusVerticalPosition = "bottom";
+        barY = 0;
+        break;
+    case VerticalPosition::Unknown:
+        // We put it here to make lint happy with our switch...
+        Q_ASSERT(this->positionVertical == VerticalPosition::Unknown);
+        break;
+    }
+
+
     switch(this->positionHorizontal) {
         case HorizontalPosition::Center:
             barX = (parentSize.width() / 2) - (barWidth / 2);
             if (this->widthPercent < 100) {
-                styleBackground += " border-top-left-radius: 10px; border-top-right-radius: 10px;";
+                styleBackground += QString(" border-%1-left-radius: 10px; border-%1-right-radius: 10px;").arg(radiusVerticalPosition);
             }
             break;
         case HorizontalPosition::Left:
             barX = 0;
-            styleBackground += " border-top-right-radius: 10px;";
+            styleBackground += QString(" border-%1-right-radius: 10px;").arg(radiusVerticalPosition);
             break;
         case HorizontalPosition::Right:
             barX = parentSize.width() - barWidth;
-            styleBackground += " border-top-left-radius: 10px;";
+            styleBackground += QString(" border-%1-left-radius: 10px;").arg(radiusVerticalPosition);
             break;
 
         case HorizontalPosition::Unknown:
@@ -150,18 +166,6 @@ void BarWidget::plot(QSize parentSize) {
 
     styleBackground += "}";
 
-    switch(this->positionVertical) {
-    case VerticalPosition::Bottom:
-        barY = parentSize.height() - barHeight;
-        break;
-    case VerticalPosition::Top:
-        barY = 0;
-        break;
-    case VerticalPosition::Unknown:
-        // We put it here to make lint happy with our switch...
-        Q_ASSERT(this->positionVertical == VerticalPosition::Unknown);
-        break;
-    }
 
     this->move(barX, barY);
     this->resize(barWidth, barHeight);
