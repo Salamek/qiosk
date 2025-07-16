@@ -1,5 +1,5 @@
 pkgname=qiosk
-pkgver=1.12.2
+pkgver=1.12.3
 pkgdesc="QT Kiosk ."
 pkgrel=1
 arch=(
