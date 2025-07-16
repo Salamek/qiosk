@@ -63,7 +63,7 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     QWebEngineSettings *settings = webPage->settings();
 
     settings->setAttribute(QWebEngineSettings::ShowScrollBars, this->config->isDisplayScrollBars());
-
+    settings->setAttribute(QWebEngineSettings::FullScreenSupportEnabled, true);
     settings->setAttribute(QWebEngineSettings::PluginsEnabled, true);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
     settings->setAttribute(QWebEngineSettings::DnsPrefetchEnabled, true);

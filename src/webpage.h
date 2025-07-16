@@ -3,6 +3,7 @@
 
 #include <QWebEnginePage>
 #include <QWebEngineRegisterProtocolHandlerRequest>
+#include <QWebEngineFullScreenRequest>
 #include <QRegularExpression>
 #include "tools.h"
 
@@ -54,6 +55,7 @@ private slots:
 #if QT_VERSION >=QT_VERSION_CHECK(6, 0, 0)
     bool certificateError(const QWebEngineCertificateError &error);
 #endif
+    void handleFullScreenRequest(QWebEngineFullScreenRequest request);
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(WebPage::Permissions)

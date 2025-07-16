@@ -14,6 +14,7 @@ WebPage::WebPage(QWebEngineProfile *profile, QObject *parent)
     connect(this, &QWebEnginePage::featurePermissionRequested, this, &WebPage::handleFeaturePermissionRequested);
     connect(this, &QWebEnginePage::proxyAuthenticationRequired, this, &WebPage::handleProxyAuthenticationRequired);
     connect(this, &QWebEnginePage::registerProtocolHandlerRequested, this, &WebPage::handleRegisterProtocolHandlerRequested);
+    connect(this, &QWebEnginePage::fullScreenRequested, this, &WebPage::handleFullScreenRequest);
 #if !defined(QT_NO_SSL) && QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
     connect(this, &QWebEnginePage::selectClientCertificate, this, &WebPage::handleSelectClientCertificate);
 #endif
@@ -220,3 +221,9 @@ QStringList WebPage::permissionTonames(WebPage::Permissions permissions){
 
     return permissionNames;
 }
+
+void WebPage::handleFullScreenRequest(QWebEngineFullScreenRequest request) {
+    request.accept(); // Accept the request
+}
+
+
