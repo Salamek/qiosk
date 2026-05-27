@@ -134,6 +134,12 @@ Options:
                                                      is used.
   --hide-cursor                                      Hide cursor.
   --navbar-enable-buttons <back,forward,reload,home> Navbar enabled button
+  --accept-language <accept_language>                Set content of Accept-Language
+                                                     header, autodetect when not
+                                                     set.
+  --user-agent <user_agent>                          Set content of User-Agent
+                                                     header, autodetect when not
+                                                     set.
 
 Arguments:
   url                                                URL to display.
