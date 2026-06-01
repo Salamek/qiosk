@@ -1,3 +1,11 @@
+qiosk (1.14.0) unstable; urgency=medium
+
+  * Fixes
+    * Virtualkeyboard
+      * 24638c6 Fix visual issues
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Mon, 01 Jun 2026 21:44:36 +0000
+
 qiosk (1.13.0) unstable; urgency=medium
 
   * Nothing worth mentioning

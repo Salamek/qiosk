@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 
     QCoreApplication::setOrganizationName("Salamek");
     QCoreApplication::setApplicationName("qiosk");
-    QCoreApplication::setApplicationVersion("1.13.0");
+    QCoreApplication::setApplicationVersion("1.14.0");
 #if QT_VERSION <= QT_VERSION_CHECK(6, 0, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
