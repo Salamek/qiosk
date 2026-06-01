@@ -8,27 +8,6 @@
 #include <QCommandLineParser>
 #include <QVersionNumber>
 
-#include <QWindow>
-#include <cstring>
-
-
-static void handleVisibleChanged(){
-    if (!QGuiApplication::inputMethod()->isVisible())
-        return;
-    for(QWindow * w: QGuiApplication::allWindows()){
-        if(std::strcmp(w->metaObject()->className(), "QtVirtualKeyboard::InputView") == 0){
-            if(QObject *keyboard = w->findChild<QObject *>("keyboard")){
-                int offset = 170;
-                QRect r = w->geometry();
-                r.setHeight(r.height() - offset);
-                r.moveTop(keyboard->property("y").toDouble() - offset);
-                w->setMask(r);
-                return;
-            }
-        }
-    }
-}
-
 
 int main(int argc, char *argv[])
 {
@@ -47,11 +26,6 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
     QApplication a(argc, argv);
-
-    if(qgetenv("XDG_CURRENT_DESKTOP") == "") {
-        // Hack to ~fix virtual keyboard viewport on openbox
-        QObject::connect(QGuiApplication::inputMethod(), &QInputMethod::visibleChanged, &handleVisibleChanged);
-    }
 
 
     QCommandLineParser parser;
