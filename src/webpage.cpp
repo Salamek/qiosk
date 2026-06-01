@@ -225,5 +225,3 @@ QStringList WebPage::permissionTonames(WebPage::Permissions permissions){
 void WebPage::handleFullScreenRequest(QWebEngineFullScreenRequest request) {
     request.accept(); // Accept the request
 }
-
-

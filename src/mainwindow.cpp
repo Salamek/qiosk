@@ -1,11 +1,13 @@
 #include "mainwindow.h"
 
-
-
+#include <QGuiApplication>
+#include <QInputMethod>
+#include <QQuickItem>
 
 MainWindow::MainWindow(Configuration *config, QWidget *parent)
     : QMainWindow(parent),
-    config(config)
+    config(config),
+    virtualKeyboardWidget(nullptr)
 {
     this->isIdle = false;
     this->resetHistoryLock = false;
@@ -94,6 +96,7 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     this->setDisplayNavBar(this->config->isDisplayNavBar());
 
     this->setUnderlayNavBar(this->config->isUnderlayNavBar());
+    this->setupVirtualKeyboard();
 
     this->progressBar = new ProgressBarWidget(this);
     this->resetTimer = new ResetTimer(this);
@@ -263,6 +266,7 @@ void MainWindow::plotTimerHack() {
 void MainWindow::plot(QSize size) {
     this->barWidget->plot(size);
     this->progressBar->plot(size);
+    this->updateVirtualKeyboardGeometry();
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
@@ -388,6 +392,71 @@ void MainWindow::setUnderlayNavBar(bool underlayNavBar) {
     this->underlayNavBar = underlayNavBar;
 }
 
+void MainWindow::setupVirtualKeyboard() {
+    if (qgetenv("QT_IM_MODULE") != "qtvirtualkeyboard") {
+        return;
+    }
+
+    this->virtualKeyboardWidget = new QQuickWidget(this);
+    this->virtualKeyboardWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
+    this->virtualKeyboardWidget->setClearColor(Qt::transparent);
+    this->virtualKeyboardWidget->setFocusPolicy(Qt::NoFocus);
+    this->virtualKeyboardWidget->setFixedHeight(0);
+    this->virtualKeyboardWidget->hide();
+    this->virtualKeyboardWidget->setSource(QUrl(QStringLiteral("qrc:/virtualkeyboard.qml")));
+    this->mainLayout->addWidget(this->virtualKeyboardWidget);
+
+    QInputMethod *inputMethod = QGuiApplication::inputMethod();
+    connect(inputMethod, &QInputMethod::visibleChanged, this, &MainWindow::updateVirtualKeyboardGeometry);
+    connect(inputMethod, &QInputMethod::keyboardRectangleChanged, this, &MainWindow::updateVirtualKeyboardGeometry);
+}
+
+void MainWindow::updateVirtualKeyboardGeometry() {
+    if (!this->virtualKeyboardWidget) {
+        return;
+    }
+
+    QInputMethod *inputMethod = QGuiApplication::inputMethod();
+    if (!inputMethod->isVisible()) {
+        this->virtualKeyboardWidget->setFixedHeight(0);
+        this->virtualKeyboardWidget->hide();
+        return;
+    }
+
+    int keyboardHeight = qRound(inputMethod->keyboardRectangle().height());
+    if (keyboardHeight <= 0 && this->virtualKeyboardWidget->rootObject()) {
+        QObject *inputPanel = this->virtualKeyboardWidget->rootObject()->findChild<QObject *>(QStringLiteral("inputPanel"));
+        if (inputPanel) {
+            keyboardHeight = qRound(inputPanel->property("height").toReal());
+        }
+    }
+    if (keyboardHeight <= 0) {
+        keyboardHeight = qRound(this->height() * 0.35);
+    }
+
+    this->virtualKeyboardWidget->setFixedHeight(keyboardHeight);
+    this->virtualKeyboardWidget->show();
+    QTimer::singleShot(100, this, &MainWindow::scrollFocusedElementIntoView);
+}
+
+void MainWindow::scrollFocusedElementIntoView() {
+    this->webView->page()->runJavaScript(QStringLiteral(R"JS(
+        (function() {
+            const element = document.activeElement;
+            if (!element) {
+                return;
+            }
+
+            const tagName = element.tagName ? element.tagName.toLowerCase() : "";
+            const editable = element.isContentEditable || tagName === "input" || tagName === "textarea" || tagName === "select";
+            if (!editable || !element.scrollIntoView) {
+                return;
+            }
+
+            element.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
+        })();
+    )JS"));
+}
 
 void MainWindow::setNavBarEnabledButtons(QStringList enabledButtons) {
     this->barWidget->setNavBarEnabledButtons(BarWidget::buttonNamesToButtons(enabledButtons));
@@ -404,5 +473,3 @@ MainWindow::~MainWindow()
     delete this->webView;
     delete this->config;
 }
-
-

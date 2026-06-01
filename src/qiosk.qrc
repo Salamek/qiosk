@@ -11,5 +11,6 @@
         <file>back_disabled.png</file>
         <file>home_disabled.png</file>
         <file>stop_disabled.png</file>
+        <file>virtualkeyboard.qml</file>
     </qresource>
 </RCC>

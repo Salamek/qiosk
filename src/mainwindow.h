@@ -12,6 +12,7 @@
 #include <QLineEdit>
 #include <QAction>
 #include <QApplication>
+#include <QQuickWidget>
 
 #include "enum.h"
 #include "barwidget.h"
@@ -60,6 +61,7 @@ private:
     ResetTimer *resetTimer;
     WebsocketControl *websocketControl;
     ConnectionChecker *connectionChecker;
+    QQuickWidget *virtualKeyboardWidget;
     void handleWebViewLoadProgress(int progress);
     void handleLoadFinished(bool ok);
     void handleLoadStarted();
@@ -72,6 +74,9 @@ private:
     void setUnderlayNavBar(bool underlayNavBar);
     void setHomePageUrl(QUrl homePageUrl);
     void setNavBarEnabledButtons(QStringList enabledButtons);
+    void setupVirtualKeyboard();
+    void updateVirtualKeyboardGeometry();
+    void scrollFocusedElementIntoView();
 private slots:
     void goHome();
     void doReload();
