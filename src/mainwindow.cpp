@@ -6,8 +6,7 @@
 
 MainWindow::MainWindow(Configuration *config, QWidget *parent)
     : QMainWindow(parent),
-    config(config),
-    virtualKeyboardWidget(nullptr)
+    config(config)
 {
     this->isIdle = false;
     this->resetHistoryLock = false;
@@ -393,10 +392,6 @@ void MainWindow::setUnderlayNavBar(bool underlayNavBar) {
 }
 
 void MainWindow::setupVirtualKeyboard() {
-    if (qgetenv("QT_IM_MODULE") != "qtvirtualkeyboard") {
-        return;
-    }
-
     this->virtualKeyboardWidget = new QQuickWidget(this);
     this->virtualKeyboardWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
     this->virtualKeyboardWidget->setClearColor(Qt::transparent);

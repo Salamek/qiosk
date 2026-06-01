@@ -37,7 +37,6 @@ int main(int argc, char *argv[])
     //qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-logging");
     if (qgetenv("QT_IM_MODULE") == "qtvirtualkeyboard") {
         qputenv("QT_VIRTUALKEYBOARD_DESKTOP_DISABLE", QByteArray("1"));
-        QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
     }
 
     QCoreApplication::setOrganizationName("Salamek");
