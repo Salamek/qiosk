@@ -397,7 +397,6 @@ void MainWindow::setupVirtualKeyboard() {
     this->virtualKeyboardWidget->setClearColor(Qt::transparent);
     this->virtualKeyboardWidget->setFocusPolicy(Qt::NoFocus);
     this->virtualKeyboardWidget->setFixedHeight(0);
-    this->virtualKeyboardWidget->hide();
     this->virtualKeyboardWidget->setSource(QUrl(QStringLiteral("qrc:/virtualkeyboard.qml")));
     this->mainLayout->addWidget(this->virtualKeyboardWidget);
 
@@ -414,7 +413,6 @@ void MainWindow::updateVirtualKeyboardGeometry() {
     QInputMethod *inputMethod = QGuiApplication::inputMethod();
     if (!inputMethod->isVisible()) {
         this->virtualKeyboardWidget->setFixedHeight(0);
-        this->virtualKeyboardWidget->hide();
         return;
     }
 
@@ -430,7 +428,6 @@ void MainWindow::updateVirtualKeyboardGeometry() {
     }
 
     this->virtualKeyboardWidget->setFixedHeight(keyboardHeight);
-    this->virtualKeyboardWidget->show();
     QTimer::singleShot(100, this, &MainWindow::scrollFocusedElementIntoView);
 }
 

@@ -9,6 +9,6 @@ Item {
         objectName: "inputPanel"
         anchors.left: parent.left
         anchors.right: parent.right
-        y: Qt.inputMethod.visible ? parent.height - inputPanel.height : parent.height
+        anchors.bottom: parent.bottom
     }
 }
