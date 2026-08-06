@@ -5,6 +5,9 @@
 #include <QWebEngineRegisterProtocolHandlerRequest>
 #include <QWebEngineFullScreenRequest>
 #include <QRegularExpression>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+#include <QWebEnginePermission>
+#endif
 #include "tools.h"
 
 class WebPage : public QWebEnginePage
@@ -38,7 +41,11 @@ private:
     bool isUrlInWhiteList(QUrl url);
     QList<QRegularExpression> whiteListRegexps;
     Permissions permissions;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+    bool isPermissionAllowed(QWebEnginePermission::PermissionType permissionType);
+#else
     bool isFeatureAllowed(Feature feature);
+#endif
 protected:
 #if QT_VERSION <=QT_VERSION_CHECK(6, 0, 0)
     bool certificateError(const QWebEngineCertificateError &error) override;
@@ -46,7 +53,11 @@ protected:
     bool acceptNavigationRequest(const QUrl &url, QWebEnginePage::NavigationType type, bool isMainFrame) override;
 private slots:
     void handleAuthenticationRequired(const QUrl &requestUrl, QAuthenticator *auth);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+    void handlePermissionRequested(QWebEnginePermission permissionRequest);
+#else
     void handleFeaturePermissionRequested(const QUrl &securityOrigin, QWebEnginePage::Feature feature);
+#endif
     void handleProxyAuthenticationRequired(const QUrl &requestUrl, QAuthenticator *auth, const QString &proxyHost);
     void handleRegisterProtocolHandlerRequested(QWebEngineRegisterProtocolHandlerRequest request);
 #if !defined(QT_NO_SSL) && QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)

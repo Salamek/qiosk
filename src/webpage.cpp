@@ -1,17 +1,16 @@
-#include "mainwindow.h"
 #include "webpage.h"
-#include "webview.h"
 #include <QAuthenticator>
-#include <QMessageBox>
-#include <QStyle>
-#include <QTimer>
 #include <QWebEngineCertificateError>
 
 WebPage::WebPage(QWebEngineProfile *profile, QObject *parent)
     : QWebEnginePage(profile, parent)
 {
     connect(this, &QWebEnginePage::authenticationRequired, this, &WebPage::handleAuthenticationRequired);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+    connect(this, &QWebEnginePage::permissionRequested, this, &WebPage::handlePermissionRequested);
+#else
     connect(this, &QWebEnginePage::featurePermissionRequested, this, &WebPage::handleFeaturePermissionRequested);
+#endif
     connect(this, &QWebEnginePage::proxyAuthenticationRequired, this, &WebPage::handleProxyAuthenticationRequired);
     connect(this, &QWebEnginePage::registerProtocolHandlerRequested, this, &WebPage::handleRegisterProtocolHandlerRequested);
     connect(this, &QWebEnginePage::fullScreenRequested, this, &WebPage::handleFullScreenRequest);
@@ -116,6 +115,39 @@ void WebPage::handleAuthenticationRequired(const QUrl &requestUrl, QAuthenticato
     }
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+bool WebPage::isPermissionAllowed(QWebEnginePermission::PermissionType permissionType) {
+    switch (permissionType) {
+    case QWebEnginePermission::PermissionType::Geolocation:
+        return this->permissions.testFlag(Permission::AllowGeolocation);
+    case QWebEnginePermission::PermissionType::MediaAudioCapture:
+        return this->permissions.testFlag(Permission::AllowMediaAudioCapture);
+    case QWebEnginePermission::PermissionType::MediaVideoCapture:
+        return this->permissions.testFlag(Permission::AllowMediaVideoCapture);
+    case QWebEnginePermission::PermissionType::MediaAudioVideoCapture:
+        return this->permissions.testFlag(Permission::AllowMediaAudioVideoCapture);
+    case QWebEnginePermission::PermissionType::MouseLock:
+        return this->permissions.testFlag(Permission::AllowMouseLock);
+    case QWebEnginePermission::PermissionType::DesktopVideoCapture:
+        return this->permissions.testFlag(Permission::AllowDesktopVideoCapture);
+    case QWebEnginePermission::PermissionType::DesktopAudioVideoCapture:
+        return this->permissions.testFlag(Permission::AllowDesktopAudioVideoCapture);
+    case QWebEnginePermission::PermissionType::Notifications:
+        return this->permissions.testFlag(Permission::AllowNotifications);
+    default:
+        return false;
+    }
+}
+
+void WebPage::handlePermissionRequested(QWebEnginePermission permissionRequest)
+{
+    if (this->isPermissionAllowed(permissionRequest.permissionType())) {
+        permissionRequest.grant();
+    } else {
+        permissionRequest.deny();
+    }
+}
+#else
 bool WebPage::isFeatureAllowed(Feature feature) {
     switch (feature) {
     case QWebEnginePage::Geolocation:
@@ -148,6 +180,7 @@ void WebPage::handleFeaturePermissionRequested(const QUrl &securityOrigin, Featu
         setFeaturePermission(securityOrigin, feature, PermissionDeniedByUser);
     }
 }
+#endif
 
 void WebPage::handleProxyAuthenticationRequired(const QUrl &, QAuthenticator *auth, const QString &proxyHost)
 {
