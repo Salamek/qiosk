@@ -1,3 +1,15 @@
+qiosk (1.15.0) unstable; urgency=medium
+
+  * Features
+    * 
+      * 1ec1230 Resolve deprecations
+    * ResetTimer
+      * 07b8615 Switch from pooling to deadline
+    * ConnectionChecker
+      * 1149e3c Refactor to use base url or provided url+race fixes
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Thu, 06 Aug 2026 19:14:44 +0000
+
 qiosk (1.14.0) unstable; urgency=medium
 
   * Fixes
