@@ -17,7 +17,6 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     progressbarwidget.cpp \
-    resettimer.cpp \
     tools.cpp \
     userinputeventfilter.cpp \
     webpage.cpp \
@@ -29,7 +28,6 @@ HEADERS += \
     configuration.h \
     mainwindow.h \
     progressbarwidget.h \
-    resettimer.h \
     tools.h \
     userinputeventfilter.h \
     webpage.h \

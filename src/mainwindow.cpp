@@ -98,7 +98,8 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     this->setupVirtualKeyboard();
 
     this->progressBar = new ProgressBarWidget(this);
-    this->resetTimer = new ResetTimer(this);
+    this->idleTimer = new QTimer(this);
+    this->idleTimer->setSingleShot(true);
 
 
 
@@ -127,8 +128,8 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
 
     connect(this->webView, &QWebEngineView::iconChanged, favAction, &QAction::setIcon);
 
-    //Reset timer events
-    connect(this->resetTimer, &ResetTimer::timeout, this, &MainWindow::checkReset);
+    // Idle timer events
+    connect(this->idleTimer, &QTimer::timeout, this, &MainWindow::checkReset);
 
     // Websocket control events
     connect(this->websocketControl, &WebsocketControl::urlChange, this->webView, &WebView::setUrl);
@@ -215,7 +216,7 @@ void MainWindow::doReload() {
 
 
 void MainWindow::checkReset() {
-    if (this->idleTime > 0 && this->lastUserActivity + this->idleTime <= QDateTime::currentSecsSinceEpoch() && !this->isIdle) {
+    if (this->idleTime > 0 && !this->isIdle) {
         this->doReset();
         this->websocketControl->onIdle();
         this->isIdle = true;
@@ -256,6 +257,9 @@ void MainWindow::onUserActivity() {
     }
 
     this->lastUserActivity = QDateTime::currentSecsSinceEpoch();
+    if (this->idleTime > 0) {
+        this->idleTimer->start(this->idleTime * 1000);
+    }
 }
 
 void MainWindow::plotTimerHack() {
@@ -357,12 +361,15 @@ void MainWindow::handleWebActionEnabledChanged(QWebEnginePage::WebAction action,
 
 void MainWindow::setIdleTime(int idleTime){
     this->idleTime = idleTime;
-    if (this->idleTime != 0) {
-        this->resetTimer->setTimeout(1); //Check each 1s
-        this->resetTimer->start();
-    } else {
-        this->resetTimer->stop();
+    this->idleTimer->stop();
+
+    if (this->idleTime <= 0 || this->isIdle) {
+        return;
     }
+
+    const qint64 elapsed = QDateTime::currentSecsSinceEpoch() - this->lastUserActivity;
+    const qint64 remainingMs = qMax<qint64>(0, this->idleTime - elapsed) * 1000;
+    this->idleTimer->start(remainingMs);
 }
 
 void MainWindow::setDisplayAddressBar(bool displayAddressBar){

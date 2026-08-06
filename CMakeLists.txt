@@ -25,7 +25,6 @@ set(PROJECT_SOURCES
     src/main.cpp
     src/mainwindow.cpp src/mainwindow.h
     src/progressbarwidget.cpp src/progressbarwidget.h
-    src/resettimer.cpp src/resettimer.h
     src/tools.cpp src/tools.h
     src/userinputeventfilter.cpp src/userinputeventfilter.h
     src/webpage.cpp src/webpage.h

@@ -58,7 +58,7 @@ private:
     BarWidget *barWidget;
     ProgressBarWidget *progressBar;
     QWebEnginePage::WebAction refreshWebAction;
-    ResetTimer *resetTimer;
+    QTimer *idleTimer;
     WebsocketControl *websocketControl;
     ConnectionChecker *connectionChecker;
     QQuickWidget *virtualKeyboardWidget;
