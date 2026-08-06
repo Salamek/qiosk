@@ -16,6 +16,7 @@ public:
 
     static QString windowModeToName(QWindow::Visibility visibility);
     static QWindow::Visibility nameToWindowMode(QString name);
+    static QUrl normalizeUrl(QUrl url);
 
     QUrl url;
     bool touchscreen; // @TODO Touchscreen support enabled

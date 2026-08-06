@@ -1,6 +1,25 @@
 #include "configuration.h"
+#include <QRegularExpression>
 
 QStringList Configuration::windowModeOptions = {"hidden", "automaticvisibility", "windowed", "minimized", "maximized", "fullscreen"};
+
+QUrl Configuration::normalizeUrl(QUrl url) {
+    const QString value = url.toString();
+    if (value.startsWith(QStringLiteral("//"))) {
+        url.setScheme(QStringLiteral("https"));
+        return url;
+    }
+
+    // QUrl interprets values such as "localhost:8080" as having a
+    // "localhost" scheme. Recognize the host:port form before trusting it.
+    static const QRegularExpression hostWithPort(
+        QStringLiteral("^[^:/?#]+:[0-9]+(?:[/?#]|$)"));
+    if (!url.scheme().isEmpty() && !hostWithPort.match(value).hasMatch()) {
+        return url;
+    }
+
+    return QUrl(QStringLiteral("https://") + value);
+}
 
 Configuration::Configuration(QObject *parent)
     : QObject{parent}
@@ -24,7 +43,7 @@ Configuration::Configuration(QObject *parent)
 
 
 void Configuration::setUrl(QUrl url) {
-    this->url = url;
+    this->url = Configuration::normalizeUrl(url);
 }
 
 void Configuration::setWindowMode(QWindow::Visibility windowMode) {

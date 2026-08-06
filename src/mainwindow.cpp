@@ -123,7 +123,7 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
         this->addressBar->setText(url.toDisplayString());
     });
     connect(addressBar, &QLineEdit::returnPressed, this, [this]() {
-        this->webView->setUrl(QUrl::fromUserInput(this->addressBar->text()));
+        this->webView->setUrl(Configuration::normalizeUrl(QUrl(this->addressBar->text())));
     });
 
     connect(this->webView, &QWebEngineView::iconChanged, favAction, &QAction::setIcon);
@@ -132,7 +132,9 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     connect(this->idleTimer, &QTimer::timeout, this, &MainWindow::checkReset);
 
     // Websocket control events
-    connect(this->websocketControl, &WebsocketControl::urlChange, this->webView, &WebView::setUrl);
+    connect(this->websocketControl, &WebsocketControl::urlChange, this, [this](QString url) {
+        this->webView->setUrl(Configuration::normalizeUrl(QUrl(url)));
+    });
     connect(this->websocketControl, &WebsocketControl::homePageUrlChange, this, [this](QString homePageUrl) {
         this->setHomePageUrl(QUrl(homePageUrl));
     });
@@ -467,7 +469,7 @@ void MainWindow::setNavBarEnabledButtons(QStringList enabledButtons) {
 }
 
 void MainWindow::setHomePageUrl(QUrl homePageUrl) {
-    this->initialUrl = homePageUrl;
+    this->initialUrl = Configuration::normalizeUrl(homePageUrl);
 }
 
 QUrl MainWindow::connectionTestUrlFor(QUrl targetUrl) const {

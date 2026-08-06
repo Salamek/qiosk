@@ -200,7 +200,7 @@ int main(int argc, char *argv[])
     }
 
     if (parser.isSet(connectionTestUrl)) {
-        QUrl testUrl = QUrl::fromUserInput(parser.value(connectionTestUrl));
+        QUrl testUrl = Configuration::normalizeUrl(QUrl(parser.value(connectionTestUrl)));
         if (!testUrl.isValid() || testUrl.scheme().isEmpty() || testUrl.host().isEmpty()) {
             fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided connection-test-url is not a valid absolute URL.")));
             parser.showHelp(1);
