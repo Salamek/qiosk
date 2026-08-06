@@ -109,6 +109,10 @@ int main(int argc, char *argv[])
     QCommandLineOption userAgent(QString("user-agent"), QCoreApplication::translate("main", "Set content of User-Agent header, autodetect when not set."),  QCoreApplication::translate("main", "user_agent"));
     parser.addOption(userAgent);
 
+    // A URL option (--connection-test-url), overrides origin autodetection
+    QCommandLineOption connectionTestUrl(QString("connection-test-url"), QCoreApplication::translate("main", "URL used to detect when the target web server becomes available; defaults to the target URL origin."), QCoreApplication::translate("main", "url"));
+    parser.addOption(connectionTestUrl);
+
     // Process the actual command line arguments given by the user
     parser.process(a);
 
@@ -193,6 +197,15 @@ int main(int argc, char *argv[])
 
     if (parser.isSet(userAgent)) {
         config->setUserAgent(parser.value(userAgent));
+    }
+
+    if (parser.isSet(connectionTestUrl)) {
+        QUrl testUrl = QUrl::fromUserInput(parser.value(connectionTestUrl));
+        if (!testUrl.isValid() || testUrl.scheme().isEmpty() || testUrl.host().isEmpty()) {
+            fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided connection-test-url is not a valid absolute URL.")));
+            parser.showHelp(1);
+        }
+        config->setConnectionTestUrl(testUrl);
     }
 
 

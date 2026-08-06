@@ -304,8 +304,13 @@ void MainWindow::handleWebViewLoadProgress(int progress)
 
 void MainWindow::handleLoadFinished(bool ok) {
     if (!ok) {
-        qDebug() << "Load finished with error. Checking URL accessibility of" << this->webView->url();
-        this->connectionChecker->checkUrlAccessibility(this->webView->url());
+        const QUrl testUrl = this->connectionTestUrlFor(this->webView->url());
+        qDebug() << "Load finished with error. Checking web server accessibility at" << testUrl;
+        this->connectionChecker->checkUrlAccessibility(testUrl);
+    } else {
+        // The page recovered without our probe (or a stale failure completed
+        // late), so no pending check may reload it later.
+        this->connectionChecker->stop();
     }
 
     this->setupReloadStopButton(false);
@@ -456,6 +461,19 @@ void MainWindow::setNavBarEnabledButtons(QStringList enabledButtons) {
 
 void MainWindow::setHomePageUrl(QUrl homePageUrl) {
     this->initialUrl = homePageUrl;
+}
+
+QUrl MainWindow::connectionTestUrlFor(QUrl targetUrl) const {
+    if (!this->config->getConnectionTestUrl().isEmpty()) {
+        return this->config->getConnectionTestUrl();
+    }
+
+    QUrl origin;
+    origin.setScheme(targetUrl.scheme());
+    origin.setHost(targetUrl.host());
+    origin.setPort(targetUrl.port());
+    origin.setPath(QStringLiteral("/"));
+    return origin;
 }
 
 

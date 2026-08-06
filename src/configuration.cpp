@@ -101,6 +101,10 @@ void Configuration::setUserAgent(QString userAgent) {
     this->userAgent = userAgent;
 }
 
+void Configuration::setConnectionTestUrl(QUrl connectionTestUrl) {
+    this->connectionTestUrl = connectionTestUrl;
+}
+
 
 QUrl Configuration::getUrl() {
     return this->url;
@@ -164,6 +168,10 @@ QString Configuration::getAcceptLanguage() {
 
 QString Configuration::getUserAgent() {
     return this->userAgent;
+}
+
+QUrl Configuration::getConnectionTestUrl() {
+    return this->connectionTestUrl;
 }
 
 QWindow::Visibility Configuration::getWindowMode() {

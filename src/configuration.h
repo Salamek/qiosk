@@ -37,6 +37,7 @@ public:
     QString profileName;
     QString acceptLanguage;
     QString userAgent;
+    QUrl connectionTestUrl;
 
 
     void setUrl(QUrl url);
@@ -57,6 +58,7 @@ public:
     void setNavbarEnabledButtons(QList<BarWidget::Button> navBarEnabledButtons);
     void setAcceptLanguage(QString acceptLanguage);
     void setUserAgent(QString userAgent);
+    void setConnectionTestUrl(QUrl connectionTestUrl);
 
     bool isFullscreen();
     bool isMaximized();
@@ -78,6 +80,7 @@ public:
     QList<BarWidget::Button> getNavBarEnabledButtons();
     QString getAcceptLanguage();
     QString getUserAgent();
+    QUrl getConnectionTestUrl();
     QWindow::Visibility getWindowMode();
     void setWindowMode(QWindow::Visibility windowMode);
 signals:

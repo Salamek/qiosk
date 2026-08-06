@@ -632,6 +632,7 @@ void WebsocketControl::commandGetConfiguration(QJsonObject data, QWebSocket *pCl
     dataObject.insert("isDisplayAddressBar", QJsonValue::fromVariant(this->configuration->isDisplayAddressBar()));
     dataObject.insert("isDisplayNavBar", QJsonValue::fromVariant(this->configuration->isDisplayNavBar()));
     dataObject.insert("isUnderlayNavBar", QJsonValue::fromVariant(this->configuration->isUnderlayNavBar()));
+    dataObject.insert("connectionTestUrl", QJsonValue::fromVariant(this->configuration->getConnectionTestUrl()));
 
 
     pClient->sendTextMessage(this->buildResponse(true, "OK", WebsocketControl::Command::GetConfiguration, dataObject));

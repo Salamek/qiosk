@@ -13,6 +13,7 @@
 #include <QAction>
 #include <QApplication>
 #include <QQuickWidget>
+#include <QTimer>
 
 #include "enum.h"
 #include "barwidget.h"
@@ -20,7 +21,6 @@
 #include "webview.h"
 #include "webpage.h"
 #include "progressbarwidget.h"
-#include "resettimer.h"
 #include "websocketcontrol.h"
 #include "connectionchecker.h"
 #include <QWindow>
@@ -73,6 +73,7 @@ private:
     void setDisplayNavBar(bool displayNavBar);
     void setUnderlayNavBar(bool underlayNavBar);
     void setHomePageUrl(QUrl homePageUrl);
+    QUrl connectionTestUrlFor(QUrl targetUrl) const;
     void setNavBarEnabledButtons(QStringList enabledButtons);
     void setupVirtualKeyboard();
     void updateVirtualKeyboardGeometry();

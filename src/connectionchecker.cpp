@@ -10,6 +10,7 @@ ConnectionChecker::ConnectionChecker(QObject *parent) : QObject(parent) {
     connect(this->networkManager, &QNetworkAccessManager::finished, this, &ConnectionChecker::handleNetworkReply);
 
     this->timer = new QTimer(this);
+    this->timer->setSingleShot(true);
     connect(this->timer, &QTimer::timeout, this, &ConnectionChecker::doCheckRequest);
 }
 
@@ -18,23 +19,60 @@ ConnectionChecker::~ConnectionChecker() {
 }
 
 void ConnectionChecker::doCheckRequest() {
+    if (!this->active || this->currentReply) {
+        return;
+    }
+
     QNetworkRequest request(this->url);
-    networkManager->get(request);
+    this->currentReply = networkManager->get(request);
 }
 
 
 void ConnectionChecker::checkUrlAccessibility(QUrl url) {
+    if (this->active && this->url == url) {
+        return;
+    }
+
+    this->stop();
     this->url = url;
+    this->active = true;
+    this->currentInterval = this->initialInterval;
     this->doCheckRequest();
 }
 
+void ConnectionChecker::stop() {
+    this->active = false;
+    this->timer->stop();
+    if (this->currentReply) {
+        QNetworkReply *reply = this->currentReply;
+        this->currentReply = nullptr;
+        reply->abort();
+        reply->deleteLater();
+    }
+}
+
 void ConnectionChecker::handleNetworkReply(QNetworkReply *reply) {
-    if (reply->error() == QNetworkReply::NoError) {
-        emit urlAccessible();
-        this->currentInterval = this->initialInterval; // Reset interval on success
+    if (reply != this->currentReply) {
+        reply->deleteLater();
+        return;
+    }
+
+    this->currentReply = nullptr;
+    if (!this->active) {
+        reply->deleteLater();
+        return;
+    }
+
+    // Any HTTP response proves that the web server is reachable. Only a
+    // connection-level failure should cause another probe.
+    const bool serverResponded = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).isValid();
+    if (reply->error() == QNetworkReply::NoError || serverResponded) {
+        this->active = false;
         this->timer->stop();
+        this->currentInterval = this->initialInterval;
+        emit urlAccessible();
     } else {
-        qDebug() << "URL is not accessible.";
+        qDebug() << "Connection test URL is not accessible:" << this->url << reply->errorString();
         if (this->currentInterval < this->maxInterval) {
             this->currentInterval = qMin(this->currentInterval + this->incrementStep, this->maxInterval);
         }

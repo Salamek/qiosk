@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QTimer>
+#include <QPointer>
+
+class QNetworkReply;
 
 class ConnectionChecker : public QObject {
     Q_OBJECT
@@ -12,6 +15,7 @@ public:
     ConnectionChecker(QObject *parent = nullptr);
     ~ConnectionChecker();
     void checkUrlAccessibility(QUrl url);
+    void stop();
 
 signals:
     void urlAccessible();
@@ -27,6 +31,8 @@ private:
     QNetworkAccessManager *networkManager;
     QTimer *timer;
     QUrl url;
+    QPointer<QNetworkReply> currentReply;
+    bool active = false;
     int currentInterval;
     const int initialInterval = 5000; // 5 seconds
     const int maxInterval = 60000;    // 60 seconds
