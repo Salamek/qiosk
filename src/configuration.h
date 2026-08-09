@@ -39,6 +39,7 @@ public:
     QString acceptLanguage;
     QString userAgent;
     QUrl connectionTestUrl;
+    bool hideCursor;
 
 
     void setUrl(QUrl url);
@@ -60,6 +61,8 @@ public:
     void setAcceptLanguage(QString acceptLanguage);
     void setUserAgent(QString userAgent);
     void setConnectionTestUrl(QUrl connectionTestUrl);
+    void setHideCursor(bool hideCursor);
+    bool loadFromFile(QString fileName, QString *errorMessage = nullptr);
 
     bool isFullscreen();
     bool isMaximized();
@@ -82,6 +85,7 @@ public:
     QString getAcceptLanguage();
     QString getUserAgent();
     QUrl getConnectionTestUrl();
+    bool isHideCursor();
     QWindow::Visibility getWindowMode();
     void setWindowMode(QWindow::Visibility windowMode);
 signals:

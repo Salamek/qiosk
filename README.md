@@ -16,15 +16,20 @@ Qiosk is a "kiosk first" web browser written in QT as a core part of [chromium-k
 * Websocket API for ~remote control
 * Uses QT [QWebEngine](https://wiki.qt.io/QtWebEngine) so it is basically build on chromium
 * Option to set User-Agent and Accept-Language HTTP headers (Autodetect if not set)
+* INI configuration file support with command-line overrides
 * Waits for an unavailable target web server and reloads once it becomes reachable. By default the target URL origin is tested; use `--connection-test-url=<url>` to override it.
 
 ## Documentation
 
 For details on how to use this package, check out our [documentation](.docs).
 
+By default qiosk loads `/etc/qiosk/qiosk.conf` when it exists. Use
+`--config=/path/to/qiosk.conf` to load a different file instead. Explicitly
+provided command-line options and the positional URL override file settings.
+The packaged default configuration documents the available keys.
+
 ### Q/A
 
 * Q: Why?
 * A: Every new version of chromium browser was less and less configurable and usable as kiosk browser (removed CLI options, annoying dialogs, no way to ignore invalid SSL certs, kiosk features only achivable by writing chrome extension and injecting it)
-
 

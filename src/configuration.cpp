@@ -1,5 +1,6 @@
 #include "configuration.h"
 #include <QRegularExpression>
+#include <QSettings>
 
 QStringList Configuration::windowModeOptions = {"hidden", "automaticvisibility", "windowed", "minimized", "maximized", "fullscreen"};
 
@@ -31,14 +32,21 @@ Configuration::Configuration(QObject *parent)
     this->navbarVerticalPosition = BarWidget::VerticalPosition::Bottom;
     this->navbarHorizontalPosition = BarWidget::HorizontalPosition::Center;
     this->windowMode = QWindow::Visibility::AutomaticVisibility;
-    this->navbarWidth = 25; //%
+    this->navbarWidth = 100; //%
     this->navbarHeight = 5; //%
     this->displayAddressBar = false;
     this->displayNavBar = false;
     this->displayScrollBars = false;
     this->underlayNavBar = false;
     this->profileName = "default";
-    //this->permissions = WebPage::Permission::AllowGeolocation | WebPage::Permission::AllowInvalidCertificate | WebPage::Permission::AllowNotifications | WebPage::Permission::AllowDesktopVideoCapture;
+    this->permissions = WebPage::Permissions();
+    this->navBarEnabledButtons = {
+        BarWidget::Button::Back,
+        BarWidget::Button::Forward,
+        BarWidget::Button::Reload,
+        BarWidget::Button::Home
+    };
+    this->hideCursor = false;
 }
 
 
@@ -121,7 +129,120 @@ void Configuration::setUserAgent(QString userAgent) {
 }
 
 void Configuration::setConnectionTestUrl(QUrl connectionTestUrl) {
-    this->connectionTestUrl = connectionTestUrl;
+    this->connectionTestUrl = Configuration::normalizeUrl(connectionTestUrl);
+}
+
+void Configuration::setHideCursor(bool hideCursor) {
+    this->hideCursor = hideCursor;
+}
+
+bool Configuration::loadFromFile(QString fileName, QString *errorMessage) {
+    QSettings settings(fileName, QSettings::IniFormat);
+
+    if (settings.status() != QSettings::NoError) {
+        if (errorMessage) {
+            *errorMessage = QStringLiteral("Unable to read configuration file %1").arg(fileName);
+        }
+        return false;
+    }
+
+    auto fail = [errorMessage, &fileName](const QString &message) {
+        if (errorMessage) {
+            *errorMessage = QStringLiteral("%1 in %2").arg(message, fileName);
+        }
+        return false;
+    };
+
+    if (settings.contains("Browser/url"))
+        this->setUrl(settings.value("Browser/url").toString());
+    if (settings.contains("Browser/idle"))
+        this->setIdleTime(settings.value("Browser/idle").toInt());
+    if (settings.contains("Navbar/width")) {
+        const int value = settings.value("Navbar/width").toInt();
+        if (value < 1 || value > 100)
+            return fail(QStringLiteral("Navbar/width must be between 1 and 100"));
+        this->setNavbarWidth(value);
+    }
+    if (settings.contains("Navbar/height")) {
+        const int value = settings.value("Navbar/height").toInt();
+        if (value < 1 || value > 100)
+            return fail(QStringLiteral("Navbar/height must be between 1 and 100"));
+        this->setNavbarHeight(value);
+    }
+    if (settings.contains("Navbar/display"))
+        this->setDisplayNavBar(settings.value("Navbar/display").toBool());
+    if (settings.contains("Page/display-addressbar"))
+        this->setDisplayAddressBar(settings.value("Page/display-addressbar").toBool());
+    if (settings.contains("Page/display-scroll-bars"))
+        this->setDisplayScrollBars(settings.value("Page/display-scroll-bars").toBool());
+    if (settings.contains("Navbar/underlay"))
+        this->setUnderlayNavBar(settings.value("Navbar/underlay").toBool());
+    if (settings.contains("Browser/profile-name"))
+        this->setProfileName(settings.value("Browser/profile-name").toString());
+    if (settings.contains("Page/accept-language"))
+        this->setAcceptLanguage(settings.value("Page/accept-language").toString());
+    if (settings.contains("Page/user-agent"))
+        this->setUserAgent(settings.value("Page/user-agent").toString());
+    if (settings.contains("Connection/test-url"))
+        this->setConnectionTestUrl(settings.value("Connection/test-url").toString());
+    if (settings.contains("Browser/hide-cursor"))
+        this->setHideCursor(settings.value("Browser/hide-cursor").toBool());
+    if (settings.contains("Page/white-list")) {
+        QStringList values = settings.value("Page/white-list").toStringList();
+        if (values.size() == 1)
+            values = values.first().split(',', Qt::SkipEmptyParts);
+        for (QString &value : values)
+            value = value.trimmed();
+        this->setWhiteList(values);
+    }
+
+    if (settings.contains("Window/mode")) {
+        const QString value = settings.value("Window/mode").toString();
+        if (!Configuration::windowModeOptions.contains(value))
+            return fail(QStringLiteral("Unknown Window/mode value '%1'").arg(value));
+        this->setWindowMode(Configuration::nameToWindowMode(value));
+    }
+
+    if (settings.contains("Navbar/horizontal-position")) {
+        const QString value = settings.value("Navbar/horizontal-position").toString();
+        const auto position = BarWidget::nameToBarWidgetHorizontalPosition(value);
+        if (position == BarWidget::HorizontalPosition::Unknown)
+            return fail(QStringLiteral("Unknown Navbar/horizontal-position value '%1'").arg(value));
+        this->setNavbarHorizontalPosition(position);
+    }
+
+    if (settings.contains("Navbar/vertical-position")) {
+        const QString value = settings.value("Navbar/vertical-position").toString();
+        const auto position = BarWidget::nameToBarWidgetVerticalPosition(value);
+        if (position == BarWidget::VerticalPosition::Unknown)
+            return fail(QStringLiteral("Unknown Navbar/vertical-position value '%1'").arg(value));
+        this->setNavbarVerticalPosition(position);
+    }
+
+    if (settings.contains("Page/allow-feature")) {
+        QStringList names = settings.value("Page/allow-feature").toStringList();
+        if (names.size() == 1)
+            names = names.first().split(',', Qt::SkipEmptyParts);
+        const auto permissions = WebPage::namesToWebPagePermissions(names);
+        if (permissions.testFlag(WebPage::Permission::Unknown))
+            return fail(QStringLiteral("Unknown Page/allow-feature value"));
+        this->setPermissions(permissions);
+    }
+
+    if (settings.contains("Navbar/enabled-buttons")) {
+        QStringList names = settings.value("Navbar/enabled-buttons").toStringList();
+        if (names.size() == 1)
+            names = names.first().split(',', Qt::SkipEmptyParts);
+        const auto buttons = BarWidget::buttonNamesToButtons(names);
+        if (buttons.contains(BarWidget::Button::Unknown))
+            return fail(QStringLiteral("Unknown Navbar/enabled-buttons value"));
+        this->setNavbarEnabledButtons(buttons);
+    }
+
+    if (settings.status() != QSettings::NoError)
+        return fail(QStringLiteral("Unable to parse configuration file"));
+
+    return true;
 }
 
 
@@ -191,6 +312,10 @@ QString Configuration::getUserAgent() {
 
 QUrl Configuration::getConnectionTestUrl() {
     return this->connectionTestUrl;
+}
+
+bool Configuration::isHideCursor() {
+    return this->hideCursor;
 }
 
 QWindow::Visibility Configuration::getWindowMode() {

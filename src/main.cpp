@@ -6,6 +6,7 @@
 #include <QWebEngineSettings>
 #include <QWebEngineProfile>
 #include <QCommandLineParser>
+#include <QFileInfo>
 #include <QVersionNumber>
 
 
@@ -33,6 +34,9 @@ int main(int argc, char *argv[])
     parser.addHelpOption();
     QCommandLineOption versionOption(QStringList() << QStringLiteral("v") << QStringLiteral("version"), QCoreApplication::translate("main", "Displays version information."));
     parser.addOption(versionOption);
+
+    QCommandLineOption configOption(QStringLiteral("config"), QCoreApplication::translate("main", "Use an alternative configuration file instead of /etc/qiosk/qiosk.conf."), QCoreApplication::translate("main", "file"));
+    parser.addOption(configOption);
 
     parser.addPositionalArgument("url", QCoreApplication::translate("main", "URL to display."));
 
@@ -125,62 +129,90 @@ int main(int argc, char *argv[])
     }
 
     const QStringList args = parser.positionalArguments();
-    // url is args.at(0)
-    if (args.size() < 1) {
-        fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Must specify an argument.")));
+    if (args.size() > 1) {
+        fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Only one URL may be specified.")));
         parser.showHelp(1);
     }
 
-    // Prefill Configuration
+    // Load built-in defaults, then the selected configuration file.
     Configuration *config = new Configuration();
-    config->setUrl(args.at(0));
-    config->setIdleTime(parser.value(idleTimeOption).toInt());
-    config->setNavbarWidth(parser.value(navbarWidthOption).toInt());
-    config->setNavbarHeight(parser.value(navbarHeightOption).toInt());
+    const bool customConfig = parser.isSet(configOption);
+    const QString configFile = customConfig ? parser.value(configOption) : QStringLiteral("/etc/qiosk/qiosk.conf");
+    if (customConfig || QFileInfo::exists(configFile)) {
+        QString errorMessage;
+        if (!QFileInfo::exists(configFile) || !config->loadFromFile(configFile, &errorMessage)) {
+            if (errorMessage.isEmpty())
+                errorMessage = QCoreApplication::translate("main", "Configuration file does not exist: %1").arg(configFile);
+            fprintf(stderr, "%s\n", qPrintable(errorMessage));
+            return EXIT_FAILURE;
+        }
+    }
 
-    config->setDisplayNavBar(parser.isSet(displayNavBarOption));
-    config->setDisplayAddressBar(parser.isSet(displayAddressBarOption));
-    config->setDisplayScrollBars(parser.isSet(displayScrollBarsOption));
-    config->setUnderlayNavBar(parser.isSet(underlayNavBarOption));
-    config->setProfileName(parser.value(profileNameOption));
+    // Explicit command-line values overlay file configuration.
+    if (!args.isEmpty())
+        config->setUrl(args.first());
+    if (parser.isSet(idleTimeOption))
+        config->setIdleTime(parser.value(idleTimeOption).toInt());
+    if (parser.isSet(navbarWidthOption))
+        config->setNavbarWidth(parser.value(navbarWidthOption).toInt());
+    if (parser.isSet(navbarHeightOption))
+        config->setNavbarHeight(parser.value(navbarHeightOption).toInt());
+
+    if (parser.isSet(displayNavBarOption))
+        config->setDisplayNavBar(true);
+    if (parser.isSet(displayAddressBarOption))
+        config->setDisplayAddressBar(true);
+    if (parser.isSet(displayScrollBarsOption))
+        config->setDisplayScrollBars(true);
+    if (parser.isSet(underlayNavBarOption))
+        config->setUnderlayNavBar(true);
+    if (parser.isSet(profileNameOption))
+        config->setProfileName(parser.value(profileNameOption));
 
     if (parser.isSet(whiteListOption)) {
         config->setWhiteList(parser.values(whiteListOption));
     }
 
-    BarWidget::HorizontalPosition horizontalPosition = BarWidget::nameToBarWidgetHorizontalPosition(parser.value(navbarHorizontalPositionOption));
-    if (horizontalPosition == BarWidget::HorizontalPosition::Unknown) {
-        fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided horizontal position is unknown, use one of left|right|center.")));
-        parser.showHelp(1);
+    if (parser.isSet(navbarHorizontalPositionOption)) {
+        BarWidget::HorizontalPosition horizontalPosition = BarWidget::nameToBarWidgetHorizontalPosition(parser.value(navbarHorizontalPositionOption));
+        if (horizontalPosition == BarWidget::HorizontalPosition::Unknown) {
+            fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided horizontal position is unknown, use one of left|right|center.")));
+            parser.showHelp(1);
+        }
+        config->setNavbarHorizontalPosition(horizontalPosition);
     }
-    config->setNavbarHorizontalPosition(horizontalPosition);
 
-    BarWidget::VerticalPosition verticalPosition = BarWidget::nameToBarWidgetVerticalPosition(parser.value(navbarVerticalPositionOption));
-    if (verticalPosition == BarWidget::VerticalPosition::Unknown) {
-        fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided vertical position is unknown, use one of top|bottom.")));
-        parser.showHelp(1);
+    if (parser.isSet(navbarVerticalPositionOption)) {
+        BarWidget::VerticalPosition verticalPosition = BarWidget::nameToBarWidgetVerticalPosition(parser.value(navbarVerticalPositionOption));
+        if (verticalPosition == BarWidget::VerticalPosition::Unknown) {
+            fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided vertical position is unknown, use one of top|bottom.")));
+            parser.showHelp(1);
+        }
+        config->setNavbarVerticalPosition(verticalPosition);
     }
-    config->setNavbarVerticalPosition(verticalPosition);
 
-    WebPage::Permissions permissions = WebPage::namesToWebPagePermissions(parser.values(allowFeatureOption));
-    if(permissions.testFlag(WebPage::Permission::Unknown)){
-        fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided permission is unknown, use one of %1.").arg(permissionOptionsMapKeys.join("|"))));
-        parser.showHelp(1);
+    if (parser.isSet(allowFeatureOption)) {
+        WebPage::Permissions permissions = WebPage::namesToWebPagePermissions(parser.values(allowFeatureOption));
+        if(permissions.testFlag(WebPage::Permission::Unknown)){
+            fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided permission is unknown, use one of %1.").arg(permissionOptionsMapKeys.join("|"))));
+            parser.showHelp(1);
+        }
+        config->setPermissions(permissions);
     }
-    config->setPermissions(permissions);
 
-
-    QList<BarWidget::Button> buttons = BarWidget::buttonNamesToButtons(parser.value(navbarEnableButtonOption).split(","));
-    if(buttons.contains(BarWidget::Button::Unknown)){
-        fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided enabled-button is unknown, use one of %1 separated by comma.").arg(enableButtonOptionsMapKeys.join("|"))));
-        parser.showHelp(1);
+    if (parser.isSet(navbarEnableButtonOption)) {
+        QList<BarWidget::Button> buttons = BarWidget::buttonNamesToButtons(parser.value(navbarEnableButtonOption).split(","));
+        if(buttons.contains(BarWidget::Button::Unknown)){
+            fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Provided enabled-button is unknown, use one of %1 separated by comma.").arg(enableButtonOptionsMapKeys.join("|"))));
+            parser.showHelp(1);
+        }
+        config->setNavbarEnabledButtons(buttons);
     }
-    config->setNavbarEnabledButtons(buttons);
 
 
     if (parser.isSet(fullscreenOption)) {
         config->setWindowMode(QWindow::Visibility::FullScreen);
-    } else {
+    } else if (parser.isSet(windowModeOption)) {
         QString windowMode = parser.value(windowModeOption);
         if (!Configuration::windowModeOptions.contains(windowMode))
         {
@@ -219,7 +251,10 @@ int main(int argc, char *argv[])
 
     a.installEventFilter(&userInputEventFilter);
 
-    if (parser.isSet(hideCursor)){
+    if (parser.isSet(hideCursor))
+      config->setHideCursor(true);
+
+    if (config->isHideCursor()){
       a.setOverrideCursor(Qt::BlankCursor);
     }
 

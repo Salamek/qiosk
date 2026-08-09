@@ -24,6 +24,7 @@ makedepends=(
 )
 
 provides=('qiosk')
+backup=('etc/qiosk/qiosk.conf')
 
 prepare() {
   mkdir -p build
@@ -31,7 +32,7 @@ prepare() {
 
 build() {
   cd build
-  cmake -B build -S ../../../ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release
+  cmake -B build -S ../../../ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc -DCMAKE_BUILD_TYPE=Release
   cmake --build build
 }
 
