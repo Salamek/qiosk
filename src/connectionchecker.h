@@ -14,7 +14,7 @@ class ConnectionChecker : public QObject {
 public:
     ConnectionChecker(QObject *parent = nullptr);
     ~ConnectionChecker();
-    void checkUrlAccessibility(QUrl url);
+    void checkUrlAccessibility(QUrl url, bool reloadIfAlreadyAccessible = false);
     void stop();
 
 signals:
@@ -34,6 +34,7 @@ private:
     QPointer<QNetworkReply> currentReply;
     bool active = false;
     bool connectionFailureObserved = false;
+    bool reloadIfAlreadyAccessible = false;
     int currentInterval;
     const int initialInterval = 5000; // 5 seconds
     const int maxInterval = 60000;    // 60 seconds

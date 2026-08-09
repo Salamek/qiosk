@@ -28,8 +28,9 @@ void ConnectionChecker::doCheckRequest() {
 }
 
 
-void ConnectionChecker::checkUrlAccessibility(QUrl url) {
+void ConnectionChecker::checkUrlAccessibility(QUrl url, bool reloadIfAlreadyAccessible) {
     if (this->active && this->url == url) {
+        this->reloadIfAlreadyAccessible |= reloadIfAlreadyAccessible;
         return;
     }
 
@@ -37,6 +38,7 @@ void ConnectionChecker::checkUrlAccessibility(QUrl url) {
     this->url = url;
     this->active = true;
     this->connectionFailureObserved = false;
+    this->reloadIfAlreadyAccessible = reloadIfAlreadyAccessible;
     this->currentInterval = this->initialInterval;
     this->doCheckRequest();
 }
@@ -44,6 +46,7 @@ void ConnectionChecker::checkUrlAccessibility(QUrl url) {
 void ConnectionChecker::stop() {
     this->active = false;
     this->connectionFailureObserved = false;
+    this->reloadIfAlreadyAccessible = false;
     this->timer->stop();
     if (this->currentReply) {
         QNetworkReply *reply = this->currentReply;
@@ -69,12 +72,13 @@ void ConnectionChecker::handleNetworkReply(QNetworkReply *reply) {
     // connection-level failure should cause another probe.
     const bool serverResponded = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).isValid();
     if (reply->error() == QNetworkReply::NoError || serverResponded) {
-        const bool recoveredFromConnectionFailure = this->connectionFailureObserved;
+        const bool shouldReload = this->connectionFailureObserved || this->reloadIfAlreadyAccessible;
         this->active = false;
         this->connectionFailureObserved = false;
+        this->reloadIfAlreadyAccessible = false;
         this->timer->stop();
         this->currentInterval = this->initialInterval;
-        if (recoveredFromConnectionFailure) {
+        if (shouldReload) {
             emit urlAccessible();
         } else {
             qDebug() << "Connection test URL is already accessible; not reloading failed page:" << this->url;

@@ -26,6 +26,10 @@
 #include "connectionchecker.h"
 #include <QWindow>
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 2, 0)
+QT_FORWARD_DECLARE_CLASS(QWebEngineLoadingInfo)
+#endif
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -67,6 +71,9 @@ private:
     QQuickWidget *virtualKeyboardWidget;
     void handleWebViewLoadProgress(int progress);
     void handleLoadFinished(bool ok);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 2, 0)
+    void handleLoadingChanged(const QWebEngineLoadingInfo &loadingInfo);
+#endif
     void handleLoadStarted();
     void handleRenderProcessTerminated(QWebEnginePage::RenderProcessTerminationStatus termStatus, int statusCode);
     void setupReloadStopButton(bool loading);

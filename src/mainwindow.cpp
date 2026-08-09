@@ -3,6 +3,9 @@
 #include <QGuiApplication>
 #include <QInputMethod>
 #include <QQuickItem>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 2, 0)
+#include <QWebEngineLoadingInfo>
+#endif
 
 MainWindow::MainWindow(Configuration *config, QWidget *parent)
     : QMainWindow(parent),
@@ -128,6 +131,9 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     connect(this->webView, &QWebEngineView::loadStarted, this, &MainWindow::handleLoadStarted);
     connect(this->webView, &QWebEngineView::loadProgress, this, &MainWindow::handleWebViewLoadProgress);
     connect(this->webView, &QWebEngineView::loadFinished, this, &MainWindow::handleLoadFinished);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 2, 0)
+    connect(webPage, &QWebEnginePage::loadingChanged, this, &MainWindow::handleLoadingChanged);
+#endif
     connect(this->webView, &WebView::rendererRecoveryStarted,
             this, &MainWindow::handleRenderProcessTerminated);
     connect(this->webView, &WebView::webActionEnabledChanged, this, &MainWindow::handleWebActionEnabledChanged);
@@ -187,7 +193,7 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     // End of initial configuration
     // ============================
 
-    //Load URL
+    // Load URL
     this->webView->setUrl(this->initialUrl);
 
     //!FIXME Hack
@@ -351,11 +357,15 @@ void MainWindow::handleWebViewLoadProgress(int progress)
 }
 
 void MainWindow::handleLoadFinished(bool ok) {
+#if QT_VERSION < QT_VERSION_CHECK(6, 2, 0)
     if (!ok) {
         const QUrl testUrl = this->connectionTestUrlFor(this->webView->url());
         qDebug() << "Load finished with error. Checking web server accessibility at" << testUrl;
         this->connectionChecker->checkUrlAccessibility(testUrl);
     } else {
+#else
+    if (ok) {
+#endif
         // The page recovered without our probe (or a stale failure completed
         // late), so no pending check may reload it later.
         this->connectionChecker->stop();
@@ -367,6 +377,33 @@ void MainWindow::handleLoadFinished(bool ok) {
         this->resetHistoryLock = false;
     }
 }
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 2, 0)
+void MainWindow::handleLoadingChanged(const QWebEngineLoadingInfo &loadingInfo) {
+    if (loadingInfo.status() != QWebEngineLoadingInfo::LoadFailedStatus) {
+        return;
+    }
+
+    qWarning().noquote()
+        << "Page load failed: domain=" << static_cast<int>(loadingInfo.errorDomain())
+        << "code=" << loadingInfo.errorCode()
+        << "error=" << loadingInfo.errorString()
+        << "url=" << loadingInfo.url().toDisplayString();
+
+    const bool connectionFailure =
+        loadingInfo.errorDomain() == QWebEngineLoadingInfo::ConnectionErrorDomain
+        || loadingInfo.errorDomain() == QWebEngineLoadingInfo::DnsErrorDomain;
+    if (!connectionFailure) {
+        qDebug() << "Page load failure is not a connection or DNS error; not starting connection recovery.";
+        return;
+    }
+
+    const QUrl failedUrl = loadingInfo.url().isEmpty() ? this->webView->url() : loadingInfo.url();
+    const QUrl testUrl = this->connectionTestUrlFor(failedUrl);
+    qDebug() << "Connection-related load failure. Checking web server accessibility at" << testUrl;
+    this->connectionChecker->checkUrlAccessibility(testUrl, true);
+}
+#endif
 
 void MainWindow::setupReloadStopButton(bool loading) {
     static QIcon stopIcon(QStringLiteral(":stop.png"));
