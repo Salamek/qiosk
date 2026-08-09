@@ -1,3 +1,11 @@
+qiosk (1.16.1) unstable; urgency=medium
+
+  * Fixes
+    * Config
+      * 5393667 Disable navbar by default
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Sun, 09 Aug 2026 15:13:01 +0000
+
 qiosk (1.16.0) unstable; urgency=medium
 
   * Fixes
