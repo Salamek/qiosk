@@ -1,3 +1,16 @@
+qiosk (1.16.0) unstable; urgency=medium
+
+  * Fixes
+    * ConnectionChecker
+      * c42950d Prevent infinite reload on HTTP error
+  * Features
+    * Configuration
+      * f5a5fa1 Add configuration file support
+    * URL
+      * 974971c Normalize provided URLs (set missing protocol to https)
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Sun, 09 Aug 2026 14:00:53 +0000
+
 qiosk (1.15.0) unstable; urgency=medium
 
   * Features
