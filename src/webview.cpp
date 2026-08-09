@@ -22,9 +22,11 @@ WebView::WebView(QWidget *parent)
         // target the same dying process.
         QTimer::singleShot(1000, this, SLOT(reload()));
 
-        // If no successful load follows, permit one controlled retry later.
+        // If no successful load follows, permit another recovery attempt after
+        // a bounded delay.
         QTimer::singleShot(30000, this, [this, recoveryGeneration]() {
             if (this->rendererRecoveryGeneration == recoveryGeneration) {
+                qWarning() << "Chromium renderer recovery did not finish successfully";
                 this->rendererRecoveryInProgress = false;
             }
         });
