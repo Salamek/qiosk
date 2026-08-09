@@ -14,6 +14,7 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     this->isIdle = false;
     this->resetHistoryLock = false;
     this->refreshWebAction = QWebEnginePage::Reload;
+    this->setWindowTitle(this->config->getWindowTitle());
     this->setHomePageUrl(this->config->getUrl());
     this->lastUserActivity = QDateTime::currentSecsSinceEpoch(); // Set last user activity to NOW
 

@@ -31,6 +31,8 @@ public:
     BarWidget::VerticalPosition navbarVerticalPosition;
     BarWidget::HorizontalPosition navbarHorizontalPosition;
     QWindow::Visibility windowMode;
+    QString windowTitle;
+    QString windowIcon;
     WebPage::Permissions permissions;
     QList<BarWidget::Button> navBarEnabledButtons;
     int navbarWidth; //%
@@ -62,6 +64,8 @@ public:
     void setUserAgent(QString userAgent);
     void setConnectionTestUrl(QUrl connectionTestUrl);
     void setHideCursor(bool hideCursor);
+    void setWindowTitle(QString windowTitle);
+    void setWindowIcon(QString windowIcon);
     bool loadFromFile(QString fileName, QString *errorMessage = nullptr);
 
     bool isFullscreen();
@@ -86,6 +90,8 @@ public:
     QString getUserAgent();
     QUrl getConnectionTestUrl();
     bool isHideCursor();
+    QString getWindowTitle();
+    QString getWindowIcon();
     QWindow::Visibility getWindowMode();
     void setWindowMode(QWindow::Visibility windowMode);
 signals:

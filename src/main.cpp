@@ -7,6 +7,7 @@
 #include <QWebEngineProfile>
 #include <QCommandLineParser>
 #include <QFileInfo>
+#include <QIcon>
 #include <QVersionNumber>
 
 
@@ -46,6 +47,12 @@ int main(int argc, char *argv[])
 
     QCommandLineOption windowModeOption(QStringList() << "m" << "window-mode", QCoreApplication::translate("main", "Set window mode.") , Configuration::windowModeOptions.join("|"), "automaticvisibility");
     parser.addOption(windowModeOption);
+
+    QCommandLineOption windowTitleOption(QStringLiteral("window-title"), QCoreApplication::translate("main", "Set the window title."), QCoreApplication::translate("main", "title"));
+    parser.addOption(windowTitleOption);
+
+    QCommandLineOption windowIconOption(QStringLiteral("window-icon"), QCoreApplication::translate("main", "Set the window icon from an image file."), QCoreApplication::translate("main", "path"));
+    parser.addOption(windowIconOption);
 
     // A int option with multiple names (-i, --idle)
     QCommandLineOption idleTimeOption(QStringList() << "i" << "idle", QCoreApplication::translate("main", "Timeout to reset to home page.") ,QCoreApplication::translate("main", "seconds"), "0");
@@ -240,6 +247,22 @@ int main(int argc, char *argv[])
         config->setConnectionTestUrl(testUrl);
     }
 
+    if (parser.isSet(windowTitleOption)) {
+        config->setWindowTitle(parser.value(windowTitleOption));
+    }
+
+    if (parser.isSet(windowIconOption)) {
+        config->setWindowIcon(parser.value(windowIconOption));
+    }
+
+
+    QIcon applicationIcon(config->getWindowIcon());
+    if (applicationIcon.isNull()) {
+        qWarning() << "Unable to load window icon" << config->getWindowIcon()
+                   << "using the built-in qiosk icon instead.";
+        applicationIcon = QIcon(QStringLiteral(":/icon.png"));
+    }
+    a.setWindowIcon(applicationIcon);
 
     MainWindow w(config);
 

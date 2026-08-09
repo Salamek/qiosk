@@ -32,6 +32,8 @@ Configuration::Configuration(QObject *parent)
     this->navbarVerticalPosition = BarWidget::VerticalPosition::Bottom;
     this->navbarHorizontalPosition = BarWidget::HorizontalPosition::Center;
     this->windowMode = QWindow::Visibility::AutomaticVisibility;
+    this->windowTitle = QStringLiteral("qiosk");
+    this->windowIcon = QStringLiteral(":/icon.png");
     this->navbarWidth = 100; //%
     this->navbarHeight = 5; //%
     this->displayAddressBar = false;
@@ -136,6 +138,14 @@ void Configuration::setHideCursor(bool hideCursor) {
     this->hideCursor = hideCursor;
 }
 
+void Configuration::setWindowTitle(QString windowTitle) {
+    this->windowTitle = windowTitle;
+}
+
+void Configuration::setWindowIcon(QString windowIcon) {
+    this->windowIcon = windowIcon;
+}
+
 bool Configuration::loadFromFile(QString fileName, QString *errorMessage) {
     QSettings settings(fileName, QSettings::IniFormat);
 
@@ -187,6 +197,10 @@ bool Configuration::loadFromFile(QString fileName, QString *errorMessage) {
         this->setConnectionTestUrl(settings.value("Connection/test-url").toString());
     if (settings.contains("Browser/hide-cursor"))
         this->setHideCursor(settings.value("Browser/hide-cursor").toBool());
+    if (settings.contains("Window/title"))
+        this->setWindowTitle(settings.value("Window/title").toString());
+    if (settings.contains("Window/icon"))
+        this->setWindowIcon(settings.value("Window/icon").toString());
     if (settings.contains("Page/white-list")) {
         QStringList values = settings.value("Page/white-list").toStringList();
         if (values.size() == 1)
@@ -316,6 +330,14 @@ QUrl Configuration::getConnectionTestUrl() {
 
 bool Configuration::isHideCursor() {
     return this->hideCursor;
+}
+
+QString Configuration::getWindowTitle() {
+    return this->windowTitle;
+}
+
+QString Configuration::getWindowIcon() {
+    return this->windowIcon;
 }
 
 QWindow::Visibility Configuration::getWindowMode() {

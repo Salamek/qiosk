@@ -98,6 +98,30 @@ Just call qiosk from CLI like this:
 qiosk https://github.com
 ```
 
+### Window title and icon
+
+The title and icon of the running qiosk window can be configured in
+`/etc/qiosk/qiosk.conf`:
+
+```ini
+[Window]
+title=Customer kiosk
+icon=/absolute/path/to/customer-kiosk.png
+```
+
+The built-in icon can be selected with `icon=:/icon.png`, which is also the
+default. Command-line values override the configuration file:
+
+```bash
+qiosk --window-title="Customer kiosk" \
+      --window-icon=/absolute/path/to/customer-kiosk.png \
+      https://example.com
+```
+
+The window title is set directly by qiosk. Whether the custom icon is shown in
+the title bar, taskbar, or task switcher depends on the window manager. Some
+Wayland desktop environments prefer the icon from a matching `.desktop` file.
+
 More options:
 
 ```
@@ -112,6 +136,9 @@ Options:
   -v, --version                                      Displays version
                                                      information.
   -m  --window-mode                                  Set window mode.
+  --window-title <title>                             Set the window title.
+  --window-icon <path>                               Set the window icon from an
+                                                     image file.
   -i, --idle <seconds>                               Timeout to reset
   -w, --white-list <string>                          Whitelist with glob syntax
   --navbar-vertical-position <top|bottom>            Navbar vertical position
@@ -389,7 +416,6 @@ Sometimes there is a need to pass arguments to underlying chromium for options t
 QTWEBENGINE_CHROMIUM_FLAGS="--disable-pinch" qiosk <url>
 ````
 (Mostly)All possible options are listed at https://gist.github.com/dodying/34ea4760a699b47825a766051f47d43b or https://peter.sh/experiments/chromium-command-line-switches/ 
-
 
 
 
