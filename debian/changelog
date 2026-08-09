@@ -1,3 +1,11 @@
+qiosk (1.17.0) unstable; urgency=medium
+
+  * Features
+    * Window
+      * a45c8f2 Allow to set title and icon, Closes #21
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Sun, 09 Aug 2026 19:33:45 +0000
+
 qiosk (1.16.2) unstable; urgency=medium
 
   * Features
