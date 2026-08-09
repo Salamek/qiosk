@@ -22,6 +22,54 @@ QUrl Configuration::normalizeUrl(QUrl url) {
     return QUrl(QStringLiteral("https://") + value);
 }
 
+bool Configuration::parseWindowPosition(QString value, QPoint *position) {
+    if (!position) {
+        return false;
+    }
+
+    static const QRegularExpression expression(
+        QStringLiteral("^\\s*(-?\\d+)\\s*,\\s*(-?\\d+)\\s*$"));
+    const QRegularExpressionMatch match = expression.match(value);
+    if (!match.hasMatch()) {
+        return false;
+    }
+
+    bool xValid = false;
+    bool yValid = false;
+    const int x = match.captured(1).toInt(&xValid);
+    const int y = match.captured(2).toInt(&yValid);
+    if (!xValid || !yValid) {
+        return false;
+    }
+
+    *position = QPoint(x, y);
+    return true;
+}
+
+bool Configuration::parseWindowSize(QString value, QSize *size) {
+    if (!size) {
+        return false;
+    }
+
+    static const QRegularExpression expression(
+        QStringLiteral("^\\s*([1-9]\\d*)\\s*[xX]\\s*([1-9]\\d*)\\s*$"));
+    const QRegularExpressionMatch match = expression.match(value);
+    if (!match.hasMatch()) {
+        return false;
+    }
+
+    bool widthValid = false;
+    bool heightValid = false;
+    const int width = match.captured(1).toInt(&widthValid);
+    const int height = match.captured(2).toInt(&heightValid);
+    if (!widthValid || !heightValid) {
+        return false;
+    }
+
+    *size = QSize(width, height);
+    return true;
+}
+
 Configuration::Configuration(QObject *parent)
     : QObject{parent}
 {
@@ -34,6 +82,7 @@ Configuration::Configuration(QObject *parent)
     this->windowMode = QWindow::Visibility::AutomaticVisibility;
     this->windowTitle = QStringLiteral("qiosk");
     this->windowIcon = QStringLiteral(":/icon.png");
+    this->windowPositionSet = false;
     this->navbarWidth = 100; //%
     this->navbarHeight = 5; //%
     this->displayAddressBar = false;
@@ -146,6 +195,15 @@ void Configuration::setWindowIcon(QString windowIcon) {
     this->windowIcon = windowIcon;
 }
 
+void Configuration::setWindowPosition(QPoint windowPosition) {
+    this->windowPosition = windowPosition;
+    this->windowPositionSet = true;
+}
+
+void Configuration::setWindowSize(QSize windowSize) {
+    this->windowSize = windowSize;
+}
+
 bool Configuration::loadFromFile(QString fileName, QString *errorMessage) {
     QSettings settings(fileName, QSettings::IniFormat);
 
@@ -201,6 +259,20 @@ bool Configuration::loadFromFile(QString fileName, QString *errorMessage) {
         this->setWindowTitle(settings.value("Window/title").toString());
     if (settings.contains("Window/icon"))
         this->setWindowIcon(settings.value("Window/icon").toString());
+    if (settings.contains("Window/position")) {
+        QPoint position;
+        const QString value = settings.value("Window/position").toString();
+        if (!Configuration::parseWindowPosition(value, &position))
+            return fail(QStringLiteral("Window/position must use the X,Y format"));
+        this->setWindowPosition(position);
+    }
+    if (settings.contains("Window/size")) {
+        QSize size;
+        const QString value = settings.value("Window/size").toString();
+        if (!Configuration::parseWindowSize(value, &size))
+            return fail(QStringLiteral("Window/size must use the WIDTHxHEIGHT format with positive dimensions"));
+        this->setWindowSize(size);
+    }
     if (settings.contains("Page/white-list")) {
         QStringList values = settings.value("Page/white-list").toStringList();
         if (values.size() == 1)
@@ -338,6 +410,22 @@ QString Configuration::getWindowTitle() {
 
 QString Configuration::getWindowIcon() {
     return this->windowIcon;
+}
+
+bool Configuration::hasWindowPosition() {
+    return this->windowPositionSet;
+}
+
+bool Configuration::hasWindowSize() {
+    return this->windowSize.isValid();
+}
+
+QPoint Configuration::getWindowPosition() {
+    return this->windowPosition;
+}
+
+QSize Configuration::getWindowSize() {
+    return this->windowSize;
 }
 
 QWindow::Visibility Configuration::getWindowMode() {

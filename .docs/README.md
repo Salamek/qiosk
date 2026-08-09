@@ -98,7 +98,7 @@ Just call qiosk from CLI like this:
 qiosk https://github.com
 ```
 
-### Window title and icon
+### Window appearance and geometry
 
 The title and icon of the running qiosk window can be configured in
 `/etc/qiosk/qiosk.conf`:
@@ -107,6 +107,8 @@ The title and icon of the running qiosk window can be configured in
 [Window]
 title=Customer kiosk
 icon=/absolute/path/to/customer-kiosk.png
+size=1280x720
+position=100,50
 ```
 
 The built-in icon can be selected with `icon=:/icon.png`, which is also the
@@ -115,12 +117,17 @@ default. Command-line values override the configuration file:
 ```bash
 qiosk --window-title="Customer kiosk" \
       --window-icon=/absolute/path/to/customer-kiosk.png \
+      --window-size=1280x720 \
+      --window-position=100,50 \
       https://example.com
 ```
 
 The window title is set directly by qiosk. Whether the custom icon is shown in
 the title bar, taskbar, or task switcher depends on the window manager. Some
 Wayland desktop environments prefer the icon from a matching `.desktop` file.
+Window size and position are only applied in `windowed` and
+`automaticvisibility` modes. Positioning is best-effort on X11 and is normally
+ignored by Wayland compositors.
 
 More options:
 
@@ -139,6 +146,10 @@ Options:
   --window-title <title>                             Set the window title.
   --window-icon <path>                               Set the window icon from an
                                                      image file.
+  --window-size <widthxheight>                       Set the initial window size
+                                                     in windowed mode.
+  --window-position <x,y>                            Set the initial window
+                                                     position in windowed mode.
   -i, --idle <seconds>                               Timeout to reset
   -w, --white-list <string>                          Whitelist with glob syntax
   --navbar-vertical-position <top|bottom>            Navbar vertical position
@@ -416,7 +427,6 @@ Sometimes there is a need to pass arguments to underlying chromium for options t
 QTWEBENGINE_CHROMIUM_FLAGS="--disable-pinch" qiosk <url>
 ````
 (Mostly)All possible options are listed at https://gist.github.com/dodying/34ea4760a699b47825a766051f47d43b or https://peter.sh/experiments/chromium-command-line-switches/ 
-
 
 
 

@@ -54,6 +54,12 @@ int main(int argc, char *argv[])
     QCommandLineOption windowIconOption(QStringLiteral("window-icon"), QCoreApplication::translate("main", "Set the window icon from an image file."), QCoreApplication::translate("main", "path"));
     parser.addOption(windowIconOption);
 
+    QCommandLineOption windowPositionOption(QStringLiteral("window-position"), QCoreApplication::translate("main", "Set the initial window position in windowed mode."), QCoreApplication::translate("main", "x,y"));
+    parser.addOption(windowPositionOption);
+
+    QCommandLineOption windowSizeOption(QStringLiteral("window-size"), QCoreApplication::translate("main", "Set the initial window size in windowed mode."), QCoreApplication::translate("main", "widthxheight"));
+    parser.addOption(windowSizeOption);
+
     // A int option with multiple names (-i, --idle)
     QCommandLineOption idleTimeOption(QStringList() << "i" << "idle", QCoreApplication::translate("main", "Timeout to reset to home page.") ,QCoreApplication::translate("main", "seconds"), "0");
     parser.addOption(idleTimeOption);
@@ -255,6 +261,24 @@ int main(int argc, char *argv[])
         config->setWindowIcon(parser.value(windowIconOption));
     }
 
+    if (parser.isSet(windowPositionOption)) {
+        QPoint position;
+        if (!Configuration::parseWindowPosition(parser.value(windowPositionOption), &position)) {
+            fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Window position must use the X,Y format.")));
+            parser.showHelp(1);
+        }
+        config->setWindowPosition(position);
+    }
+
+    if (parser.isSet(windowSizeOption)) {
+        QSize size;
+        if (!Configuration::parseWindowSize(parser.value(windowSizeOption), &size)) {
+            fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: Window size must use the WIDTHxHEIGHT format with positive dimensions.")));
+            parser.showHelp(1);
+        }
+        config->setWindowSize(size);
+    }
+
 
     QIcon applicationIcon(config->getWindowIcon());
     if (applicationIcon.isNull()) {
@@ -265,6 +289,14 @@ int main(int argc, char *argv[])
     a.setWindowIcon(applicationIcon);
 
     MainWindow w(config);
+
+    if (config->getWindowMode() == QWindow::Visibility::Windowed
+        || config->getWindowMode() == QWindow::Visibility::AutomaticVisibility) {
+        if (config->hasWindowSize())
+            w.resize(config->getWindowSize());
+        if (config->hasWindowPosition())
+            w.move(config->getWindowPosition());
+    }
 
     w.setWindowMode(config->getWindowMode());
 

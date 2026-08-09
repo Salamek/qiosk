@@ -2,6 +2,8 @@
 #define CONFIGURATION_H
 
 #include <QObject>
+#include <QPoint>
+#include <QSize>
 #include <QUrl>
 #include <QWindow>
 #include "barwidget.h"
@@ -17,6 +19,8 @@ public:
     static QString windowModeToName(QWindow::Visibility visibility);
     static QWindow::Visibility nameToWindowMode(QString name);
     static QUrl normalizeUrl(QUrl url);
+    static bool parseWindowPosition(QString value, QPoint *position);
+    static bool parseWindowSize(QString value, QSize *size);
 
     QUrl url;
     bool touchscreen; // @TODO Touchscreen support enabled
@@ -33,6 +37,9 @@ public:
     QWindow::Visibility windowMode;
     QString windowTitle;
     QString windowIcon;
+    QPoint windowPosition;
+    QSize windowSize;
+    bool windowPositionSet;
     WebPage::Permissions permissions;
     QList<BarWidget::Button> navBarEnabledButtons;
     int navbarWidth; //%
@@ -66,6 +73,8 @@ public:
     void setHideCursor(bool hideCursor);
     void setWindowTitle(QString windowTitle);
     void setWindowIcon(QString windowIcon);
+    void setWindowPosition(QPoint windowPosition);
+    void setWindowSize(QSize windowSize);
     bool loadFromFile(QString fileName, QString *errorMessage = nullptr);
 
     bool isFullscreen();
@@ -92,6 +101,10 @@ public:
     bool isHideCursor();
     QString getWindowTitle();
     QString getWindowIcon();
+    bool hasWindowPosition();
+    bool hasWindowSize();
+    QPoint getWindowPosition();
+    QSize getWindowSize();
     QWindow::Visibility getWindowMode();
     void setWindowMode(QWindow::Visibility windowMode);
 signals:
