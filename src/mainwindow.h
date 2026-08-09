@@ -10,6 +10,7 @@
 #include <QResizeEvent>
 #include <QProgressBar>
 #include <QLineEdit>
+#include <QLabel>
 #include <QAction>
 #include <QApplication>
 #include <QQuickWidget>
@@ -59,12 +60,15 @@ private:
     ProgressBarWidget *progressBar;
     QWebEnginePage::WebAction refreshWebAction;
     QTimer *idleTimer;
+    QLabel *rendererCrashBar;
+    QTimer *rendererCrashBarTimer;
     WebsocketControl *websocketControl;
     ConnectionChecker *connectionChecker;
     QQuickWidget *virtualKeyboardWidget;
     void handleWebViewLoadProgress(int progress);
     void handleLoadFinished(bool ok);
     void handleLoadStarted();
+    void handleRenderProcessTerminated(QWebEnginePage::RenderProcessTerminationStatus termStatus, int statusCode);
     void setupReloadStopButton(bool loading);
     void checkReset();
     void plot(QSize size);

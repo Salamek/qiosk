@@ -20,9 +20,11 @@ protected:
     QWebEngineView *createWindow(QWebEnginePage::WebWindowType type) override;
 signals:
     void webActionEnabledChanged(QWebEnginePage::WebAction webAction, bool enabled);
+    void rendererRecoveryStarted(QWebEnginePage::RenderProcessTerminationStatus termStatus, int statusCode);
 private:
     void createWebActionTrigger(QWebEnginePage *page, QWebEnginePage::WebAction);
-    qint64 lastCrashReloadTime = -1;
+    bool rendererRecoveryInProgress = false;
+    quint64 rendererRecoveryGeneration = 0;
 };
 
 #endif

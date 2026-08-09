@@ -91,6 +91,17 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     centralWidget->setLayout(this->mainLayout);
     this->setCentralWidget(centralWidget);
 
+    this->rendererCrashBar = new QLabel(centralWidget);
+    this->rendererCrashBar->setAlignment(Qt::AlignCenter);
+    this->rendererCrashBar->setAttribute(Qt::WA_TransparentForMouseEvents);
+    this->rendererCrashBar->setStyleSheet(QStringLiteral(
+        "QLabel { background-color: #b71c1c; color: white; font-weight: bold; padding: 8px; }"));
+    this->rendererCrashBar->hide();
+
+    this->rendererCrashBarTimer = new QTimer(this);
+    this->rendererCrashBarTimer->setSingleShot(true);
+    connect(this->rendererCrashBarTimer, &QTimer::timeout, this->rendererCrashBar, &QWidget::hide);
+
     this->barWidget = new BarWidget(this);
     this->setDisplayNavBar(this->config->isDisplayNavBar());
 
@@ -117,6 +128,8 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     connect(this->webView, &QWebEngineView::loadStarted, this, &MainWindow::handleLoadStarted);
     connect(this->webView, &QWebEngineView::loadProgress, this, &MainWindow::handleWebViewLoadProgress);
     connect(this->webView, &QWebEngineView::loadFinished, this, &MainWindow::handleLoadFinished);
+    connect(this->webView, &WebView::rendererRecoveryStarted,
+            this, &MainWindow::handleRenderProcessTerminated);
     connect(this->webView, &WebView::webActionEnabledChanged, this, &MainWindow::handleWebActionEnabledChanged);
 
     connect(this->webView, &QWebEngineView::urlChanged, this, [this](const QUrl &url) {
@@ -272,6 +285,7 @@ void MainWindow::plot(QSize size) {
     this->barWidget->plot(size);
     this->progressBar->plot(size);
     this->updateVirtualKeyboardGeometry();
+    this->rendererCrashBar->setGeometry(0, 0, this->centralWidget()->width(), 40);
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
@@ -297,6 +311,34 @@ void MainWindow::showEvent(QShowEvent *event) {
 
 void MainWindow::handleLoadStarted() {
     this->setupReloadStopButton(true);
+}
+
+void MainWindow::handleRenderProcessTerminated(QWebEnginePage::RenderProcessTerminationStatus termStatus, int statusCode) {
+    QString reason;
+    switch (termStatus) {
+    case QWebEnginePage::NormalTerminationStatus:
+        reason = tr("exited normally");
+        break;
+    case QWebEnginePage::AbnormalTerminationStatus:
+        reason = tr("exited abnormally");
+        break;
+    case QWebEnginePage::CrashedTerminationStatus:
+        reason = tr("crashed");
+        break;
+    case QWebEnginePage::KilledTerminationStatus:
+        reason = tr("was killed");
+        break;
+    }
+
+    const QString message = tr("Chromium renderer %1 (exit code %2). Reloading the page.")
+                                .arg(reason)
+                                .arg(statusCode);
+    qWarning().noquote() << message;
+    this->rendererCrashBar->setText(message);
+    this->rendererCrashBar->setGeometry(0, 0, this->centralWidget()->width(), 40);
+    this->rendererCrashBar->show();
+    this->rendererCrashBar->raise();
+    this->rendererCrashBarTimer->start(5000);
 }
 
 void MainWindow::handleWebViewLoadProgress(int progress)

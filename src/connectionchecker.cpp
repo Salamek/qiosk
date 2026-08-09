@@ -36,12 +36,14 @@ void ConnectionChecker::checkUrlAccessibility(QUrl url) {
     this->stop();
     this->url = url;
     this->active = true;
+    this->connectionFailureObserved = false;
     this->currentInterval = this->initialInterval;
     this->doCheckRequest();
 }
 
 void ConnectionChecker::stop() {
     this->active = false;
+    this->connectionFailureObserved = false;
     this->timer->stop();
     if (this->currentReply) {
         QNetworkReply *reply = this->currentReply;
@@ -67,11 +69,18 @@ void ConnectionChecker::handleNetworkReply(QNetworkReply *reply) {
     // connection-level failure should cause another probe.
     const bool serverResponded = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).isValid();
     if (reply->error() == QNetworkReply::NoError || serverResponded) {
+        const bool recoveredFromConnectionFailure = this->connectionFailureObserved;
         this->active = false;
+        this->connectionFailureObserved = false;
         this->timer->stop();
         this->currentInterval = this->initialInterval;
-        emit urlAccessible();
+        if (recoveredFromConnectionFailure) {
+            emit urlAccessible();
+        } else {
+            qDebug() << "Connection test URL is already accessible; not reloading failed page:" << this->url;
+        }
     } else {
+        this->connectionFailureObserved = true;
         qDebug() << "Connection test URL is not accessible:" << this->url << reply->errorString();
         if (this->currentInterval < this->maxInterval) {
             this->currentInterval = qMin(this->currentInterval + this->incrementStep, this->maxInterval);

@@ -33,6 +33,7 @@ private:
     QUrl url;
     QPointer<QNetworkReply> currentReply;
     bool active = false;
+    bool connectionFailureObserved = false;
     int currentInterval;
     const int initialInterval = 5000; // 5 seconds
     const int maxInterval = 60000;    // 60 seconds
