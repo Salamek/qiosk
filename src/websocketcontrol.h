@@ -41,7 +41,7 @@ public:
     };
 
 
-    explicit WebsocketControl(QHostAddress host, quint16 port, bool debug, Configuration *configuration, QObject *parent = nullptr);
+    explicit WebsocketControl(QHostAddress host, quint16 port, QString token, bool debug, Configuration *configuration, QObject *parent = nullptr);
     ~WebsocketControl();
 
     void onIdle();
@@ -61,7 +61,9 @@ private:
     bool debug;
     quint16 port;
     QHostAddress host;
+    QString token;
     Configuration *configuration;
+    bool isAuthorized(QWebSocket *client) const;
     void commandSetUrl(QJsonObject options, QWebSocket *pClient);
 
     void commandSetWindowMode(QJsonObject options, QWebSocket *pClient);

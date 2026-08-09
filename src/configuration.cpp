@@ -70,6 +70,35 @@ bool Configuration::parseWindowSize(QString value, QSize *size) {
     return true;
 }
 
+bool Configuration::parseWebSocketBind(QString value, QHostAddress *address) {
+    if (!address) {
+        return false;
+    }
+
+    QHostAddress parsedAddress;
+    if (!parsedAddress.setAddress(value.trimmed())) {
+        return false;
+    }
+
+    *address = parsedAddress;
+    return true;
+}
+
+bool Configuration::parseWebSocketPort(QString value, quint16 *port) {
+    if (!port) {
+        return false;
+    }
+
+    bool valid = false;
+    const uint parsedPort = value.trimmed().toUInt(&valid);
+    if (!valid || parsedPort == 0 || parsedPort > 65535) {
+        return false;
+    }
+
+    *port = static_cast<quint16>(parsedPort);
+    return true;
+}
+
 Configuration::Configuration(QObject *parent)
     : QObject{parent}
 {
@@ -98,6 +127,8 @@ Configuration::Configuration(QObject *parent)
         BarWidget::Button::Home
     };
     this->hideCursor = false;
+    this->webSocketBind = QHostAddress::LocalHost;
+    this->webSocketPort = 1791;
 }
 
 
@@ -204,6 +235,18 @@ void Configuration::setWindowSize(QSize windowSize) {
     this->windowSize = windowSize;
 }
 
+void Configuration::setWebSocketBind(QHostAddress webSocketBind) {
+    this->webSocketBind = webSocketBind;
+}
+
+void Configuration::setWebSocketPort(quint16 webSocketPort) {
+    this->webSocketPort = webSocketPort;
+}
+
+void Configuration::setWebSocketToken(QString webSocketToken) {
+    this->webSocketToken = webSocketToken;
+}
+
 bool Configuration::loadFromFile(QString fileName, QString *errorMessage) {
     QSettings settings(fileName, QSettings::IniFormat);
 
@@ -273,6 +316,22 @@ bool Configuration::loadFromFile(QString fileName, QString *errorMessage) {
             return fail(QStringLiteral("Window/size must use the WIDTHxHEIGHT format with positive dimensions"));
         this->setWindowSize(size);
     }
+    if (settings.contains("WebSocketControl/bind")) {
+        QHostAddress address;
+        const QString value = settings.value("WebSocketControl/bind").toString();
+        if (!Configuration::parseWebSocketBind(value, &address))
+            return fail(QStringLiteral("WebSocketControl/bind must be an IPv4 or IPv6 address"));
+        this->setWebSocketBind(address);
+    }
+    if (settings.contains("WebSocketControl/port")) {
+        quint16 port;
+        const QString value = settings.value("WebSocketControl/port").toString();
+        if (!Configuration::parseWebSocketPort(value, &port))
+            return fail(QStringLiteral("WebSocketControl/port must be between 1 and 65535"));
+        this->setWebSocketPort(port);
+    }
+    if (settings.contains("WebSocketControl/token"))
+        this->setWebSocketToken(settings.value("WebSocketControl/token").toString());
     if (settings.contains("Page/white-list")) {
         QStringList values = settings.value("Page/white-list").toStringList();
         if (values.size() == 1)
@@ -426,6 +485,18 @@ QPoint Configuration::getWindowPosition() {
 
 QSize Configuration::getWindowSize() {
     return this->windowSize;
+}
+
+QHostAddress Configuration::getWebSocketBind() {
+    return this->webSocketBind;
+}
+
+quint16 Configuration::getWebSocketPort() {
+    return this->webSocketPort;
+}
+
+QString Configuration::getWebSocketToken() {
+    return this->webSocketToken;
 }
 
 QWindow::Visibility Configuration::getWindowMode() {

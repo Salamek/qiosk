@@ -19,7 +19,12 @@ MainWindow::MainWindow(Configuration *config, QWidget *parent)
     this->lastUserActivity = QDateTime::currentSecsSinceEpoch(); // Set last user activity to NOW
 
     // Start websocket control server
-    this->websocketControl = new WebsocketControl(QHostAddress::LocalHost, 1791, false, this->config);
+    this->websocketControl = new WebsocketControl(
+        this->config->getWebSocketBind(),
+        this->config->getWebSocketPort(),
+        this->config->getWebSocketToken(),
+        false,
+        this->config);
 
     // Initialize connection checker
     this->connectionChecker = new ConnectionChecker(this);

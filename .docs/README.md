@@ -178,10 +178,19 @@ Options:
   --user-agent <user_agent>                          Set content of User-Agent
                                                      header, autodetect when not
                                                      set.
+  --connection-test-url <url>                        URL used to detect when the
+                                                     target web server becomes
+                                                     available.
+  --websocket-bind <address>                         IPv4 or IPv6 address for the
+                                                     WebSocket control server.
+  --websocket-port <port>                            Port for the WebSocket
+                                                     control server.
+  --websocket-token <token>                          Require this bearer token
+                                                     for WebSocket control
+                                                     connections.
 
 Arguments:
   url                                                URL to display.
-                                        URL to display.
 ```
 
 
@@ -189,7 +198,51 @@ Arguments:
 
 ## Remote control
 
-Since 2.4 qiosk can be remote controled via websocket connection on port 1791 binded to localhost
+Since 2.4 qiosk can be remotely controlled using a WebSocket connection. By
+default, the server listens on `127.0.0.1:1791` without authentication.
+
+The listener and optional authentication token can be configured in
+`/etc/qiosk/qiosk.conf`:
+
+```ini
+[WebSocketControl]
+bind=127.0.0.1
+port=1791
+token=replace-with-a-long-random-token
+```
+
+Command-line options override the configuration file:
+
+```bash
+qiosk --websocket-bind=0.0.0.0 \
+      --websocket-port=1791 \
+      --websocket-token=replace-with-a-long-random-token \
+      https://example.com
+```
+
+When `token` is non-empty, clients must include it in the WebSocket handshake:
+
+```http
+Authorization: Bearer replace-with-a-long-random-token
+```
+
+For example, using Python's `websockets` package:
+
+```python
+async with websockets.connect(
+    "ws://127.0.0.1:1791",
+    additional_headers={"Authorization": "Bearer replace-with-a-long-random-token"},
+) as websocket:
+    ...
+```
+
+Older `websockets` releases call the argument `extra_headers`. Binding to a
+non-loopback address exposes remote-control access to the network, so configure
+a token whenever doing so. Supplying a token directly on the command line may
+expose it in the process list; the configuration file is preferable for
+long-running installations. The control server uses unencrypted `ws://`, so a
+bearer token does not provide confidentiality; use it only on a trusted network
+or through a VPN or encrypted tunnel.
 
 
 ### Commands
@@ -427,9 +480,6 @@ Sometimes there is a need to pass arguments to underlying chromium for options t
 QTWEBENGINE_CHROMIUM_FLAGS="--disable-pinch" qiosk <url>
 ````
 (Mostly)All possible options are listed at https://gist.github.com/dodying/34ea4760a699b47825a766051f47d43b or https://peter.sh/experiments/chromium-command-line-switches/ 
-
-
-
 
 
 

@@ -13,7 +13,7 @@ Qiosk is a "kiosk first" web browser written in QT as a core part of [chromium-k
 * Option to set permissions (camera, geolocation, screen-recording, ignore-ssl, etc.)
 * Option to enable/disable scrollbars
 * Configurable profile (default=icognito, or different name for normal profile)
-* Websocket API for ~remote control
+* WebSocket API for remote control with configurable bind address, port, and optional bearer-token authentication
 * Uses QT [QWebEngine](https://wiki.qt.io/QtWebEngine) so it is basically build on chromium
 * Option to set User-Agent and Accept-Language HTTP headers (Autodetect if not set)
 * INI configuration file support with command-line overrides

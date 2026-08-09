@@ -6,6 +6,7 @@
 #include <QSize>
 #include <QUrl>
 #include <QWindow>
+#include <QHostAddress>
 #include "barwidget.h"
 #include "webpage.h"
 
@@ -21,6 +22,8 @@ public:
     static QUrl normalizeUrl(QUrl url);
     static bool parseWindowPosition(QString value, QPoint *position);
     static bool parseWindowSize(QString value, QSize *size);
+    static bool parseWebSocketBind(QString value, QHostAddress *address);
+    static bool parseWebSocketPort(QString value, quint16 *port);
 
     QUrl url;
     bool touchscreen; // @TODO Touchscreen support enabled
@@ -49,6 +52,9 @@ public:
     QString userAgent;
     QUrl connectionTestUrl;
     bool hideCursor;
+    QHostAddress webSocketBind;
+    quint16 webSocketPort;
+    QString webSocketToken;
 
 
     void setUrl(QUrl url);
@@ -75,6 +81,9 @@ public:
     void setWindowIcon(QString windowIcon);
     void setWindowPosition(QPoint windowPosition);
     void setWindowSize(QSize windowSize);
+    void setWebSocketBind(QHostAddress webSocketBind);
+    void setWebSocketPort(quint16 webSocketPort);
+    void setWebSocketToken(QString webSocketToken);
     bool loadFromFile(QString fileName, QString *errorMessage = nullptr);
 
     bool isFullscreen();
@@ -105,6 +114,9 @@ public:
     bool hasWindowSize();
     QPoint getWindowPosition();
     QSize getWindowSize();
+    QHostAddress getWebSocketBind();
+    quint16 getWebSocketPort();
+    QString getWebSocketToken();
     QWindow::Visibility getWindowMode();
     void setWindowMode(QWindow::Visibility windowMode);
 signals:

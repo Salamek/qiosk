@@ -130,6 +130,15 @@ int main(int argc, char *argv[])
     QCommandLineOption connectionTestUrl(QString("connection-test-url"), QCoreApplication::translate("main", "URL used to detect when the target web server becomes available; defaults to the target URL origin."), QCoreApplication::translate("main", "url"));
     parser.addOption(connectionTestUrl);
 
+    QCommandLineOption webSocketBindOption(QStringLiteral("websocket-bind"), QCoreApplication::translate("main", "IPv4 or IPv6 address for the WebSocket control server to bind to."), QCoreApplication::translate("main", "address"));
+    parser.addOption(webSocketBindOption);
+
+    QCommandLineOption webSocketPortOption(QStringLiteral("websocket-port"), QCoreApplication::translate("main", "Port for the WebSocket control server."), QCoreApplication::translate("main", "port"));
+    parser.addOption(webSocketPortOption);
+
+    QCommandLineOption webSocketTokenOption(QStringLiteral("websocket-token"), QCoreApplication::translate("main", "Require this bearer token for WebSocket control connections."), QCoreApplication::translate("main", "token"));
+    parser.addOption(webSocketTokenOption);
+
     // Process the actual command line arguments given by the user
     parser.process(a);
 
@@ -277,6 +286,28 @@ int main(int argc, char *argv[])
             parser.showHelp(1);
         }
         config->setWindowSize(size);
+    }
+
+    if (parser.isSet(webSocketBindOption)) {
+        QHostAddress address;
+        if (!Configuration::parseWebSocketBind(parser.value(webSocketBindOption), &address)) {
+            fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: WebSocket bind must be an IPv4 or IPv6 address.")));
+            parser.showHelp(1);
+        }
+        config->setWebSocketBind(address);
+    }
+
+    if (parser.isSet(webSocketPortOption)) {
+        quint16 port;
+        if (!Configuration::parseWebSocketPort(parser.value(webSocketPortOption), &port)) {
+            fprintf(stderr, "%s\n", qPrintable(QCoreApplication::translate("main", "Error: WebSocket port must be between 1 and 65535.")));
+            parser.showHelp(1);
+        }
+        config->setWebSocketPort(port);
+    }
+
+    if (parser.isSet(webSocketTokenOption)) {
+        config->setWebSocketToken(parser.value(webSocketTokenOption));
     }
 
 

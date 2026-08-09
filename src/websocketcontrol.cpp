@@ -2,21 +2,25 @@
 
 
 
-WebsocketControl::WebsocketControl(QHostAddress host, quint16 port, bool debug, Configuration *configuration, QObject *parent) :
+WebsocketControl::WebsocketControl(QHostAddress host, quint16 port, QString token, bool debug, Configuration *configuration, QObject *parent) :
     QObject(parent),
     pWebSocketServer(new QWebSocketServer(QStringLiteral("Qiosk Control Server"), QWebSocketServer::NonSecureMode, this)),
-    host(host),
-    port(port),
     debug(debug),
+    port(port),
+    host(host),
+    token(token),
     configuration(configuration)
 {
     if (this->host != QHostAddress::Null && this->pWebSocketServer->listen(this->host, this->port)) {
         if (this->debug) {
-            qDebug() << "Qiosk Control Server listening on port" << this->port;
+            qDebug() << "Qiosk Control Server listening on" << this->host << "port" << this->port;
         }
 
         connect(this->pWebSocketServer, &QWebSocketServer::newConnection, this, &WebsocketControl::onNewConnection);
         connect(this->pWebSocketServer, &QWebSocketServer::closed, this, &WebsocketControl::closed);
+    } else {
+        qWarning() << "Unable to start Qiosk Control Server on" << this->host << "port" << this->port
+                   << ":" << this->pWebSocketServer->errorString();
     }
 }
 
@@ -31,11 +35,47 @@ void WebsocketControl::onNewConnection()
 {
     QWebSocket *pSocket = this->pWebSocketServer->nextPendingConnection();
 
+    if (!this->isAuthorized(pSocket)) {
+        qWarning() << "Rejected unauthorized Qiosk Control Server connection from"
+                   << pSocket->peerAddress();
+        connect(pSocket, &QWebSocket::disconnected, pSocket, &QObject::deleteLater);
+        pSocket->close(QWebSocketProtocol::CloseCodePolicyViolated,
+                       QStringLiteral("Unauthorized"));
+        return;
+    }
+
     connect(pSocket, &QWebSocket::textMessageReceived, this, &WebsocketControl::processTextMessage);
     connect(pSocket, &QWebSocket::binaryMessageReceived, this, &WebsocketControl::processBinaryMessage);
     connect(pSocket, &QWebSocket::disconnected, this, &WebsocketControl::socketDisconnected);
 
     this->clients << pSocket;
+}
+
+bool WebsocketControl::isAuthorized(QWebSocket *client) const
+{
+    if (this->token.isEmpty()) {
+        return true;
+    }
+
+    const QByteArray authorization = client->request().rawHeader("Authorization");
+    const QByteArray bearerPrefix("Bearer ");
+    if (authorization.size() <= bearerPrefix.size()
+        || authorization.left(bearerPrefix.size()).compare(bearerPrefix, Qt::CaseInsensitive) != 0) {
+        return false;
+    }
+
+    const QByteArray suppliedToken = authorization.mid(bearerPrefix.size());
+    const QByteArray expectedToken = this->token.toUtf8();
+    if (suppliedToken.size() != expectedToken.size()) {
+        return false;
+    }
+
+    unsigned char difference = 0;
+    for (qsizetype i = 0; i < suppliedToken.size(); ++i) {
+        difference |= static_cast<unsigned char>(suppliedToken.at(i))
+                      ^ static_cast<unsigned char>(expectedToken.at(i));
+    }
+    return difference == 0;
 }
 
 
