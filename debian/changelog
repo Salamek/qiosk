@@ -1,3 +1,13 @@
+qiosk (1.18.0) unstable; urgency=medium
+
+  * Features
+    * websocketcontrol
+      * 01baff3 Allow to set authentication token required in header of ws connection, Closes #7
+    * Window
+      * c97018b Allow to set size and position, Closes #14
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Mon, 10 Aug 2026 10:59:46 +0000
+
 qiosk (1.17.0) unstable; urgency=medium
 
   * Features
