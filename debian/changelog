@@ -1,3 +1,11 @@
+qiosk (1.18.1) unstable; urgency=medium
+
+  * Fixes
+    * ConnectionChecker
+      * 07373a5 Reload on ERR_NETWORK_CHANGED correctly
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Sat, 15 Aug 2026 22:47:54 +0000
+
 qiosk (1.18.0) unstable; urgency=medium
 
   * Features
