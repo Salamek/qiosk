@@ -396,11 +396,20 @@ void MainWindow::handleLoadingChanged(const QWebEngineLoadingInfo &loadingInfo) 
         << "error=" << loadingInfo.errorString()
         << "url=" << loadingInfo.url().toDisplayString();
 
+    // Chromium reports ERR_NETWORK_CHANGED (-21) through Qt's
+    // InternalErrorDomain instead of ConnectionErrorDomain on some Qt
+    // WebEngine versions. It is still a transient network failure and should
+    // use the same recovery path.
+    constexpr int chromiumNetworkChangedError = -21;
+    const bool internalNetworkChange =
+        loadingInfo.errorDomain() == QWebEngineLoadingInfo::InternalErrorDomain
+        && loadingInfo.errorCode() == chromiumNetworkChangedError;
     const bool connectionFailure =
         loadingInfo.errorDomain() == QWebEngineLoadingInfo::ConnectionErrorDomain
-        || loadingInfo.errorDomain() == QWebEngineLoadingInfo::DnsErrorDomain;
+        || loadingInfo.errorDomain() == QWebEngineLoadingInfo::DnsErrorDomain
+        || internalNetworkChange;
     if (!connectionFailure) {
-        qDebug() << "Page load failure is not a connection or DNS error; not starting connection recovery.";
+        qDebug() << "Page load failure is not a recoverable network error; not starting connection recovery.";
         return;
     }
 
