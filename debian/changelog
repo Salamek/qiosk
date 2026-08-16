@@ -1,3 +1,11 @@
+qiosk (1.18.2) unstable; urgency=medium
+
+  * Fixes
+    * Debian
+      * e6e0b62 Depend on qt6-svg-plugins to fix virtual keyboard images
+
+ -- Adam Schubert <adam.schubert@sg1-game.net>  Sun, 16 Aug 2026 19:00:24 +0000
+
 qiosk (1.18.1) unstable; urgency=medium
 
   * Fixes
